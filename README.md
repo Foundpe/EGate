@@ -109,7 +109,7 @@ const API = "https://your-vercel-app.vercel.app/api"; // Your API base URL
 
 ### 2. 🛰️ Deploy to Vercel
 
-1. [Fork](https://github.com/your/EGate) this repository  
+1. Fork this repository  
 2. Link the repo to [Vercel](https://vercel.com/import)  
 3. In Vercel’s project settings, add the environment variables:
 
