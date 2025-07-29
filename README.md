@@ -196,6 +196,11 @@ To use the admin panel:
 2. Enter the `ADMIN_PASSWORD`
 3. Access all management tools
 
+You need to set the api endpoit link at line **96**
+```js
+96:  const API = ""; // Your API base URL
+```
+
 ---
 
 ## 🗂️ File Structure
