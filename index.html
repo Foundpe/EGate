@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Key System</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #121212;
+      color: #f0f0f0;
+      text-align: center;
+      padding: 30px;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      margin: 10px;
+      border: none;
+      background: #5865f2;
+      color: white;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+    .panel {
+      display: none;
+      margin-top: 20px;
+    }
+    input {
+      padding: 8px;
+      margin: 6px;
+      width: 250px;
+      max-width: 90%;
+    }
+    #admin-actions > div {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🔐 Key System</h1>
+
+  <button onclick="showPanel('verify')">Check Key</button>
+  <button onclick="showPanel('reset')">Reset HWID</button>
+  <button onclick="promptAdmin()">Admin</button>
+
+  <div id="verify" class="panel">
+    <h2>Check Key</h2>
+    <input id="v_key" placeholder="License Key" />
+    <input id="v_hwid" placeholder="HWID" />
+    <br/>
+    <button onclick="verifyKey()">Submit</button>
+    <p id="verifyResult"></p>
+  </div>
+
+  <div id="reset" class="panel">
+    <h2>Reset HWID</h2>
+    <input id="r_key" placeholder="License Key" />
+    <br/>
+    <button onclick="resetKey()">Submit</button>
+    <p id="resetResult"></p>
+  </div>
+
+  <div id="admin" class="panel">
+    <h2>Admin Panel</h2>
+    <div id="admin-auth">
+      <input id="admin_password" type="password" placeholder="Admin Password" />
+      <br/>
+      <button onclick="authAdmin()">Login</button>
+      <p id="adminLoginResult"></p>
+    </div>
+    <div id="admin-actions" style="display: none;">
+      <div>
+        <button onclick="makeKey()">Generate Key</button>
+        <p id="makeKeyResult"></p>
+      </div>
+      <div>
+        <input id="check_key" placeholder="Key to check" />
+        <button onclick="checkKeyInfo()">Check Key Info</button>
+        <p id="checkKeyInfoResult"></p>
+      </div>
+      <div>
+        <button onclick="deleteAllKeys()">Delete ALL Keys</button>
+        <p id="deleteAllResult"></p>
+      </div>
+      <div>
+        <input id="delete_key" placeholder="Key to delete" />
+        <button onclick="deleteKey()">Delete Key</button>
+        <p id="deleteKeyResult"></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = "https://key-sys-web.vercel.app/api"; // Your API base URL
+    let ADMIN_PASS = "";
+
+    function showPanel(id) {
+      document.querySelectorAll(".panel").forEach(p => p.style.display = "none");
+      document.getElementById(id).style.display = "block";
+    }
+
+    function promptAdmin() {
+      showPanel('admin');
+    }
+
+    function authAdmin() {
+      const pass = document.getElementById("admin_password").value;
+      fetch(`${API}/make?admin=${encodeURIComponent(pass)}`)
+        .then(res => res.status === 403 ? null : res.text())
+        .then(data => {
+          if (data) {
+            ADMIN_PASS = pass;
+            document.getElementById("admin-auth").style.display = "none";
+            document.getElementById("admin-actions").style.display = "block";
+            document.getElementById("adminLoginResult").textContent = "";
+          } else {
+            document.getElementById("adminLoginResult").textContent = "❌ Incorrect password";
+          }
+        });
+    }
+
+    function verifyKey() {
+      const key = document.getElementById("v_key").value;
+      const hwid = document.getElementById("v_hwid").value;
+      fetch(`${API}/verify?key=${key}&hwid=${hwid}`)
+        .then(res => res.text())
+        .then(data => document.getElementById("verifyResult").textContent = data);
+    }
+
+    function resetKey() {
+      const key = document.getElementById("r_key").value;
+      fetch(`${API}/reset?key=${key}`)
+        .then(res => res.text())
+        .then(data => document.getElementById("resetResult").textContent = data);
+    }
+
+    function makeKey() {
+      fetch(`${API}/make?admin=${ADMIN_PASS}`)
+        .then(res => res.text())
+        .then(data => document.getElementById("makeKeyResult").textContent = data);
+    }
+
+    function checkKeyInfo() {
+      const key = document.getElementById("check_key").value;
+      fetch(`${API}/info?key=${key}&admin=${ADMIN_PASS}`)
+        .then(res => res.text())
+        .then(data => document.getElementById("checkKeyInfoResult").textContent = data);
+    }
+
+    function deleteKey() {
+      const key = document.getElementById("delete_key").value;
+      fetch(`${API}/delete?key=${key}&admin=${ADMIN_PASS}`)
+        .then(res => res.text())
+        .then(data => document.getElementById("deleteKeyResult").textContent = data);
+    }
+
+    function deleteAllKeys() {
+      if (!confirm("Are you sure? This will delete ALL keys.")) return;
+      fetch(`${API}/deleteAll?admin=${ADMIN_PASS}`)
+        .then(res => res.text())
+        .then(data => document.getElementById("deleteAllResult").textContent = data);
+    }
+  </script>
+
+</body>
+</html>
