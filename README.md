@@ -198,7 +198,7 @@ To use the admin panel:
 
 You need to set the api endpoit link at line **96**
 ```js
-const API = ""; // Your API base URL
+const API = "https://your-vercel-app.vercel.app/api"; // Your API base URL
 ```
 
 ---
