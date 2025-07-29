@@ -3,6 +3,11 @@
 EGate is a secure and simple license key system built for paid feature locking, user HWID binding, admin control, and reset cooldowns.  
 Designed to run serverlessly on **Vercel**, with GitHub as the persistent backend.
 
+
+Feel free to not use `index.html` and make ur own or even a discord bot.
+
+Anything is possible if uou can do some sort of web request!!
+
 ---
 
 ## 📚 Table of Contents
