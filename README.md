@@ -70,7 +70,39 @@ See the full list in the original content...
 
 ## 🧪 API Usage Examples
 
-[Python, JavaScript, curl examples — same as above]
+### 🐍 Python
+
+```python
+import requests
+
+BASE = "https://your-vercel-app.vercel.app/api"
+key = "1234-ABCD"
+hwid = "abc-hardware-id"
+
+print(requests.get(f"{BASE}/verify", params={"key": key, "hwid": hwid}).text)
+print(requests.get(f"{BASE}/reset", params={"key": key}).text)
+print(requests.get(f"{BASE}/make", params={"admin": "yourpass"}).text)
+```
+
+---
+
+### 🌐 JavaScript (fetch)
+
+```js
+const BASE = "https://your-vercel-app.vercel.app/api";
+
+fetch(`${BASE}/verify?key=1234-ABCD&hwid=abc123`)
+  .then(res => res.text())
+  .then(console.log);
+```
+
+---
+
+### 📟 curl
+
+```bash
+curl "https://your-vercel-app.vercel.app/api/verify?key=1234-ABCD&hwid=abc123"
+```
 
 ---
 
