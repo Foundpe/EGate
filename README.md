@@ -198,7 +198,7 @@ To use the admin panel:
 
 You need to set the api endpoit link at line **96**
 ```js
-96:  const API = ""; // Your API base URL
+const API = ""; // Your API base URL
 ```
 
 ---
