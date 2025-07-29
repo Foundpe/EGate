@@ -1,6 +1,6 @@
-# 🔐 Key System API & Web UI
+# 🔐 EGate (Key System API & Web UI)
 
-A secure and simple license key system built for paid feature locking, user HWID binding, admin control, and reset cooldowns.  
+EGate is a secure and simple license key system built for paid feature locking, user HWID binding, admin control, and reset cooldowns.  
 Designed to run serverlessly on **Vercel**, with GitHub as the persistent backend.
 
 ---
