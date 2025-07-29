@@ -6,7 +6,7 @@ Designed to run serverlessly on **Vercel**, with GitHub as the persistent backen
 
 Feel free to not use `index.html` and make ur own or even a discord bot.
 
-Anything is possible if uou can do some sort of web request!!
+Anything is possible if you can do some sort of web request!!
 
 ---
 
