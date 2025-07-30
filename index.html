@@ -89,11 +89,16 @@
         <button onclick="deleteKey()">Delete Key</button>
         <p id="deleteKeyResult"></p>
       </div>
+      <div>
+        <input id="admin_reset_key" placeholder="Key to reset HWID" />
+        <button onclick="adminResetKey()">Admin Reset HWID</button>
+        <p id="adminResetResult"></p>
+      </div>
     </div>
   </div>
 
   <script>
-    const API = "https://your-vercel-app.vercel.app/api"; // Your API base URL
+    const API = "https://key-sys-web.vercel.app/api"; // Your API base URL
     let ADMIN_PASS = "";
 
     function showPanel(id) {
@@ -161,6 +166,17 @@
       fetch(`${API}/deleteAll?admin=${ADMIN_PASS}`)
         .then(res => res.text())
         .then(data => document.getElementById("deleteAllResult").textContent = data);
+    }
+
+    function adminResetKey() {
+      const key = document.getElementById("admin_reset_key").value;
+      if (!key) {
+        document.getElementById("adminResetResult").textContent = "❌ Please enter a key";
+        return;
+      }
+      fetch(`${API}/adminReset?key=${key}&admin=${ADMIN_PASS}`)
+        .then(res => res.text())
+        .then(data => document.getElementById("adminResetResult").textContent = data);
     }
   </script>
 
