@@ -1,5 +1,7 @@
 import { getKeys, updateKeys } from "../utils/github.js";
 
+const Reset_Delay_Hours = 24; // Change this for a dif delay
+
 function hoursSince(dateStr) {
   if (!dateStr) return 9999;
   return (Date.now() - new Date(dateStr)) / 1000 / 60 / 60;
@@ -18,8 +20,8 @@ export default async function handler(req, res) {
     const keyData = keys[key];
     if (!keyData) return res.status(404).send("key not found");
 
-    if (hoursSince(keyData.last_reset) < 24) {
-      const timeLeft = (24 - hoursSince(keyData.last_reset)).toFixed(1);
+    if (hoursSince(keyData.last_reset) < Reset_Delay_Hours) {
+      const timeLeft = (Reset_Delay_Hours - hoursSince(keyData.last_reset)).toFixed(1);
       return res.status(429).send(`cooldown: try again in ${timeLeft} hours`);
     }
 
