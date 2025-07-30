@@ -20,7 +20,7 @@
 
 🔒 **HWID Binding** — Lock license keys to one machine
 
-🔁 **Reset Control** — One HWID reset per 24 hours [(can be changed)](https://github.com/eman225511/EGate#reset)
+🔁 **Reset Control** — One HWID reset per 24 hours [(can be changed)](#-`/reset`)
 
 📋 **Web UI** — Simple HTML frontend with full admin panel
 
