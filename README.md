@@ -20,7 +20,7 @@
 
 🔒 **HWID Binding** — Lock license keys to one machine
 
-🔁 **Reset Control** — One HWID reset per 24 hours
+🔁 **Reset Control** — One HWID reset per 24 hours [(can be changed)](https://github.com/eman225511/EGate/edit/main/README.md#reset)
 
 📋 **Web UI** — Simple HTML frontend with full admin panel
 
@@ -86,6 +86,10 @@ All requests are `GET` based with query parameters.
 🔄 Reset HWID (only allowed every 24 hours)  
 - `?key=XXXX-YYYY`  
 - Returns success or cooldown remaining
+- to change it go to line **3** in api/reset.js
+```js
+const Reset_Delay_Hours = 24; // Change this for a dif delay
+```
 
 ---
 
