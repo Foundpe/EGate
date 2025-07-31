@@ -1,31 +1,35 @@
 
+
 <div align="center">
-  <h1>🔐 EGate — HWID-Locked License Key System + Admin Dashboard</h1>
+  <h1>🔐 EGate</h1>
+  <b>HWID-Locked License Key System & Admin Dashboard</b><br>
+  <sub>Modern, serverless, and secure. Protect your premium apps, bots, or scripts.</sub>
+  <br><br>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
+  <a href="https://github.com/eman225511"><img src="https://img.shields.io/badge/MADE%20BY-EMAN-ff69b4.svg" alt="Made by Eman"></a>
+  <br><br>
+  <a href="https://vercel.com/import"><img src="https://vercel.com/button" alt="Deploy to Vercel"></a>
 </div>
-
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Made by Eman](https://img.shields.io/badge/MADE%20BY-EMAN-ff69b4.svg)](https://github.com/eman225511)
-
-
-[![Deploy to Vercel](https://vercel.com/button)](https://vercel.com/import)
-
 
 ---
 
-> **EGate** is a sleek and secure API-based license key system with HWID binding, admin key management, and optional Web UI.  
-> Perfect for protecting premium features in CLI tools, desktop apps, bots, or scripts.
+<p align="center">
+  <b>EGate</b> is a modern, serverless license key system with HWID binding, admin key management, and a simple web UI.<br>
+  <i>Protect your premium CLI tools, desktop apps, bots, or scripts with ease.</i>
+</p>
 
 ---
 
 ## 📦 Features
 
-
-✨ <b>Fully Serverless</b> — Powered by <a href="https://vercel.com/docs/functions">Vercel Functions</a><br>
-🔒 <b>HWID Binding</b> — Lock license keys to one machine<br>
-🔁 <b>Reset Control</b> — One HWID reset per 24 hours <a href="#reset">(can be changed)</a><br>
-📋 <b>Web UI</b> — Simple HTML frontend with full admin panel<br>
-🧠 <b>Admin Endpoints</b> — Create, delete, inspect, or purge keys with password protection<br>
-🗂️ <b>GitHub Storage</b> — Keys are saved in <code>keys.json</code> in your private GitHub repo
+<ul>
+  <li>⚡ <b>Serverless</b> — Powered by <a href="https://vercel.com/docs/functions">Vercel Functions</a></li>
+  <li>🔒 <b>HWID Binding</b> — Lock license keys to a single device</li>
+  <li>🔁 <b>User HWID Reset</b> — One reset per 24 hours (configurable)</li>
+  <li>🛠️ <b>Admin Panel</b> — Create, delete, inspect, or purge keys (password protected)</li>
+  <li>🐙 <b>GitHub Storage</b> — All keys are stored in your private repo's <code>keys.json</code></li>
+  <li>🌐 <b>Simple Web UI</b> — HTML frontend for users and admins</li>
+</ul>
 
 ---
 
@@ -41,23 +45,34 @@
 
 Set these in your <b>Vercel Project Settings &gt; Environment Variables</b>
 
-| Name             | Required | Example                 | Description                             |
-|------------------|----------|-------------------------|-----------------------------------------|
-| `ADMIN_PASSWORD` | ✅       | `supersecret123`        | Password to access admin routes         |
-| `GITHUB_TOKEN`   | ✅       | `ghp_xxx`               | GitHub PAT with `repo` permission       |
-| `GITHUB_OWNER`   | ✅       | `eman225511`            | Your GitHub username                    |
-| `GITHUB_REPO`    | ✅       | `EGate-Keys`            | Repo where `keys.json` lives            |
-| `GITHUB_BRANCH`  | ❌       | `main` (default)        | Branch containing `keys.json`           |
+| Name             | Required | Example           | Description                       |
+|------------------|----------|-------------------|-----------------------------------|
+| `ADMIN_PASSWORD` | ✅       | `supersecret123`  | Password for admin endpoints      |
+| `GITHUB_TOKEN`   | ✅       | `ghp_xxx`         | GitHub PAT with `repo` access     |
+| `GITHUB_OWNER`   | ✅       | `eman225511`      | Your GitHub username              |
+| `GITHUB_REPO`    | ✅       | `EGate-Keys`      | Repo where `keys.json` lives      |
+| `GITHUB_BRANCH`  | ❌       | `main` (default)  | Branch for `keys.json`            |
 
 ---
 
-## 🚀 Installation & Setup
+## 🚀 Quickstart
 
+1. **Fork or clone** this repo to your private GitHub account.
+2. Ensure a `keys.json` file exists at the root (just `{}` for empty).
+3. [Import to Vercel](https://vercel.com/import) and set the required environment variables above.
+4. Deploy and visit your API/UI at:
 
-### 1. 🛠️ Requirements
+   ```
+   https://your-vercel-app.vercel.app/
+   ```
 
-- **Vercel account** (for serverless API and frontend hosting)
-- **GitHub account** with a **private repo** (this repo) containing an empty `keys.json` file (`{}`)
+---
+
+## 🛠️ Requirements
+
+- Vercel account (for serverless API & frontend)
+- GitHub account with a private repo containing `keys.json` (`{}`)
+- GitHub Personal Access Token (PAT) with `repo` access
 - **GitHub Personal Access Token (PAT)** with `repo` access (for reading/writing keys)
 
 ---
@@ -80,12 +95,13 @@ https://your-vercel-app.vercel.app/
 
 ---
 
+
 <details>
 <summary><h2>🔌 API Endpoints</h2></summary>
 
-All requests are `GET` based with query parameters. All endpoints are served from your Vercel deployment, e.g. `https://your-vercel-app.vercel.app/api/ENDPOINT`.
+All requests are `GET` with query parameters. All endpoints are served from your Vercel deployment, e.g. `https://your-vercel-app.vercel.app/api/ENDPOINT`.
 
-### 🔍 `/verify` — Key Verification & HWID Binding
+### `/verify` — Key Verification & HWID Binding
 
 **Purpose:** Verify a license key and bind it to a hardware ID (HWID) on first use, or validate existing HWID binding.
 
@@ -94,10 +110,10 @@ All requests are `GET` based with query parameters. All endpoints are served fro
 - `hwid` *(required)* — Hardware ID to bind/verify (e.g., device MAC address, CPU ID, etc.)
 
 **Behavior:**
-- ✅ **First call:** Binds the key to the provided HWID
-- 🔁 **Subsequent calls:** Validates that the HWID matches the bound one
-- ❌ **Invalid key:** Returns error message
-- ⚠️ **HWID mismatch:** Returns error if key is bound to different HWID
+- First call: Binds the key to the provided HWID and returns `key bound to hwid`
+- Subsequent calls: If HWID matches, returns `key verified`
+- If HWID does not match, returns `hwid mismatch` (403)
+- If key not found, returns `key not found` (404)
 
 **Example Request:**
 ```
@@ -106,15 +122,15 @@ GET /api/verify?key=ABCD-1234-EFGH&hwid=MAC-00-11-22-33-44-55
 
 **Response Examples:**
 ```
-✅ Success (first binding): "key verified and hwid bound"
-✅ Success (valid): "key and hwid verified"
-❌ Invalid key: "invalid key"
-❌ HWID mismatch: "hwid mismatch"
+"key bound to hwid"
+"key verified"
+"hwid mismatch"
+"key not found"
 ```
 
 ---
 
-### 🔄 `/reset` — HWID Reset (User)
+### `/reset` — HWID Reset (User)
 
 **Purpose:** Reset the HWID binding for a key, allowing it to be bound to a new device. Limited to once every 24 hours per key.
 
@@ -130,10 +146,9 @@ GET /api/reset?key=ABCD-1234-EFGH
 
 **Response Examples:**
 ```
-✅ Success: "hwid reset successful"
-⏰ Cooldown active: "reset cooldown active. try again in X hours"
-❌ Invalid key: "invalid key"
-❌ No HWID bound: "no hwid to reset"
+"hwid reset"
+"cooldown: try again in X hours"
+"key not found"
 ```
 
 **Customization:**
@@ -144,7 +159,7 @@ const Reset_Delay_Hours = 24; // Change this for a different delay
 
 ---
 
-### 🔑 `/make` *(Admin Only)*
+### `/make` *(Admin Only)*
 
 **Purpose:** Generate a new random license key.
 
@@ -158,15 +173,15 @@ GET /api/make?admin=supersecret123
 
 **Response Examples:**
 ```
-✅ Success: "New key: ABCD-1234-EFGH-5678"
-❌ Unauthorized: "forbidden"
+<new-key-string>
+"invalid admin password"
 ```
 
 ---
 
-### 📋 `/info` *(Admin Only)*
+### `/info` *(Admin Only)*
 
-**Purpose:** View detailed information about a specific license key, including creation time, HWID binding, and reset history.
+**Purpose:** View information about a specific license key.
 
 **Parameters:**
 - `key` *(required)* — The license key to inspect
@@ -179,22 +194,19 @@ GET /api/info?key=ABCD-1234-EFGH&admin=supersecret123
 
 **Response Examples:**
 ```json
-✅ Success: {
-  "key": "ABCD-1234-EFGH",
-  "created": "2025-01-15T10:30:00.000Z",
+{
   "hwid": "MAC-00-11-22-33-44-55",
-  "lastReset": "2025-01-20T15:45:00.000Z"
+  "last_reset": "2025-01-20T15:45:00.000Z"
 }
-
-❌ Key not found: "key not found"
-❌ Unauthorized: "forbidden"
+"Key not found"
+"Forbidden"
 ```
 
 ---
 
-### 🗑️ `/delete` *(Admin Only)*
+### `/delete` *(Admin Only)*
 
-**Purpose:** Permanently delete a specific license key from the system.
+**Purpose:** Permanently delete a specific license key.
 
 **Parameters:**
 - `key` *(required)* — The license key to delete
@@ -207,16 +219,16 @@ GET /api/delete?key=ABCD-1234-EFGH&admin=supersecret123
 
 **Response Examples:**
 ```
-✅ Success: "key deleted"
-❌ Key not found: "key not found"
-❌ Unauthorized: "forbidden"
+"Key deleted"
+"Key not found"
+"Forbidden"
 ```
 
 ---
 
-### ☠️ `/deleteAll` *(Admin Only)*
+### `/deleteAll` *(Admin Only)*
 
-**Purpose:** **DANGER ZONE** — Permanently delete ALL license keys from the system. Use with extreme caution!
+**Purpose:** **DANGER ZONE** — Permanently delete ALL license keys. Use with extreme caution!
 
 **Parameters:**
 - `admin` *(required)* — Admin password
@@ -228,17 +240,15 @@ GET /api/deleteAll?admin=supersecret123
 
 **Response Examples:**
 ```
-✅ Success: "all keys deleted"
-❌ Unauthorized: "forbidden"
+"All keys deleted"
+"Forbidden"
 ```
-
-> ⚠️ **Warning:** This action is irreversible and will delete all license keys permanently.
 
 ---
 
-### 🛠️ `/adminReset` *(Admin Only)*
+### `/adminReset` *(Admin Only)*
 
-**Purpose:** Force reset the HWID binding for any key instantly, bypassing the 24-hour cooldown restriction. Useful for customer support scenarios.
+**Purpose:** Instantly reset the HWID for any key (no cooldown, admin only).
 
 **Parameters:**
 - `key` *(required)* — The license key to reset
@@ -251,10 +261,9 @@ GET /api/adminReset?key=ABCD-1234-EFGH&admin=supersecret123
 
 **Response Examples:**
 ```
-✅ Success: "admin hwid reset successful"
-❌ Key not found: "key not found"
-❌ No HWID bound: "no hwid to reset"
-❌ Unauthorized: "forbidden"
+"admin hwid reset successful"
+"key not found"
+"Forbidden"
 ```
 
 </details>
@@ -269,7 +278,6 @@ GET /api/adminReset?key=ABCD-1234-EFGH&admin=supersecret123
 
 ```python
 import requests
-import json
 
 BASE = "https://your-vercel-app.vercel.app/api"
 ADMIN_PASSWORD = "supersecret123"
@@ -283,11 +291,7 @@ def print_response(resp):
 def verify_key(key, hwid):
     resp = requests.get(f"{BASE}/verify", params={"key": key, "hwid": hwid})
     print_response(resp)
-    if resp.status_code == 200:
-        return resp.text
-    else:
-        # Handle error
-        return f"Error: {resp.status_code} - {resp.text}"
+    return resp.text
 
 # Example 2: Reset HWID (user)
 def reset_hwid(key):
@@ -315,6 +319,22 @@ def admin_reset_hwid(key):
     resp = requests.get(f"{BASE}/adminReset", params={"key": key, "admin": ADMIN_PASSWORD})
     print_response(resp)
     return resp.text
+
+def delete_key(key):
+    resp = requests.get(f"{BASE}/delete", params={"key": key, "admin": ADMIN_PASSWORD})
+    print_response(resp)
+    return resp.text
+
+# Usage example:
+if __name__ == "__main__":
+    # Create a new key
+    new_key = create_new_key().strip()
+    # Verify and bind the key
+    verify_key(new_key, "MAC-00-11-22-33-44-55")
+    # Get key info
+    get_key_info(new_key)
+    # Admin HWID reset
+    admin_reset_hwid(new_key)
 
 # Example 6: Delete a specific key (admin)
 def delete_key(key):
