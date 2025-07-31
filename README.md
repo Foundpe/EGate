@@ -72,7 +72,6 @@ Set these in your <b>Vercel Project Settings &gt; Environment Variables</b>
 
 - Vercel account (for serverless API & frontend)
 - GitHub account with a private repo containing `keys.json` (`{}`)
-- GitHub Personal Access Token (PAT) with `repo` access
 - **GitHub Personal Access Token (PAT)** with `repo` access (for reading/writing keys)
 
 ---
