@@ -264,6 +264,7 @@ GET /api/adminReset?key=ABCD-1234-EFGH&admin=supersecret123
 <details>
 <summary><h2>💻 API Usage Examples</h2></summary>
 
+
 ### Python
 
 ```python
@@ -273,63 +274,69 @@ import json
 BASE = "https://your-vercel-app.vercel.app/api"
 ADMIN_PASSWORD = "supersecret123"
 
+# Helper: Print status and body
+def print_response(resp):
+    print(f"Status: {resp.status_code}")
+    print(f"Body: {resp.text}")
+
 # Example 1: Verify a key and bind HWID (first time)
 def verify_key(key, hwid):
-    response = requests.get(f"{BASE}/verify", params={"key": key, "hwid": hwid})
-    print(f"Verify Response: {response.text}")
-    return response.text
+    resp = requests.get(f"{BASE}/verify", params={"key": key, "hwid": hwid})
+    print_response(resp)
+    if resp.status_code == 200:
+        return resp.text
+    else:
+        # Handle error
+        return f"Error: {resp.status_code} - {resp.text}"
 
 # Example 2: Reset HWID (user)
 def reset_hwid(key):
-    response = requests.get(f"{BASE}/reset", params={"key": key})
-    print(f"Reset Response: {response.text}")
-    return response.text
+    resp = requests.get(f"{BASE}/reset", params={"key": key})
+    print_response(resp)
+    return resp.text
 
 # Example 3: Generate new key (admin)
 def create_new_key():
-    response = requests.get(f"{BASE}/make", params={"admin": ADMIN_PASSWORD})
-    print(f"New Key: {response.text}")
-    return response.text
+    resp = requests.get(f"{BASE}/make", params={"admin": ADMIN_PASSWORD})
+    print_response(resp)
+    return resp.text
 
 # Example 4: Get key information (admin)
 def get_key_info(key):
-    response = requests.get(f"{BASE}/info", params={"key": key, "admin": ADMIN_PASSWORD})
-    print(f"Key Info: {response.text}")
+    resp = requests.get(f"{BASE}/info", params={"key": key, "admin": ADMIN_PASSWORD})
+    print_response(resp)
     try:
-        return json.loads(response.text)
-    except:
-        return response.text
+        return resp.json()
+    except Exception:
+        return resp.text
 
 # Example 5: Force reset HWID (admin)
 def admin_reset_hwid(key):
-    response = requests.get(f"{BASE}/adminReset", params={"key": key, "admin": ADMIN_PASSWORD})
-    print(f"Admin Reset: {response.text}")
-    return response.text
+    resp = requests.get(f"{BASE}/adminReset", params={"key": key, "admin": ADMIN_PASSWORD})
+    print_response(resp)
+    return resp.text
 
 # Example 6: Delete a specific key (admin)
 def delete_key(key):
-    response = requests.get(f"{BASE}/delete", params={"key": key, "admin": ADMIN_PASSWORD})
-    print(f"Delete Response: {response.text}")
-    return response.text
+    resp = requests.get(f"{BASE}/delete", params={"key": key, "admin": ADMIN_PASSWORD})
+    print_response(resp)
+    return resp.text
 
 # Usage example:
 if __name__ == "__main__":
     # Generate a new key
     new_key_response = create_new_key()
-    
     # Extract key from response (assumes format "New key: XXXX-YYYY-ZZZZ")
     if "New key:" in new_key_response:
         key = new_key_response.split("New key: ")[1].strip()
-        
         # Verify and bind the key
         verify_key(key, "MAC-00-11-22-33-44-55")
-        
         # Get key information
         info = get_key_info(key)
-        
         # Reset HWID (admin)
         admin_reset_hwid(key)
 ```
+
 
 ### JavaScript (Node.js)
 
@@ -337,13 +344,24 @@ if __name__ == "__main__":
 const BASE = "https://your-vercel-app.vercel.app/api";
 const ADMIN_PASSWORD = "supersecret123";
 
-// Example 1: Verify key with async/await
+// Helper: Print status and body
+async function printResponse(response) {
+    console.log('Status:', response.status);
+    const text = await response.text();
+    console.log('Body:', text);
+    return text;
+}
+
+// Example 1: Verify key with async/await and status check
 async function verifyKey(key, hwid) {
     try {
         const response = await fetch(`${BASE}/verify?key=${key}&hwid=${hwid}`);
-        const result = await response.text();
-        console.log('Verify Result:', result);
-        return result;
+        await printResponse(response);
+        if (response.status === 200) {
+            // Success
+        } else {
+            // Handle error
+        }
     } catch (error) {
         console.error('Error verifying key:', error);
     }
@@ -353,9 +371,7 @@ async function verifyKey(key, hwid) {
 async function createNewKey() {
     try {
         const response = await fetch(`${BASE}/make?admin=${ADMIN_PASSWORD}`);
-        const result = await response.text();
-        console.log('New Key:', result);
-        return result;
+        await printResponse(response);
     } catch (error) {
         console.error('Error creating key:', error);
     }
@@ -365,16 +381,13 @@ async function createNewKey() {
 async function getKeyInfo(key) {
     try {
         const response = await fetch(`${BASE}/info?key=${key}&admin=${ADMIN_PASSWORD}`);
-        const result = await response.text();
-        
-        // Try to parse as JSON
+        const text = await printResponse(response);
         try {
-            const jsonResult = JSON.parse(result);
+            const jsonResult = JSON.parse(text);
             console.log('Key Info (JSON):', jsonResult);
             return jsonResult;
         } catch {
-            console.log('Key Info (Text):', result);
-            return result;
+            return text;
         }
     } catch (error) {
         console.error('Error getting key info:', error);
@@ -384,21 +397,18 @@ async function getKeyInfo(key) {
 // Example 4: Complete workflow
 async function exampleWorkflow() {
     // Create a new key
-    const newKeyResponse = await createNewKey();
-    
+    const response = await fetch(`${BASE}/make?admin=${ADMIN_PASSWORD}`);
+    const newKeyResponse = await printResponse(response);
     if (newKeyResponse && newKeyResponse.includes('New key:')) {
         const key = newKeyResponse.split('New key: ')[1].trim();
-        
         // Verify the key with different HWIDs
         await verifyKey(key, 'device-001');
         await verifyKey(key, 'device-002'); // This should fail
-        
         // Get key information
         await getKeyInfo(key);
-        
         // Reset HWID as admin
         const resetResponse = await fetch(`${BASE}/adminReset?key=${key}&admin=${ADMIN_PASSWORD}`);
-        console.log('Admin Reset:', await resetResponse.text());
+        await printResponse(resetResponse);
     }
 }
 
@@ -467,6 +477,7 @@ class EGateAdmin {
 const admin = new EGateAdmin(API_BASE, 'yourpassword');
 ```
 
+
 ### curl (Command Line)
 
 ```bash
@@ -474,50 +485,49 @@ const admin = new EGateAdmin(API_BASE, 'yourpassword');
 API_BASE="https://your-vercel-app.vercel.app/api"
 ADMIN_PASSWORD="supersecret123"
 
-# Example 1: Verify a key and bind HWID
-curl -G "${API_BASE}/verify" \
+# Example 1: Verify a key and bind HWID (shows status)
+curl -i -G "$API_BASE/verify" \
   --data-urlencode "key=ABCD-1234-EFGH" \
   --data-urlencode "hwid=MAC-00-11-22-33-44-55"
 
 # Example 2: Reset HWID (user)
-curl -G "${API_BASE}/reset" \
+curl -i -G "$API_BASE/reset" \
   --data-urlencode "key=ABCD-1234-EFGH"
 
 # Example 3: Create new key (admin)
-curl -G "${API_BASE}/make" \
+curl -i -G "$API_BASE/make" \
   --data-urlencode "admin=${ADMIN_PASSWORD}"
 
 # Example 4: Get key information (admin) - formatted JSON output
-curl -G "${API_BASE}/info" \
+curl -i -G "$API_BASE/info" \
   --data-urlencode "key=ABCD-1234-EFGH" \
   --data-urlencode "admin=${ADMIN_PASSWORD}" | jq '.'
 
 # Example 5: Force reset HWID (admin)
-curl -G "${API_BASE}/adminReset" \
+curl -i -G "$API_BASE/adminReset" \
   --data-urlencode "key=ABCD-1234-EFGH" \
   --data-urlencode "admin=${ADMIN_PASSWORD}"
 
 # Example 6: Delete a key (admin)
-curl -G "${API_BASE}/delete" \
+curl -i -G "$API_BASE/delete" \
   --data-urlencode "key=ABCD-1234-EFGH" \
   --data-urlencode "admin=${ADMIN_PASSWORD}"
 
-# Example 7: Batch operations script
+# Example 7: Batch operations script (shows status)
 #!/bin/bash
 API_BASE="https://your-vercel-app.vercel.app/api"
 ADMIN_PASSWORD="supersecret123"
 
-# Create multiple keys
 echo "Creating 5 new keys..."
 for i in {1..5}; do
     echo "Key $i:"
-    curl -s -G "${API_BASE}/make" --data-urlencode "admin=${ADMIN_PASSWORD}"
+    curl -i -s -G "$API_BASE/make" --data-urlencode "admin=${ADMIN_PASSWORD}"
     echo
 done
 
-# List all keys (you'd need to implement this endpoint or check keys.json)
 echo -e "\nDone creating keys!"
 ```
+
 
 ### PowerShell (Windows)
 
@@ -526,18 +536,24 @@ echo -e "\nDone creating keys!"
 $API_BASE = "https://your-vercel-app.vercel.app/api"
 $ADMIN_PASSWORD = "supersecret123"
 
+# Helper: Print status and body
+function Print-ApiResponse {
+    param($Response)
+    Write-Host "Status: $($Response.StatusCode)" -ForegroundColor Yellow
+    Write-Host "Body: $($Response.Content.ReadAsStringAsync().Result)" -ForegroundColor Cyan
+}
+
 # Function to verify a key
 function Verify-EGateKey {
     param(
         [string]$Key,
         [string]$HWID
     )
-    
     $uri = "$API_BASE/verify?key=$Key&hwid=$HWID"
     try {
-        $response = Invoke-RestMethod -Uri $uri -Method Get
-        Write-Host "Verification Result: $response" -ForegroundColor Green
-        return $response
+        $response = Invoke-WebRequest -Uri $uri -Method Get
+        Print-ApiResponse $response
+        return $response.Content
     }
     catch {
         Write-Host "Error: $($_.Exception.Message)" -ForegroundColor Red
@@ -548,9 +564,9 @@ function Verify-EGateKey {
 function New-EGateKey {
     $uri = "$API_BASE/make?admin=$ADMIN_PASSWORD"
     try {
-        $response = Invoke-RestMethod -Uri $uri -Method Get
-        Write-Host "New Key Created: $response" -ForegroundColor Green
-        return $response
+        $response = Invoke-WebRequest -Uri $uri -Method Get
+        Print-ApiResponse $response
+        return $response.Content
     }
     catch {
         Write-Host "Error: $($_.Exception.Message)" -ForegroundColor Red
@@ -560,13 +576,11 @@ function New-EGateKey {
 # Function to get key information
 function Get-EGateKeyInfo {
     param([string]$Key)
-    
     $uri = "$API_BASE/info?key=$Key&admin=$ADMIN_PASSWORD"
     try {
-        $response = Invoke-RestMethod -Uri $uri -Method Get
-        Write-Host "Key Information:" -ForegroundColor Cyan
-        $response | ConvertTo-Json -Depth 2 | Write-Host
-        return $response
+        $response = Invoke-WebRequest -Uri $uri -Method Get
+        Print-ApiResponse $response
+        return $response.Content
     }
     catch {
         Write-Host "Error: $($_.Exception.Message)" -ForegroundColor Red
@@ -578,14 +592,16 @@ $newKey = New-EGateKey
 if ($newKey -match "New key: (.+)") {
     $keyValue = $matches[1].Trim()
     Write-Host "Extracted key: $keyValue"
-    
     # Verify the key
     Verify-EGateKey -Key $keyValue -HWID "WIN-PC-12345"
-    
     # Get key info
     Get-EGateKeyInfo -Key $keyValue
 }
 ```
+
+---
+
+**Tip:** Always check both the HTTP status code and the response body for errors or success. The API uses standard status codes for error handling, so robust clients should not assume 200 for all responses.
 
 </details>
 
@@ -594,9 +610,22 @@ if ($newKey -match "New key: (.+)") {
 <details>
 <summary><h2>📊 Response Codes & Error Handling</h2></summary>
 
+
 ### HTTP Status Codes
 
-All endpoints return **HTTP 200 OK** for both successful and error responses. The actual result is determined by the response body content.
+API endpoints return appropriate HTTP status codes for both success and error responses. The most common codes are:
+
+| Status Code | Meaning                                 |
+|-------------|-----------------------------------------|
+| 200         | Success                                 |
+| 400         | Bad Request (missing/invalid parameters)|
+| 403         | Forbidden/Unauthorized                  |
+| 404         | Not Found (key not found)               |
+| 405         | Method Not Allowed                      |
+| 429         | Too Many Requests (cooldown active)     |
+| 500         | Internal Server Error                   |
+
+Check the response status code and body to determine the result of your request.
 
 ### Common Response Messages
 
