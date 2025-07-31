@@ -633,36 +633,35 @@ if ($newKey -match "New key: (.+)") {
 
 ### HTTP Status Codes
 
-API endpoints return appropriate HTTP status codes for both success and error responses. The most common codes are:
+API endpoints return standard HTTP status codes. The most common are:
 
 | Status Code | Meaning                                 |
 |-------------|-----------------------------------------|
 | 200         | Success                                 |
 | 400         | Bad Request (missing/invalid parameters)|
-| 403         | Forbidden/Unauthorized                  |
+| 403         | Forbidden (wrong admin password, HWID mismatch) |
 | 404         | Not Found (key not found)               |
 | 405         | Method Not Allowed                      |
 | 429         | Too Many Requests (cooldown active)     |
 | 500         | Internal Server Error                   |
 
-Check the response status code and body to determine the result of your request.
+Check both the status code and response body for the result.
 
 ### Common Response Messages
 
-| Response | Meaning | Action Required |
-|----------|---------|-----------------|
-| `"key verified and hwid bound"` | ✅ First-time verification successful | Key is now bound to HWID |
-| `"key and hwid verified"` | ✅ Subsequent verification successful | Key and HWID match |
-| `"invalid key"` | ❌ Key doesn't exist | Check key format/validity |
-| `"hwid mismatch"` | ❌ Key bound to different HWID | Use correct device or reset HWID |
-| `"forbidden"` | ❌ Admin password incorrect | Check ADMIN_PASSWORD |
-| `"reset cooldown active. try again in X hours"` | ⏰ Reset attempted too soon | Wait for cooldown or use admin reset |
-| `"hwid reset successful"` | ✅ HWID reset completed | Key can now be bound to new device |
-| `"admin hwid reset successful"` | ✅ Admin force reset completed | Key can now be bound to new device |
-| `"key not found"` | ❌ Key doesn't exist for admin operations | Verify key exists |
-| `"no hwid to reset"` | ❌ Key has no HWID binding | Nothing to reset |
-| `"key deleted"` | ✅ Key successfully deleted | Key removed from system |
-| `"all keys deleted"` | ✅ All keys purged | All keys removed from system |
+| Response                        | When/Why                                      |
+|----------------------------------|-----------------------------------------------|
+| `"key bound to hwid"`            | First-time verification, HWID is now bound    |
+| `"key verified"`                 | HWID matches, key is valid                   |
+| `"hwid mismatch"`                | HWID does not match bound HWID (403)         |
+| `"key not found"`                | Key does not exist (404)                     |
+| `"hwid reset"`                   | HWID reset successful                        |
+| `"cooldown: try again in X hours"` | HWID reset attempted too soon (429)        |
+| `"invalid admin password"`       | Wrong admin password (403, /make)            |
+| `"Forbidden"`                    | Wrong admin password (403, admin endpoints)  |
+| `"Key deleted"`                  | Key deleted (admin)                          |
+| `"All keys deleted"`             | All keys deleted (admin)                     |
+| `"admin hwid reset successful"`  | Admin forced HWID reset                      |
 
 ### Error Handling Best Practices
 
