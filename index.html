@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Key System</title>
   <style>
     body {
@@ -12,6 +12,7 @@
       text-align: center;
       padding: 30px;
     }
+
     button {
       padding: 12px 24px;
       font-size: 16px;
@@ -22,16 +23,19 @@
       cursor: pointer;
       border-radius: 8px;
     }
+
     .panel {
       display: none;
       margin-top: 20px;
     }
+
     input {
       padding: 8px;
       margin: 6px;
       width: 250px;
       max-width: 90%;
     }
+
     #admin-actions > div {
       margin-top: 10px;
     }
@@ -49,7 +53,7 @@
     <h2>Check Key</h2>
     <input id="v_key" placeholder="License Key" />
     <input id="v_hwid" placeholder="HWID" />
-    <br/>
+    <br />
     <button onclick="verifyKey()">Submit</button>
     <p id="verifyResult"></p>
   </div>
@@ -57,19 +61,21 @@
   <div id="reset" class="panel">
     <h2>Reset HWID</h2>
     <input id="r_key" placeholder="License Key" />
-    <br/>
+    <br />
     <button onclick="resetKey()">Submit</button>
     <p id="resetResult"></p>
   </div>
 
   <div id="admin" class="panel">
     <h2>Admin Panel</h2>
+
     <div id="admin-auth">
       <input id="admin_password" type="password" placeholder="Admin Password" />
-      <br/>
+      <br />
       <button onclick="authAdmin()">Login</button>
       <p id="adminLoginResult"></p>
     </div>
+
     <div id="admin-actions" style="display: none;">
       <div>
         <button onclick="makeKey()">Generate Key</button>
@@ -94,11 +100,15 @@
         <button onclick="adminResetKey()">Admin Reset HWID</button>
         <p id="adminResetResult"></p>
       </div>
+      <div>
+        <button onclick="downloadDump()">Download Full Key Dump</button>
+        <p id="dumpResult"></p>
+      </div>
     </div>
   </div>
 
   <script>
-    const API = "https://key-sys-web.vercel.app/api"; // Your API base URL
+    const API = "https://key-sys-web.vercel.app/api";
     let ADMIN_PASS = "";
 
     function showPanel(id) {
@@ -107,7 +117,7 @@
     }
 
     function promptAdmin() {
-      showPanel('admin');
+      showPanel("admin");
     }
 
     function authAdmin() {
@@ -177,6 +187,28 @@
       fetch(`${API}/adminReset?key=${key}&admin=${ADMIN_PASS}`)
         .then(res => res.text())
         .then(data => document.getElementById("adminResetResult").textContent = data);
+    }
+
+    function downloadDump() {
+      fetch(`${API}/dump?admin=${ADMIN_PASS}`)
+        .then(res => {
+          if (!res.ok) throw new Error("Failed to fetch dump");
+          return res.json();
+        })
+        .then(data => {
+          const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "keys.json";
+          a.click();
+          URL.revokeObjectURL(url);
+          document.getElementById("dumpResult").textContent = "✅ Downloaded";
+        })
+        .catch(err => {
+          console.error(err);
+          document.getElementById("dumpResult").textContent = "❌ Failed to download";
+        });
     }
   </script>
 
