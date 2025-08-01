@@ -273,13 +273,27 @@ GET /api/adminReset?key=ABCD-1234-EFGH&admin=supersecret123
 - `key` *(required)* — Admin password (same as ADMIN_PASSWORD env var)
 
 **Example Request:**
-`GET /api/dump?admin=supersecret123`
+`GET /api/dump?admin=YOUR_PASSWORD`
 
-**Response Examples:**
-```
-200 — JSON object containing all license keys and their metadata.
-403 — If admin password is missing or incorrect.
-500 — On internal server errors.
+Returns the current `keys.json` from the GitHub repo. Requires admin password via query string.
+
+**Query Parameters:**
+- `admin` – Required. Admin password (set in `ADMIN_PASSWORD` environment variable).
+
+**Response:**
+```json
+{
+  "keys": {
+    "exampleKey": {
+      "hwid": "1234567890",
+      "created": "2025-07-31T00:00:00Z",
+      "notes": "example"
+    }
+  }
+}
+Errors:
+	403 Forbidden – if password is invalid
+	500 Internal Server Error – if GitHub fetch fails
 ```
 
 
