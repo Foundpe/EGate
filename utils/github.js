@@ -43,3 +43,13 @@ export async function updateKeys(newKeys, sha) {
 
   return await res.json();
 }
+
+
+export async function getFileFromGitHub(filename) {
+  const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${filename}?ref=${BRANCH}`;
+  const res = await fetch(url, { headers });
+  if (!res.ok) throw new Error(`Failed to fetch ${filename} (${res.status})`);
+  const data = await res.json();
+  const content = Buffer.from(data.content, "base64").toString("utf-8");
+  return { content, sha: data.sha };
+}
