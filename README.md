@@ -265,6 +265,24 @@ GET /api/adminReset?key=ABCD-1234-EFGH&admin=supersecret123
 "Forbidden"
 ```
 
+### `/dump` (Admin Only)
+
+**Purpose:** Fetch and return the full keys.json contents as JSON. Useful for backup, inspection, or exporting all license keys at once.
+
+**Parameters:**
+- `key` *(required)* — Admin password (same as ADMIN_PASSWORD env var)
+
+**Example Request:**
+`GET /api/dump?admin=supersecret123`
+
+**Response Examples:**
+```
+200 — JSON object containing all license keys and their metadata.
+403 — If admin password is missing or incorrect.
+500 — On internal server errors.
+```
+
+
 </details>
 
 ---
