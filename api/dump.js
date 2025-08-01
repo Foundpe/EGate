@@ -1,18 +1,20 @@
-import { getFileFromGitHub } from '../utils/github.js';
+// api/dump.js
+import { getKeys } from '../utils/github.js';
+
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
 export default async function handler(req, res) {
-  const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
-  const admin = req.query.admin;
+  const { admin } = req.query;
 
-  if (!admin || admin !== ADMIN_PASSWORD) {
-    return res.status(403).json({ error: "Forbidden" });
+  if (admin !== ADMIN_PASSWORD) {
+    return res.status(403).json({ error: 'Forbidden – Invalid admin password' });
   }
 
   try {
-    const { content } = await getFileFromGitHub("keys.json");
-    res.status(200).json(content);
+    const { content: keys } = await getKeys();
+    res.status(200).json({ keys });
   } catch (err) {
-    console.error("Error fetching keys:", err);
-    res.status(500).json({ error: "Failed to fetch keys.json" });
+    console.error('Error fetching keys.json:', err);
+    res.status(500).json({ error: 'Failed to fetch keys.json', details: err.message });
   }
 }
