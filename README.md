@@ -287,7 +287,6 @@ Returns the current `keys.json` from the GitHub repo. Requires admin password vi
     "exampleKey": {
       "hwid": "1234567890",
       "created": "2025-07-31T00:00:00Z",
-      "notes": "example"
     }
   }
 }
