@@ -897,7 +897,7 @@ async function handleLicenseVerification(api, licenseKey, deviceId) {
 ---
 
 <details>
-<summary><h2>🌐 Web UI (`index.html`, `reset.html`)</h2></summary>
+<summary><h2>🌐 Web UI (index.html, reset.html)</h2></summary>
 
 ## 🌐 Main Page
 - 🔐 Check Key
