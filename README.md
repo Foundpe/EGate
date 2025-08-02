@@ -294,6 +294,24 @@ Errors:
 	403 Forbidden – if password is invalid
 	500 Internal Server Error – if GitHub fetch fails
 ```
+### `ping.js`
+
+A lightweight endpoint to verify if the EGate API is online. Useful for uptime checks or basic health monitoring.
+
+➤ Method
+
+GET
+
+➤ Example Request
+`GET https://your-egate.vercel.app/api/ping`
+
+➤ Example Response
+```
+{
+  "status": "ok",
+  "timestamp": "2025-08-01T01:23:45.678Z"
+}
+```
 
 
 </details>
