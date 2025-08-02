@@ -897,7 +897,7 @@ async function handleLicenseVerification(api, licenseKey, deviceId) {
 ---
 
 <details>
-<summary><h2>🌐 Web UI (`index.html`)</h2></summary>
+<summary><h2>🌐 Web UI (`index.html`, `reset.html`)</h2></summary>
 
 - 🔐 Check Key
 - 🔁 Reset HWID
@@ -908,6 +908,34 @@ async function handleLicenseVerification(api, licenseKey, deviceId) {
 ```js
 const API = "https://your-vercel-app.vercel.app/api";
 ```
+
+## 🌐 User Reset Page
+
+A standalone page for users to easily reset their HWID binding without needing the full admin panel.
+
+### 🔗 `reset.html`
+
+- **Purpose:** Allows end-users to reset their license key's HWID using just the key (no admin login required).
+- **Endpoint Called:** `GET /api/reset?key=YOUR_LICENSE_KEY`
+- **Validates:** Cooldown and key existence.
+- **Displays:** Clear feedback messages (e.g. "hwid reset", "cooldown", "key not found").
+
+### 🧪 Usage
+
+1. Upload `reset.html` to the root of your Vercel deployment (same folder as `index.html`).
+2. Users visit:
+   `https://your-vercel-app.vercel.app/reset.html`
+3. Enter license key and hit **Reset HWID**.
+
+### 📦 Developer Notes
+
+- Works with your existing `/api/reset` endpoint (GET-based).
+- Handles all common status codes:
+- `200` → success: `✅ hwid reset`
+- `429` → cooldown active: `❌ cooldown: try again in X hours`
+- `404` → invalid key: `❌ key not found`
+- `500` → server error
+
 
 </details>
 
