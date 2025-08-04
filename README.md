@@ -33,6 +33,21 @@
 
 ---
 
+## 🎛️ Admin Panel
+
+**[EGate Admin Panel](https://github.com/eman225511/EGate-Admin-Panel)** — A dedicated web-based admin interface for managing your EGate API with enhanced features and a modern UI.
+
+### Features:
+- 🖥️ **Modern Web Interface** — Clean, responsive admin dashboard
+- 🔑 **Key Management** — Create, view, delete, and manage license keys
+- 🔐 **Secure Authentication** — Protected admin access
+
+**Perfect for:** Users who prefer a dedicated admin interface over the built-in web UI for managing their EGate license system.
+
+**Repository:** [github.com/eman225511/EGate-Admin-Panel](https://github.com/eman225511/EGate-Admin-Panel)
+
+---
+
 ## ⚙️ Environment Variables
 
 
