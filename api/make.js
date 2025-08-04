@@ -20,6 +20,7 @@ export default async function handler(req, res) {
     keys[newKey] = {
       hwid: "",
       last_reset: null,
+      created: new Date().toISOString(),
     };
 
     await updateKeys(keys, sha);
