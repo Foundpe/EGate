@@ -44,6 +44,7 @@
 
 **Perfect for:** Users who prefer a dedicated admin interface over the built-in web UI for managing their EGate license system.
 
+**🌐 Live Demo:** [EGate-Admin-Panel.vercel.app](https://egate-admin-panel.vercel.app/)  
 **Repository:** [github.com/eman225511/EGate-Admin-Panel](https://github.com/eman225511/EGate-Admin-Panel)
 
 ---
