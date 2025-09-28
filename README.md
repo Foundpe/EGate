@@ -25,7 +25,8 @@
 <ul>
   <li>⚡ <b>Serverless</b> — Powered by <a href="https://vercel.com/docs/functions">Vercel Functions</a></li>
   <li>🔒 <b>HWID Binding</b> — Lock license keys to a single device</li>
-  <li>🔁 <b>User HWID Reset</b> — One reset per 24 hours (configurable)</li>
+  <li>� <b>Email Binding</b> — Associate email addresses with license keys (one-to-one)</li>
+  <li>�🔁 <b>User HWID Reset</b> — One reset per 24 hours (configurable)</li>
   <li>🛠️ <b>Admin Panel</b> — Create, delete, inspect, or purge keys (password protected)</li>
   <li>🐙 <b>GitHub Storage</b> — All keys are stored in your private repo's <code>keys.json</code></li>
   <li>🌐 <b>Simple Web UI</b> — HTML frontend for users and admins</li>
@@ -310,6 +311,97 @@ Errors:
 	403 Forbidden – if password is invalid
 	500 Internal Server Error – if GitHub fetch fails
 ```
+### `/bindEmail` — Email Binding
+
+**Purpose:** Bind an email address to a license key. Each email can only be bound to one key, and each key can only have one email.
+
+**Parameters:**
+- `key` *(required)* — The license key to bind the email to
+- `email` *(required)* — Email address to bind (must be valid format)
+
+**Behavior:**
+- Validates email format using regex
+- Prevents duplicate email bindings across keys
+- Prevents multiple emails per key
+- Records binding timestamp
+
+**Example Request:**
+```
+GET /api/bindEmail?key=ABCD-1234-EFGH&email=user@example.com
+```
+
+**Response Examples:**
+```
+"email successfully bound to key"
+"email already bound to another key"
+"key already has email bound: user@example.com"
+"invalid email format"
+"key not found"
+```
+
+---
+
+### `/checkKey` — Key Information (Public)
+
+**Purpose:** Get basic information about a license key without requiring admin access.
+
+**Parameters:**
+- `key` *(required)* — The license key to check
+
+**Example Request:**
+```
+GET /api/checkKey?key=ABCD-1234-EFGH
+```
+
+**Response Examples:**
+```json
+{
+  "exists": true,
+  "hasEmail": true,
+  "email": "user@example.com",
+  "hasHwid": true,
+  "created": "2025-08-03T12:34:56.789Z",
+  "emailBoundAt": "2025-08-03T13:00:00.123Z"
+}
+```
+
+```json
+{
+  "error": "key not found"
+}
+```
+
+---
+
+### `/resetEmail` *(Admin Only)*
+
+**Purpose:** Reset the email binding for a license key, allowing a new email to be bound. This is an admin-only operation.
+
+**Parameters:**
+- `key` *(required)* — The license key to reset email for
+- `admin` *(required)* — Admin password
+
+**Behavior:**
+- Removes the email binding from the specified key
+- Records the reset timestamp in `email_reset_at`
+- Removes the `email_bound_at` timestamp
+- Only works if the key currently has an email bound
+
+**Example Request:**
+```
+GET /api/resetEmail?key=ABCD-1234-EFGH&admin=supersecret123
+```
+
+**Response Examples:**
+```
+"email reset successfully"
+"key has no email bound"
+"key not found"
+"Forbidden"
+```
+
+---
+
 ### `ping.js`
 
 A lightweight endpoint to verify if the EGate API is online. Useful for uptime checks or basic health monitoring.
@@ -389,18 +481,47 @@ def delete_key(key):
     print_response(resp)
     return resp.text
 
+# Example 6: Bind email to key
+def bind_email(key, email):
+    resp = requests.get(f"{BASE}/bindEmail", params={"key": key, "email": email})
+    print_response(resp)
+    return resp.text
+
+# Example 7: Check key information (public)
+def check_key_info(key):
+    resp = requests.get(f"{BASE}/checkKey", params={"key": key})
+    print_response(resp)
+    try:
+        return resp.json()
+    except Exception:
+        return resp.text
+
+# Example 8: Reset email binding (admin)
+def reset_email(key):
+    resp = requests.get(f"{BASE}/resetEmail", params={"key": key, "admin": ADMIN_PASSWORD})
+    print_response(resp)
+    return resp.text
+
 # Usage example:
 if __name__ == "__main__":
     # Create a new key
     new_key = create_new_key().strip()
+    # Bind email to key
+    bind_email(new_key, "user@example.com")
+    # Check key info (public endpoint)
+    key_info = check_key_info(new_key)
     # Verify and bind the key
     verify_key(new_key, "MAC-00-11-22-33-44-55")
-    # Get key info
+    # Get admin key info
     get_key_info(new_key)
+    # Reset email binding (admin)
+    reset_email(new_key)
+    # Bind new email
+    bind_email(new_key, "newemail@example.com")
     # Admin HWID reset
     admin_reset_hwid(new_key)
 
-# Example 6: Delete a specific key (admin)
+# Example 9: Delete a specific key (admin)
 def delete_key(key):
     resp = requests.get(f"{BASE}/delete", params={"key": key, "admin": ADMIN_PASSWORD})
     print_response(resp)
@@ -936,12 +1057,13 @@ async function handleLicenseVerification(api, licenseKey, deviceId) {
 ## 🌐 Main Page
 - 🔐 Check Key
 - 🔁 Reset HWID
+- 📧 Bind Email to Key
 - 🧑‍💼 Admin Panel (make, delete, inspect, force reset keys)
 
 > 📌 **Configure your API URL:**
-> In `index.html`, set your deployed API base URL on **line 96**:
+> In `index.html`, set your deployed API base URL on **line 126**:
 ```js
-const API = "https://your-vercel-app.vercel.app/api";
+const API = "https://key-sys-web.vercel.app/api";
 ```
 
 ## 🌐 User Reset Page
@@ -988,11 +1110,17 @@ EGate/
 │   ├── info.js                 # 📋 Get key information (admin)
 │   ├── delete.js               # 🗑️ Delete specific key (admin)
 │   ├── deleteAll.js            # ☠️ Delete all keys (admin)
-│   └── adminReset.js           # 🛠️ Force HWID reset, no cooldown (admin)
+│   ├── adminReset.js           # 🛠️ Force HWID reset, no cooldown (admin)
+│   ├── bindEmail.js            # 📧 Bind email to license key
+│   ├── resetEmail.js           # 📧 Reset email binding (admin)
+│   ├── checkKey.js             # 🔍 Get public key information
+│   ├── dump.js                 # 📥 Export all keys (admin)
+│   └── ping.js                 # 🏓 Health check endpoint
 ├── utils/
 │   └── github.js               # 🐙 GitHub API integration utilities
 ├── keys.json                   # 📦 License keys database (JSON format)
 ├── index.html                  # 🌐 Web UI & admin dashboard
+├── reset.html                  # 🔄 Standalone HWID reset page
 ├── package.json                # 📄 Project dependencies & metadata
 ├── vercel.json                 # ⚙️ Vercel deployment configuration (auto-generated)
 └── README.md                   # 📖 This documentation file
@@ -1001,13 +1129,18 @@ EGate/
 ### File Descriptions
 
 #### API Endpoints (`/api/` folder)
-- **`make.js`** - Creates new random license keys. Requires admin authentication.
+- **`make.js`** - Creates new random license keys with timestamp. Requires admin authentication.
 - **`verify.js`** - Core verification logic. Binds keys to HWID on first use, validates on subsequent calls.
 - **`reset.js`** - Allows users to reset their HWID binding once every 24 hours.
-- **`info.js`** - Returns detailed information about a key (creation date, HWID, reset history).
+- **`info.js`** - Returns detailed information about a key (creation date, HWID, email, reset history).
 - **`delete.js`** - Removes a specific license key from the system.
 - **`deleteAll.js`** - Nuclear option - removes ALL keys (admin only, use with caution).
 - **`adminReset.js`** - Instant HWID reset for customer support scenarios.
+- **`bindEmail.js`** - Binds an email address to a license key (one-to-one relationship).
+- **`resetEmail.js`** - Resets email binding for a key, allowing new email assignment (admin only).
+- **`checkKey.js`** - Returns basic key information without requiring admin access.
+- **`dump.js`** - Exports all license key data as JSON (admin only).
+- **`ping.js`** - Health check endpoint for monitoring uptime.
 
 #### Utilities (`/utils/` folder)
 - **`github.js`** - Handles all GitHub API operations (read/write `keys.json`, authentication).
@@ -1019,7 +1152,10 @@ EGate/
     "ABCD-1234-EFGH": {
       "created": "2025-01-15T10:30:00.000Z",
       "hwid": "MAC-00-11-22-33-44-55",
-      "lastReset": "2025-01-20T15:45:00.000Z"
+      "last_reset": "2025-01-20T15:45:00.000Z",
+      "email": "user@example.com",
+      "email_bound_at": "2025-01-16T09:15:30.000Z",
+      "email_reset_at": "2025-01-22T10:30:15.000Z"
     }
   }
   ```

@@ -47,6 +47,7 @@
 
   <button onclick="showPanel('verify')">Check Key</button>
   <button onclick="showPanel('reset')">Reset HWID</button>
+  <button onclick="showPanel('bindEmail')">Bind Email</button>
   <button onclick="promptAdmin()">Admin</button>
 
   <div id="verify" class="panel">
@@ -64,6 +65,15 @@
     <br />
     <button onclick="resetKey()">Submit</button>
     <p id="resetResult"></p>
+  </div>
+
+  <div id="bindEmail" class="panel">
+    <h2>Bind Email to Key</h2>
+    <input id="bind_key" placeholder="License Key" />
+    <input id="bind_email" type="email" placeholder="Email Address" />
+    <br />
+    <button onclick="bindEmailToKey()">Bind Email</button>
+    <p id="bindEmailResult"></p>
   </div>
 
   <div id="admin" class="panel">
@@ -101,6 +111,11 @@
         <p id="adminResetResult"></p>
       </div>
       <div>
+        <input id="reset_email_key" placeholder="Key to reset email" />
+        <button onclick="resetEmailFromKey()">Reset Email</button>
+        <p id="resetEmailResult"></p>
+      </div>
+      <div>
         <button onclick="downloadDump()">Download Full Key Dump</button>
         <p id="dumpResult"></p>
       </div>
@@ -108,7 +123,7 @@
   </div>
 
   <script>
-    const API = "https://your-vercel-app.vercel.app/api";
+    const API = "https://key-sys-web.vercel.app/api";
     let ADMIN_PASS = "";
 
     function showPanel(id) {
@@ -208,6 +223,58 @@
         .catch(err => {
           console.error(err);
           document.getElementById("dumpResult").textContent = "❌ Failed to download";
+        });
+    }
+
+    function bindEmailToKey() {
+      const key = document.getElementById("bind_key").value;
+      const email = document.getElementById("bind_email").value;
+      
+      if (!key) {
+        document.getElementById("bindEmailResult").textContent = "❌ Please enter a key";
+        return;
+      }
+      
+      if (!email) {
+        document.getElementById("bindEmailResult").textContent = "❌ Please enter an email";
+        return;
+      }
+
+      fetch(`${API}/bindEmail?key=${encodeURIComponent(key)}&email=${encodeURIComponent(email)}`)
+        .then(res => res.text())
+        .then(data => {
+          if (data.includes("successfully bound")) {
+            document.getElementById("bindEmailResult").textContent = "✅ " + data;
+          } else {
+            document.getElementById("bindEmailResult").textContent = "❌ " + data;
+          }
+        })
+        .catch(err => {
+          document.getElementById("bindEmailResult").textContent = "❌ Error: " + err.message;
+        });
+    }
+
+    function resetEmailFromKey() {
+      const key = document.getElementById("reset_email_key").value;
+      
+      if (!key) {
+        document.getElementById("resetEmailResult").textContent = "❌ Please enter a key";
+        return;
+      }
+
+      if (!confirm("Are you sure you want to reset the email for this key?")) return;
+
+      fetch(`${API}/resetEmail?key=${encodeURIComponent(key)}&admin=${ADMIN_PASS}`)
+        .then(res => res.text())
+        .then(data => {
+          if (data.includes("reset successfully")) {
+            document.getElementById("resetEmailResult").textContent = "✅ " + data;
+          } else {
+            document.getElementById("resetEmailResult").textContent = "❌ " + data;
+          }
+        })
+        .catch(err => {
+          document.getElementById("resetEmailResult").textContent = "❌ Error: " + err.message;
         });
     }
   </script>

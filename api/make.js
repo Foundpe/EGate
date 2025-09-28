@@ -21,6 +21,7 @@ export default async function handler(req, res) {
       hwid: "",
       last_reset: null,
       created: new Date().toISOString(),
+      email: "",
     };
 
     await updateKeys(keys, sha);
