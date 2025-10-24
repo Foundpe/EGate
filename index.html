@@ -179,14 +179,16 @@
 
 
 
-<div id="lock-overlay" class="fixed inset-0 flex items-center justify-center bg-black z-50">
-  <div class="bg-[#1a1c23] p-6 rounded-xl w-full max-w-md text-center">
-    <h2 class="text-xl font-bold text-indigo-400 mb-4">Admin Access (TEST)</h2>
-    <p class="text-sm text-gray-400 mb-4">Modo prueba — sin contraseña. Haz click para entrar y probar el diseño.</p>
-    <button class="btn mt-3 w-full" onclick="bypassLock()">Entrar (sin password)</button>
-    <p id="globalLoginResult" class="mt-3 text-sm text-red-400"></p>
+  <!-- Global Admin Lock -->
+   <div id="lock-overlay" class="fixed inset-0 flex items-center justify-center bg-black z-50">
+    <div class="bg-[#1a1c23] p-6 rounded-xl w-full max-w-md text-center">
+      <h2 class="text-xl font-bold text-indigo-400 mb-4">Admin Access</h2>
+      <input id="global_admin_password" type="password" class="input" placeholder="Admin Password">
+      <button class="btn mt-3 w-full" onclick="globalAuth()">Login</button>
+      <p id="globalLoginResult" class="mt-3 text-sm text-red-400"></p>
+    </div>
   </div>
-</div>
+
 
 
 
