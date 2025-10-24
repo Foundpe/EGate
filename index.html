@@ -284,11 +284,27 @@
         });
     }
 
-    function makeKey() {
-      fetch(`${API}/make?admin=${ADMIN_PASS}`)
-        .then(res => res.text())
-        .then(data => document.getElementById("makeKeyResult").textContent = data);
+async function makeKey() {
+  const daysInput = document.getElementById("key_days");
+  const days = daysInput.value.trim() || "30"; // si no pone nada, 30 días por defecto
+
+  document.getElementById("makeKeyResult").textContent = "⏳ Generating...";
+
+  try {
+    const res = await fetch(`${API}/make?admin=${ADMIN_PASS}&days=${days}`);
+    const text = await res.text();
+
+    if (res.ok) {
+      document.getElementById("makeKeyResult").innerHTML =
+        `✅ <b>Key created:</b> <span class="text-yellow-400">${text}</span>`;
+      loadAllKeys(); // refresca la lista automáticamente
+    } else {
+      document.getElementById("makeKeyResult").textContent = `❌ ${text}`;
     }
+  } catch (e) {
+    document.getElementById("makeKeyResult").textContent = `❌ Error: ${e.message}`;
+  }
+}
 
     function checkKeyInfo() {
       const key = document.getElementById("check_key").value;
