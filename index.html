@@ -159,22 +159,36 @@
     </div>
 
     <!-- INFO -->
+    <!-- INFO -->
     <div id="info" class="section hidden">
-      <h2 class="text-2xl font-semibold mb-4">All Keys Information</h2>
-      <button class="btn mb-4" onclick="loadAllKeys()">🔄 Refresh</button>
-      <div id="keysList" class="space-y-3"></div>
+    <h2 class="text-2xl font-semibold mb-4">All Keys Information</h2>
+
+    <div class="flex items-center space-x-2 mb-4">
+        <input id="searchKey" class="input flex-1" placeholder="🔍 Search by key, HWID, or email">
+        <select id="filterStatus" class="input w-40">
+        <option value="all">All</option>
+        <option value="active">Active</option>
+        <option value="expired">Expired</option>
+        </select>
+        <button class="btn" onclick="loadAllKeys()">🔄 Refresh</button>
+    </div>
+
+    <div id="keysList" class="space-y-3 max-h-[70vh] overflow-y-auto pr-2"></div>
     </div>
   </div>
 
-  <!-- Global Admin Lock -->
-  <div id="lock-overlay" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 z-50">
-    <div class="bg-[#1a1c23] p-6 rounded-xl w-full max-w-md text-center">
-      <h2 class="text-xl font-bold text-indigo-400 mb-4">Admin Access</h2>
-      <input id="global_admin_password" type="password" class="input" placeholder="Admin Password">
-      <button class="btn mt-3 w-full" onclick="globalAuth()">Login</button>
-      <p id="globalLoginResult" class="mt-3 text-sm text-red-400"></p>
-    </div>
+
+
+  <!-- Global Admin Lock (testing - no password) -->
+<div id="lock-overlay" class="fixed inset-0 flex items-center justify-center bg-black z-50">
+  <div class="bg-[#1a1c23] p-6 rounded-xl w-full max-w-md text-center">
+    <h2 class="text-xl font-bold text-indigo-400 mb-4">Admin Access (TEST)</h2>
+    <p class="text-sm text-gray-400 mb-4">Modo prueba — sin contraseña. Haz click para entrar y probar el diseño.</p>
+    <button class="btn mt-3 w-full" onclick="bypassLock()">Entrar (sin password)</button>
+    <p id="globalLoginResult" class="mt-3 text-sm text-red-400"></p>
   </div>
+</div>
+
 
   <script>
     const API = "https://egatesystem.vercel.app/api";
@@ -187,6 +201,21 @@
       document.querySelectorAll(".sidebar button").forEach(b => b.classList.remove("active"));
       event.target.classList.add("active");
     }
+
+    // Modo testing: quita overlay sin pedir password
+    function bypassLock() {
+    // opcional: asigna un admin temporal para que las acciones admin funcionen durante pruebas
+    ADMIN_PASS = "TEST_ADMIN";
+    // ocultar overlay y permitir interacción con el panel
+    const overlay = document.getElementById("lock-overlay");
+    if (overlay) overlay.classList.add("hidden");
+    // si tienes la sección admin-auth visible, ocultarla y mostrar acciones
+    const aAuth = document.getElementById("admin-auth");
+    const aActions = document.getElementById("admin-actions");
+    if (aAuth) aAuth.classList.add("hidden");
+    if (aActions) aActions.classList.remove("hidden");
+    }
+
 
     // Global admin verification
     function globalAuth() {
@@ -300,20 +329,105 @@
         });
     }
 
-    function loadAllKeys() {
-      fetch(`${API}/dump?admin=${ADMIN_PASS}`)
-        .then(res => res.json())
-        .then(data => {
-          const container = document.getElementById("keysList");
-          container.innerHTML = Object.entries(data)
-            .map(([key, info]) => `
-              <div class="bg-[#1e1f25] p-3 rounded-lg">
-                <p class="font-mono text-sm text-indigo-400">${key}</p>
-                <pre class="text-xs text-gray-400">${JSON.stringify(info, null, 2)}</pre>
-              </div>
-            `).join("");
-        });
-    }
+async function loadAllKeys() {
+  const listContainer = document.getElementById("keysList");
+  listContainer.innerHTML = `<p class="text-gray-400 text-sm">Loading keys...</p>`;
+
+  try {
+    const res = await fetch(`${API}/info?admin=${ADMIN_PASS}`);
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+
+    renderKeyList(data);
+  } catch (err) {
+    listContainer.innerHTML = `<p class="text-red-400 text-sm">❌ ${err.message}</p>`;
+  }
+}
+
+function renderKeyList(keys) {
+  const container = document.getElementById("keysList");
+  const search = document.getElementById("searchKey").value.toLowerCase();
+  const filter = document.getElementById("filterStatus").value;
+
+  container.innerHTML = "";
+
+  const entries = Object.entries(keys);
+  if (!entries.length) {
+    container.innerHTML = `<p class="text-gray-400 text-sm">No keys found.</p>`;
+    return;
+  }
+
+  const now = new Date();
+  const filtered = entries.filter(([key, info]) => {
+    const expired = info.expires && new Date(info.expires) < now;
+    const matchesSearch =
+      key.toLowerCase().includes(search) ||
+      (info.email || "").toLowerCase().includes(search) ||
+      (info.hwid || "").toLowerCase().includes(search);
+    const matchesFilter =
+      filter === "all" ||
+      (filter === "active" && !expired) ||
+      (filter === "expired" && expired);
+    return matchesSearch && matchesFilter;
+  });
+
+  if (!filtered.length) {
+    container.innerHTML = `<p class="text-gray-400 text-sm">No matching keys.</p>`;
+    return;
+  }
+
+  for (const [key, info] of filtered) {
+    const expired = info.expires && new Date(info.expires) < now;
+    const statusColor = expired ? "bg-red-500" : "bg-green-500";
+    const statusText = expired ? "Expired" : "Active";
+
+    const hwid = info.hwid || "Not bound";
+    const email = info.email || "Not bound";
+    const created = info.created
+      ? new Date(info.created).toLocaleString()
+      : "Unknown";
+    const expires = info.expires
+      ? new Date(info.expires).toLocaleString()
+      : "∞ (No Expiry)";
+
+    const card = document.createElement("div");
+    card.className =
+      "flex items-start justify-between bg-[#1e212a] p-4 rounded-lg border border-gray-700 hover:border-indigo-400 transition-all";
+
+    card.innerHTML = `
+      <div>
+        <div class="flex items-center space-x-2 mb-1">
+          <div class="w-3 h-3 rounded-full ${statusColor}"></div>
+          <p class="font-mono text-sm text-gray-200">${key}</p>
+        </div>
+        <p class="text-xs text-gray-400">HWID: ${hwid}</p>
+        <p class="text-xs text-gray-400">Email: ${email}</p>
+        <p class="text-xs text-gray-400">Created: ${created}</p>
+        <p class="text-xs text-gray-400">Expires: ${expires}</p>
+        <p class="text-xs text-gray-400 mt-1"><span class="text-indigo-400 font-medium">${statusText}</span></p>
+      </div>
+      <button class="btn text-xs px-2 py-1" onclick="copyKey('${key}')">Copy</button>
+    `;
+
+    container.appendChild(card);
+  }
+}
+
+// 🔍 Filtrar en tiempo real
+document.getElementById("searchKey").addEventListener("input", () => loadAllKeys());
+document.getElementById("filterStatus").addEventListener("change", () => loadAllKeys());
+
+// 📋 Copiar key
+function copyKey(key) {
+  navigator.clipboard.writeText(key);
+  const toast = document.createElement("div");
+  toast.className =
+    "fixed bottom-6 right-6 bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-lg text-sm animate-fade-in";
+  toast.textContent = `Copied: ${key}`;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2000);
+}
+
   </script>
 </body>
 </html>
