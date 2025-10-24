@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EGate Key System</title>
+  <title>EGate Admin Panel</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
@@ -11,58 +11,114 @@
       color: #e5e7eb;
       font-family: 'Inter', sans-serif;
     }
-    .tab-active {
-      border-bottom: 3px solid #6366f1;
+    .sidebar {
+      background-color: #1a1c23;
+      height: 100vh;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      width: 250px;
+    }
+    .sidebar button {
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: left;
+      background-color: transparent;
+      color: #cbd5e1;
+      transition: all 0.2s;
+    }
+    .sidebar button:hover,
+    .sidebar button.active {
+      background-color: #2d2f36;
       color: #6366f1;
+    }
+    .content {
+      flex: 1;
+      background-color: #111318;
+      border-radius: 16px;
+      padding: 24px;
+      margin: 20px;
+      overflow-y: auto;
+      height: calc(100vh - 40px);
+    }
+    .input {
+      width: 100%;
+      padding: 10px;
+      background-color: #1e1f25;
+      border: 1px solid #2f3138;
+      border-radius: 8px;
+      margin-top: 6px;
+      margin-bottom: 10px;
+      color: #e5e7eb;
+    }
+    .btn {
+      background-color: #6366f1;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: 0.2s;
+    }
+    .btn:hover {
+      background-color: #4f46e5;
+    }
+    pre {
+      background-color: #1e1f25;
+      border-radius: 8px;
+      padding: 10px;
+      overflow-x: auto;
+      color: #94a3b8;
     }
   </style>
 </head>
-<body class="min-h-screen p-8">
+<body class="flex">
 
-  <div class="max-w-4xl mx-auto bg-[#1a1c23] rounded-2xl shadow-lg p-6">
-    <h1 class="text-3xl font-bold text-center text-indigo-400 mb-6">EGate Key System</h1>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2 class="text-xl font-bold mb-6 text-indigo-400 text-center">EGate Admin</h2>
+    <button class="active" onclick="showSection('verify')">🔑 Verify</button>
+    <button onclick="showSection('reset')">♻️ Reset HWID</button>
+    <button onclick="showSection('email')">📧 Bind Email</button>
+    <button onclick="showSection('admin')">🛠️ Admin</button>
+    <button onclick="showSection('info')">📋 Info</button>
+  </div>
 
-    <!-- Tabs -->
-    <div class="flex justify-around border-b border-gray-700 mb-6">
-      <button class="pb-3 tab-active" id="tab-verify" onclick="showTab('verify')">🔑 Check Key</button>
-      <button class="pb-3" id="tab-reset" onclick="showTab('reset')">♻️ Reset HWID</button>
-      <button class="pb-3" id="tab-email" onclick="showTab('email')">📧 Bind Email</button>
-      <button class="pb-3" id="tab-admin" onclick="showTab('admin')">🛠️ Admin</button>
-    </div>
-
-    <!-- Verify Panel -->
-    <div id="verify" class="tab-panel">
-      <h2 class="text-xl font-semibold mb-3">Check License Key</h2>
+  <!-- Main content -->
+  <div class="content">
+    <!-- VERIFY -->
+    <div id="verify" class="section">
+      <h2 class="text-2xl font-semibold mb-4">Check License Key</h2>
       <input id="v_key" class="input" placeholder="License Key">
       <input id="v_hwid" class="input" placeholder="HWID">
-      <button class="btn mt-3" onclick="verifyKey()">Verify</button>
+      <button class="btn" onclick="verifyKey()">Verify</button>
       <p id="verifyResult" class="mt-3 text-sm text-gray-400"></p>
     </div>
 
-    <!-- Reset Panel -->
-    <div id="reset" class="tab-panel hidden">
-      <h2 class="text-xl font-semibold mb-3">Reset HWID</h2>
+    <!-- RESET -->
+    <div id="reset" class="section hidden">
+      <h2 class="text-2xl font-semibold mb-4">Reset HWID</h2>
       <input id="r_key" class="input" placeholder="License Key">
-      <button class="btn mt-3" onclick="resetKey()">Reset</button>
+      <button class="btn" onclick="resetKey()">Reset</button>
       <p id="resetResult" class="mt-3 text-sm text-gray-400"></p>
     </div>
 
-    <!-- Email Panel -->
-    <div id="email" class="tab-panel hidden">
-      <h2 class="text-xl font-semibold mb-3">Bind Email</h2>
+    <!-- EMAIL -->
+    <div id="email" class="section hidden">
+      <h2 class="text-2xl font-semibold mb-4">Bind Email</h2>
       <input id="bind_key" class="input" placeholder="License Key">
-      <input id="bind_email" type="email" class="input" placeholder="Email Address">
-      <button class="btn mt-3" onclick="bindEmailToKey()">Bind</button>
+      <input id="bind_email" class="input" type="email" placeholder="Email Address">
+      <button class="btn" onclick="bindEmailToKey()">Bind</button>
       <p id="bindEmailResult" class="mt-3 text-sm text-gray-400"></p>
     </div>
 
-    <!-- Admin Panel -->
-    <div id="admin" class="tab-panel hidden">
-      <h2 class="text-xl font-semibold mb-4">Admin Panel</h2>
-      
-      <div id="admin-auth" class="bg-[#111318] p-4 rounded-xl">
+    <!-- ADMIN -->
+    <div id="admin" class="section hidden">
+      <h2 class="text-2xl font-semibold mb-4">Admin Panel</h2>
+
+      <div id="admin-auth">
         <input id="admin_password" type="password" class="input" placeholder="Admin Password">
-        <button class="btn mt-3" onclick="authAdmin()">Login</button>
+        <button class="btn" onclick="authAdmin()">Login</button>
         <p id="adminLoginResult" class="mt-3 text-sm text-red-400"></p>
       </div>
 
@@ -73,26 +129,26 @@
         </div>
         <div>
           <input id="check_key" class="input" placeholder="Key to check">
-          <button class="btn bg-indigo-600 hover:bg-indigo-700 mt-2" onclick="checkKeyInfo()">Check Info</button>
-          <p id="checkKeyInfoResult" class="text-sm mt-1 text-gray-400"></p>
+          <button class="btn bg-indigo-600 hover:bg-indigo-700" onclick="checkKeyInfo()">Check Info</button>
+          <pre id="checkKeyInfoResult" class="mt-2"></pre>
+        </div>
+        <div>
+          <input id="delete_key" class="input" placeholder="Key to delete">
+          <button class="btn bg-red-600 hover:bg-red-700" onclick="deleteKey()">Delete Key</button>
+          <p id="deleteKeyResult" class="text-sm mt-1 text-gray-400"></p>
         </div>
         <div>
           <button class="btn bg-red-600 hover:bg-red-700" onclick="deleteAllKeys()">Delete ALL Keys</button>
           <p id="deleteAllResult" class="text-sm mt-1 text-gray-400"></p>
         </div>
         <div>
-          <input id="delete_key" class="input" placeholder="Key to delete">
-          <button class="btn bg-red-600 hover:bg-red-700 mt-2" onclick="deleteKey()">Delete Key</button>
-          <p id="deleteKeyResult" class="text-sm mt-1 text-gray-400"></p>
-        </div>
-        <div>
           <input id="admin_reset_key" class="input" placeholder="Key to reset HWID">
-          <button class="btn bg-yellow-500 hover:bg-yellow-600 mt-2" onclick="adminResetKey()">Admin Reset HWID</button>
+          <button class="btn bg-yellow-500 hover:bg-yellow-600" onclick="adminResetKey()">Admin Reset HWID</button>
           <p id="adminResetResult" class="text-sm mt-1 text-gray-400"></p>
         </div>
         <div>
           <input id="reset_email_key" class="input" placeholder="Key to reset email">
-          <button class="btn bg-yellow-500 hover:bg-yellow-600 mt-2" onclick="resetEmailFromKey()">Reset Email</button>
+          <button class="btn bg-yellow-500 hover:bg-yellow-600" onclick="resetEmailFromKey()">Reset Email</button>
           <p id="resetEmailResult" class="text-sm mt-1 text-gray-400"></p>
         </div>
         <div>
@@ -101,18 +157,21 @@
         </div>
       </div>
     </div>
+
+    <!-- INFO -->
+    <div id="info" class="section hidden">
+      <h2 class="text-2xl font-semibold mb-4">All Keys Information</h2>
+      <button class="btn mb-4" onclick="loadAllKeys()">🔄 Refresh</button>
+      <div id="keysList" class="space-y-3"></div>
+    </div>
   </div>
 
-    </div>
-
-  <!-- Global login overlay: inicia bloqueando la UI -->
+  <!-- Global Admin Lock -->
   <div id="lock-overlay" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 z-50">
-    <div class="w-full max-w-md bg-[#111318] p-6 rounded-xl shadow-lg">
-      <h2 class="text-lg font-semibold mb-4 text-center text-indigo-400">Acceso de administrador</h2>
-      <input id="global_admin_password" type="password" class="input" placeholder="Contraseña de admin">
-      <div class="flex justify-center mt-4">
-        <button class="btn" onclick="globalAuth()">Login</button>
-      </div>
+    <div class="bg-[#1a1c23] p-6 rounded-xl w-full max-w-md text-center">
+      <h2 class="text-xl font-bold text-indigo-400 mb-4">Admin Access</h2>
+      <input id="global_admin_password" type="password" class="input" placeholder="Admin Password">
+      <button class="btn mt-3 w-full" onclick="globalAuth()">Login</button>
       <p id="globalLoginResult" class="mt-3 text-sm text-red-400"></p>
     </div>
   </div>
@@ -121,52 +180,32 @@
     const API = "https://egatesystem.vercel.app/api";
     let ADMIN_PASS = "";
 
-  
-    // 🔹 UI Helpers
-    const inputStyle = "w-full p-2 bg-[#111318] border border-gray-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500";
-    const btnStyle = "px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 transition text-white font-medium";
-    document.querySelectorAll("input").forEach(i => i.className = inputStyle);
-    document.querySelectorAll("button").forEach(b => { if(!b.classList.contains("tab")) b.className = btnStyle; });
-
-    // focus + submit con Enter para overlay
-    window.addEventListener("load", () => {
-      const g = document.getElementById("global_admin_password");
-      if (g) {
-        g.focus();
-        g.addEventListener("keydown", (e) => { if (e.key === "Enter") globalAuth(); });
-      }
-    });
-
-    function showTab(tab) {
-      document.querySelectorAll(".tab-panel").forEach(t => t.classList.add("hidden"));
-      document.getElementById(tab).classList.remove("hidden");
-      document.querySelectorAll("[id^=tab-]").forEach(b => b.classList.remove("tab-active"));
-      document.getElementById(`tab-${tab}`).classList.add("tab-active");
+    // Sidebar switching
+    function showSection(id) {
+      document.querySelectorAll(".section").forEach(s => s.classList.add("hidden"));
+      document.getElementById(id).classList.remove("hidden");
+      document.querySelectorAll(".sidebar button").forEach(b => b.classList.remove("active"));
+      event.target.classList.add("active");
     }
 
-    // Función de login global que desbloquea todo si la contraseña es correcta
+    // Global admin verification
     function globalAuth() {
       const pass = document.getElementById("global_admin_password").value;
-      document.getElementById("globalLoginResult").textContent = "Verificando...";
+      document.getElementById("globalLoginResult").textContent = "Verifying...";
       fetch(`${API}/info?key=dummy&admin=${encodeURIComponent(pass)}`)
         .then(res => res.status === 403 ? null : res.text())
         .then(data => {
           if (data) {
             ADMIN_PASS = pass;
             document.getElementById("lock-overlay").classList.add("hidden");
-            // también ocultar el bloque de login dentro del panel admin y mostrar acciones
-            const aAuth = document.getElementById("admin-auth");
-            const aActions = document.getElementById("admin-actions");
-            if (aAuth) aAuth.classList.add("hidden");
-            if (aActions) aActions.classList.remove("hidden");
           } else {
-            document.getElementById("globalLoginResult").textContent = "❌ Contraseña incorrecta";
+            document.getElementById("globalLoginResult").textContent = "❌ Wrong password";
           }
         })
-        .catch(() => document.getElementById("globalLoginResult").textContent = "❌ Error de conexión");
+        .catch(() => document.getElementById("globalLoginResult").textContent = "❌ Connection error");
     }
 
-    // 🔹 API Functions (igual que antes)
+    // API Functions
     function verifyKey() {
       const key = document.getElementById("v_key").value;
       const hwid = document.getElementById("v_hwid").value;
@@ -258,6 +297,21 @@
           a.download = "keys.json";
           a.click();
           URL.revokeObjectURL(url);
+        });
+    }
+
+    function loadAllKeys() {
+      fetch(`${API}/dump?admin=${ADMIN_PASS}`)
+        .then(res => res.json())
+        .then(data => {
+          const container = document.getElementById("keysList");
+          container.innerHTML = Object.entries(data)
+            .map(([key, info]) => `
+              <div class="bg-[#1e1f25] p-3 rounded-lg">
+                <p class="font-mono text-sm text-indigo-400">${key}</p>
+                <pre class="text-xs text-gray-400">${JSON.stringify(info, null, 2)}</pre>
+              </div>
+            `).join("");
         });
     }
   </script>
