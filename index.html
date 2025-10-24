@@ -88,6 +88,7 @@
 
     <div id="admin-actions" style="display: none;">
       <div>
+        <input id="key_days" type="number" min="1" max="365" placeholder="Days (default 30)" />
         <button onclick="makeKey()">Generate Key</button>
         <p id="makeKeyResult"></p>
       </div>
@@ -166,17 +167,49 @@
         .then(data => document.getElementById("resetResult").textContent = data);
     }
 
+    // ✅ GENERAR CLAVE CON FECHA DE EXPIRACIÓN
     function makeKey() {
-      fetch(`${API}/make?admin=${ADMIN_PASS}`)
+      const days = document.getElementById("key_days").value || 30;
+
+      fetch(`${API}/make?admin=${ADMIN_PASS}&days=${days}`)
         .then(res => res.text())
-        .then(data => document.getElementById("makeKeyResult").textContent = data);
+        .then(data => {
+          const match = data.match(/([A-Z0-9-]+).*expira el ([0-9-]+)/);
+          if (match) {
+            const key = match[1];
+            const exp = match[2];
+            document.getElementById("makeKeyResult").innerHTML =
+              `✅ Key generada:<br><strong>${key}</strong><br>📅 Expira el: <strong>${exp}</strong>`;
+          } else {
+            document.getElementById("makeKeyResult").textContent = data;
+          }
+        })
+        .catch(err => {
+          document.getElementById("makeKeyResult").textContent = "❌ Error: " + err.message;
+        });
     }
 
+    // ✅ MOSTRAR INFO DE LA KEY (INCLUYE FECHA DE EXPIRACIÓN)
     function checkKeyInfo() {
       const key = document.getElementById("check_key").value;
       fetch(`${API}/info?key=${key}&admin=${ADMIN_PASS}`)
-        .then(res => res.text())
-        .then(data => document.getElementById("checkKeyInfoResult").textContent = data);
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            document.getElementById("checkKeyInfoResult").textContent = "❌ " + data.error;
+          } else {
+            document.getElementById("checkKeyInfoResult").innerHTML = `
+              🔑 <b>Key:</b> ${key}<br>
+              💻 <b>HWID:</b> ${data.hwid || "none"}<br>
+              📅 <b>Creada:</b> ${data.created}<br>
+              ⏳ <b>Expira:</b> ${data.expires || "no set"}<br>
+              ✉️ <b>Email:</b> ${data.email || "none"}
+            `;
+          }
+        })
+        .catch(err => {
+          document.getElementById("checkKeyInfoResult").textContent = "❌ Error: " + err.message;
+        });
     }
 
     function deleteKey() {
