@@ -337,18 +337,70 @@
     }
 function loadAllKeys() {
   fetch(`${API}/dump?admin=${ADMIN_PASS}`)
-    .then(res => res.text()) // obtenemos texto sin asumir JSON todavía
+    .then(res => res.text())
     .then(txt => {
-      console.log("🔍 API RAW RESPONSE:", txt); // 👈 agrega esto
+      console.log("🔍 RAW:", txt);
+
+      // Si el texto tiene una línea extra antes del JSON (como "keys\n{...}")
+      const jsonStart = txt.indexOf("{");
+      if (jsonStart === -1) throw new Error("No se encontró JSON válido");
+
+      // Recorta el texto hasta que empiece el JSON
+      const jsonText = txt.slice(jsonStart);
+
       let data;
       try {
-        data = JSON.parse(txt);
-      } catch {
+        data = JSON.parse(jsonText);
+      } catch (e) {
+        console.error("❌ Error al parsear JSON:", e);
         document.getElementById("keysList").innerHTML =
-          `<p class="text-red-400 text-sm">❌ Invalid JSON response</p>`;
-        console.error("Raw API response:", txt);
+          `<p class="text-red-400 text-sm">❌ Error al leer datos del servidor.</p>`;
         return;
       }
+
+      // Si el objeto está vacío
+      if (!Object.keys(data).length) {
+        document.getElementById("keysList").innerHTML =
+          `<p class="text-gray-400 text-sm italic">No keys found</p>`;
+        return;
+      }
+
+      // Render de todas las keys
+      const html = Object.entries(data)
+        .map(([key, info]) => {
+          return `
+            <div class="bg-gray-900 border border-gray-800 rounded-lg p-4 mb-3 shadow">
+              <div class="flex justify-between items-center mb-2">
+                <span class="font-mono text-yellow-400">${key}</span>
+                <span class="text-sm ${info.expires ? "text-green-400" : "text-red-400"}">
+                  ${info.expires ? "⏳ Active" : "❌ No Expiration"}
+                </span>
+              </div>
+              <div class="text-sm text-gray-300 space-y-1">
+                <p>📧 <b>Email:</b> ${info.email || "—"}</p>
+                <p>💻 <b>HWID:</b> ${info.hwid || "—"}</p>
+                <p>🕒 <b>Created:</b> ${new Date(info.created).toLocaleString() || "—"}</p>
+                <p>⏳ <b>Expires:</b> ${
+                  info.expires ? new Date(info.expires).toLocaleString() : "❌ No expiration"
+                }</p>
+                <p>🔁 <b>Last Reset:</b> ${
+                  info.last_reset ? new Date(info.last_reset).toLocaleString() : "—"
+                }</p>
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+
+      document.getElementById("keysList").innerHTML = html;
+    })
+    .catch((err) => {
+      console.error("Fetch error:", err);
+      document.getElementById("keysList").innerHTML =
+        `<p class="text-red-400 text-sm">❌ Error fetching keys</p>`;
+    });
+}
+
 
   </script>
 </body>
