@@ -9,6 +9,8 @@ export default async function handler(req, res) {
   if (admin !== process.env.ADMIN_PASSWORD)
     return res.status(403).send("invalid admin password");
 
+  const days = parseInt(req.query.days || "30"); // duración por defecto: 30 días
+
   try {
     const { content: keys, sha } = await getKeys();
 
@@ -17,16 +19,22 @@ export default async function handler(req, res) {
       newKey = uuidv4().toUpperCase();
     } while (keys[newKey]);
 
+    const now = new Date();
+    const expires = new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
+
     keys[newKey] = {
       hwid: "",
       last_reset: null,
-      created: new Date().toISOString(),
+      created: now.toISOString(),
+      expires: expires.toISOString(),
       email: "",
     };
 
     await updateKeys(keys, sha);
 
-    res.status(200).send(newKey);
+    res
+      .status(200)
+      .send(`${newKey} (expira el ${expires.toISOString().split("T")[0]})`);
   } catch (e) {
     res.status(500).send("Server error: " + e.message);
   }
