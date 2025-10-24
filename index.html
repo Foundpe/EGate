@@ -337,8 +337,18 @@
     }
 function loadAllKeys() {
   fetch(`${API}/dump?admin=${ADMIN_PASS}`)
-    .then(res => res.json())
-    .then(data => {
+    .then(res => res.text()) // <--- tomamos texto en vez de JSON
+    .then(txt => {
+      let data;
+      try {
+        data = JSON.parse(txt);
+      } catch {
+        document.getElementById("keysList").innerHTML =
+          `<p class="text-red-400 text-sm">❌ Invalid JSON response</p>`;
+        console.error("Raw API response:", txt);
+        return;
+      }
+
       const container = document.getElementById("keysList");
       container.innerHTML = "";
 
@@ -349,7 +359,7 @@ function loadAllKeys() {
       }
 
       keys.forEach(([key, info]) => {
-        const created = new Date(info.created).toLocaleString();
+        const created = info.created ? new Date(info.created).toLocaleString() : "—";
         const expires = info.expires
           ? new Date(info.expires).toLocaleString()
           : "❌ No expiration";
@@ -359,7 +369,7 @@ function loadAllKeys() {
           ? new Date(info.last_reset).toLocaleString()
           : "—";
 
-        // Calcular si expiró
+        // Estado del key (según expiración)
         let expClass = "text-green-400";
         if (info.expires) {
           const now = new Date();
@@ -383,9 +393,10 @@ function loadAllKeys() {
         `;
       });
     })
-    .catch(() => {
+    .catch(err => {
       document.getElementById("keysList").innerHTML =
         `<p class="text-red-400 text-sm">❌ Error loading keys</p>`;
+      console.error("Load error:", err);
     });
 }
   </script>
