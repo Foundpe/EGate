@@ -3,155 +3,124 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Key System</title>
+  <title>EGate Key System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
-      font-family: sans-serif;
-      background: #121212;
-      color: #f0f0f0;
-      text-align: center;
-      padding: 30px;
+      background-color: #0f1117;
+      color: #e5e7eb;
+      font-family: 'Inter', sans-serif;
     }
-
-    button {
-      padding: 12px 24px;
-      font-size: 16px;
-      margin: 10px;
-      border: none;
-      background: #5865f2;
-      color: white;
-      cursor: pointer;
-      border-radius: 8px;
-    }
-
-    .panel {
-      display: none;
-      margin-top: 20px;
-    }
-
-    input {
-      padding: 8px;
-      margin: 6px;
-      width: 250px;
-      max-width: 90%;
-    }
-
-    #admin-actions > div {
-      margin-top: 10px;
+    .tab-active {
+      border-bottom: 3px solid #6366f1;
+      color: #6366f1;
     }
   </style>
 </head>
-<body>
+<body class="min-h-screen p-8">
 
-  <h1>🔐 Key System</h1>
+  <div class="max-w-4xl mx-auto bg-[#1a1c23] rounded-2xl shadow-lg p-6">
+    <h1 class="text-3xl font-bold text-center text-indigo-400 mb-6">EGate Key System</h1>
 
-  <button onclick="showPanel('verify')">Check Key</button>
-  <button onclick="showPanel('reset')">Reset HWID</button>
-  <button onclick="showPanel('bindEmail')">Bind Email</button>
-  <button onclick="promptAdmin()">Admin</button>
-
-  <div id="verify" class="panel">
-    <h2>Check Key</h2>
-    <input id="v_key" placeholder="License Key" />
-    <input id="v_hwid" placeholder="HWID" />
-    <br />
-    <button onclick="verifyKey()">Submit</button>
-    <p id="verifyResult"></p>
-  </div>
-
-  <div id="reset" class="panel">
-    <h2>Reset HWID</h2>
-    <input id="r_key" placeholder="License Key" />
-    <br />
-    <button onclick="resetKey()">Submit</button>
-    <p id="resetResult"></p>
-  </div>
-
-  <div id="bindEmail" class="panel">
-    <h2>Bind Email to Key</h2>
-    <input id="bind_key" placeholder="License Key" />
-    <input id="bind_email" type="email" placeholder="Email Address" />
-    <br />
-    <button onclick="bindEmailToKey()">Bind Email</button>
-    <p id="bindEmailResult"></p>
-  </div>
-
-  <div id="admin" class="panel">
-    <h2>Admin Panel</h2>
-
-    <div id="admin-auth">
-      <input id="admin_password" type="password" placeholder="Admin Password" />
-      <br />
-      <button onclick="authAdmin()">Login</button>
-      <p id="adminLoginResult"></p>
+    <!-- Tabs -->
+    <div class="flex justify-around border-b border-gray-700 mb-6">
+      <button class="pb-3 tab-active" id="tab-verify" onclick="showTab('verify')">🔑 Check Key</button>
+      <button class="pb-3" id="tab-reset" onclick="showTab('reset')">♻️ Reset HWID</button>
+      <button class="pb-3" id="tab-email" onclick="showTab('email')">📧 Bind Email</button>
+      <button class="pb-3" id="tab-admin" onclick="showTab('admin')">🛠️ Admin</button>
     </div>
 
-    <div id="admin-actions" style="display: none;">
-      <div>
-        <input id="key_days" type="number" min="1" max="365" placeholder="Days (default 30)" />
-        <button onclick="makeKey()">Generate Key</button>
-        <p id="makeKeyResult"></p>
+    <!-- Verify Panel -->
+    <div id="verify" class="tab-panel">
+      <h2 class="text-xl font-semibold mb-3">Check License Key</h2>
+      <input id="v_key" class="input" placeholder="License Key">
+      <input id="v_hwid" class="input" placeholder="HWID">
+      <button class="btn mt-3" onclick="verifyKey()">Verify</button>
+      <p id="verifyResult" class="mt-3 text-sm text-gray-400"></p>
+    </div>
+
+    <!-- Reset Panel -->
+    <div id="reset" class="tab-panel hidden">
+      <h2 class="text-xl font-semibold mb-3">Reset HWID</h2>
+      <input id="r_key" class="input" placeholder="License Key">
+      <button class="btn mt-3" onclick="resetKey()">Reset</button>
+      <p id="resetResult" class="mt-3 text-sm text-gray-400"></p>
+    </div>
+
+    <!-- Email Panel -->
+    <div id="email" class="tab-panel hidden">
+      <h2 class="text-xl font-semibold mb-3">Bind Email</h2>
+      <input id="bind_key" class="input" placeholder="License Key">
+      <input id="bind_email" type="email" class="input" placeholder="Email Address">
+      <button class="btn mt-3" onclick="bindEmailToKey()">Bind</button>
+      <p id="bindEmailResult" class="mt-3 text-sm text-gray-400"></p>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="admin" class="tab-panel hidden">
+      <h2 class="text-xl font-semibold mb-4">Admin Panel</h2>
+      
+      <div id="admin-auth" class="bg-[#111318] p-4 rounded-xl">
+        <input id="admin_password" type="password" class="input" placeholder="Admin Password">
+        <button class="btn mt-3" onclick="authAdmin()">Login</button>
+        <p id="adminLoginResult" class="mt-3 text-sm text-red-400"></p>
       </div>
-      <div>
-        <input id="check_key" placeholder="Key to check" />
-        <button onclick="checkKeyInfo()">Check Key Info</button>
-        <p id="checkKeyInfoResult"></p>
-      </div>
-      <div>
-        <button onclick="deleteAllKeys()">Delete ALL Keys</button>
-        <p id="deleteAllResult"></p>
-      </div>
-      <div>
-        <input id="delete_key" placeholder="Key to delete" />
-        <button onclick="deleteKey()">Delete Key</button>
-        <p id="deleteKeyResult"></p>
-      </div>
-      <div>
-        <input id="admin_reset_key" placeholder="Key to reset HWID" />
-        <button onclick="adminResetKey()">Admin Reset HWID</button>
-        <p id="adminResetResult"></p>
-      </div>
-      <div>
-        <input id="reset_email_key" placeholder="Key to reset email" />
-        <button onclick="resetEmailFromKey()">Reset Email</button>
-        <p id="resetEmailResult"></p>
-      </div>
-      <div>
-        <button onclick="downloadDump()">Download Full Key Dump</button>
-        <p id="dumpResult"></p>
+
+      <div id="admin-actions" class="hidden mt-6 space-y-4">
+        <div>
+          <button class="btn bg-green-600 hover:bg-green-700" onclick="makeKey()">Generate Key</button>
+          <p id="makeKeyResult" class="text-sm mt-1 text-gray-400"></p>
+        </div>
+        <div>
+          <input id="check_key" class="input" placeholder="Key to check">
+          <button class="btn bg-indigo-600 hover:bg-indigo-700 mt-2" onclick="checkKeyInfo()">Check Info</button>
+          <p id="checkKeyInfoResult" class="text-sm mt-1 text-gray-400"></p>
+        </div>
+        <div>
+          <button class="btn bg-red-600 hover:bg-red-700" onclick="deleteAllKeys()">Delete ALL Keys</button>
+          <p id="deleteAllResult" class="text-sm mt-1 text-gray-400"></p>
+        </div>
+        <div>
+          <input id="delete_key" class="input" placeholder="Key to delete">
+          <button class="btn bg-red-600 hover:bg-red-700 mt-2" onclick="deleteKey()">Delete Key</button>
+          <p id="deleteKeyResult" class="text-sm mt-1 text-gray-400"></p>
+        </div>
+        <div>
+          <input id="admin_reset_key" class="input" placeholder="Key to reset HWID">
+          <button class="btn bg-yellow-500 hover:bg-yellow-600 mt-2" onclick="adminResetKey()">Admin Reset HWID</button>
+          <p id="adminResetResult" class="text-sm mt-1 text-gray-400"></p>
+        </div>
+        <div>
+          <input id="reset_email_key" class="input" placeholder="Key to reset email">
+          <button class="btn bg-yellow-500 hover:bg-yellow-600 mt-2" onclick="resetEmailFromKey()">Reset Email</button>
+          <p id="resetEmailResult" class="text-sm mt-1 text-gray-400"></p>
+        </div>
+        <div>
+          <button class="btn bg-gray-600 hover:bg-gray-700" onclick="downloadDump()">Download Key Dump</button>
+          <p id="dumpResult" class="text-sm mt-1 text-gray-400"></p>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
-    const API = "https://egatesystem.vercel.app/api";
-    let ADMIN_PASS = "minhook";
+    const API = "https://key-sys-web.vercel.app/api";
+    let ADMIN_PASS = "";
 
-    function showPanel(id) {
-      document.querySelectorAll(".panel").forEach(p => p.style.display = "none");
-      document.getElementById(id).style.display = "block";
+    // 🔹 UI Helpers
+    const inputStyle = "w-full p-2 bg-[#111318] border border-gray-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500";
+    const btnStyle = "px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 transition text-white font-medium";
+    document.querySelectorAll("input").forEach(i => i.className = inputStyle);
+    document.querySelectorAll("button").forEach(b => { if(!b.classList.contains("tab")) b.className = btnStyle; });
+
+    function showTab(tab) {
+      document.querySelectorAll(".tab-panel").forEach(t => t.classList.add("hidden"));
+      document.getElementById(tab).classList.remove("hidden");
+      document.querySelectorAll("[id^=tab-]").forEach(b => b.classList.remove("tab-active"));
+      document.getElementById(`tab-${tab}`).classList.add("tab-active");
     }
 
-    function promptAdmin() {
-      showPanel("admin");
-    }
-
-    function authAdmin() {
-      const pass = document.getElementById("admin_password").value;
-      fetch(`${API}/info?key=dummy&admin=${encodeURIComponent(pass)}`)
-        .then(res => res.status === 403 ? null : res.text())
-        .then(data => {
-          if (data) {
-            ADMIN_PASS = pass;
-            document.getElementById("admin-auth").style.display = "none";
-            document.getElementById("admin-actions").style.display = "block";
-            document.getElementById("adminLoginResult").textContent = "";
-          } else {
-            document.getElementById("adminLoginResult").textContent = "❌ Incorrect password";
-          }
-        });
-    }
-
+    // 🔹 API Functions (igual que antes)
     function verifyKey() {
       const key = document.getElementById("v_key").value;
       const hwid = document.getElementById("v_hwid").value;
@@ -167,49 +136,41 @@
         .then(data => document.getElementById("resetResult").textContent = data);
     }
 
-    // ✅ GENERAR CLAVE CON FECHA DE EXPIRACIÓN
-    function makeKey() {
-      const days = document.getElementById("key_days").value || 30;
-
-      fetch(`${API}/make?admin=${ADMIN_PASS}&days=${days}`)
+    function bindEmailToKey() {
+      const key = document.getElementById("bind_key").value;
+      const email = document.getElementById("bind_email").value;
+      fetch(`${API}/bindEmail?key=${key}&email=${email}`)
         .then(res => res.text())
+        .then(data => document.getElementById("bindEmailResult").textContent = data);
+    }
+
+    function authAdmin() {
+      const pass = document.getElementById("admin_password").value;
+      fetch(`${API}/info?key=dummy&admin=${encodeURIComponent(pass)}`)
+        .then(res => res.status === 403 ? null : res.text())
         .then(data => {
-          const match = data.match(/([A-Z0-9-]+).*expira el ([0-9-]+)/);
-          if (match) {
-            const key = match[1];
-            const exp = match[2];
-            document.getElementById("makeKeyResult").innerHTML =
-              `✅ Key generada:<br><strong>${key}</strong><br>📅 Expira el: <strong>${exp}</strong>`;
+          if (data) {
+            ADMIN_PASS = pass;
+            document.getElementById("admin-auth").classList.add("hidden");
+            document.getElementById("admin-actions").classList.remove("hidden");
           } else {
-            document.getElementById("makeKeyResult").textContent = data;
+            document.getElementById("adminLoginResult").textContent = "❌ Incorrect password";
           }
-        })
-        .catch(err => {
-          document.getElementById("makeKeyResult").textContent = "❌ Error: " + err.message;
         });
     }
 
-    // ✅ MOSTRAR INFO DE LA KEY (INCLUYE FECHA DE EXPIRACIÓN)
+    function makeKey() {
+      fetch(`${API}/make?admin=${ADMIN_PASS}`)
+        .then(res => res.text())
+        .then(data => document.getElementById("makeKeyResult").textContent = data);
+    }
+
     function checkKeyInfo() {
       const key = document.getElementById("check_key").value;
       fetch(`${API}/info?key=${key}&admin=${ADMIN_PASS}`)
         .then(res => res.json())
-        .then(data => {
-          if (data.error) {
-            document.getElementById("checkKeyInfoResult").textContent = "❌ " + data.error;
-          } else {
-            document.getElementById("checkKeyInfoResult").innerHTML = `
-              🔑 <b>Key:</b> ${key}<br>
-              💻 <b>HWID:</b> ${data.hwid || "none"}<br>
-              📅 <b>Creada:</b> ${data.created}<br>
-              ⏳ <b>Expira:</b> ${data.expires || "no set"}<br>
-              ✉️ <b>Email:</b> ${data.email || "none"}
-            `;
-          }
-        })
-        .catch(err => {
-          document.getElementById("checkKeyInfoResult").textContent = "❌ Error: " + err.message;
-        });
+        .then(data => document.getElementById("checkKeyInfoResult").textContent = JSON.stringify(data, null, 2))
+        .catch(() => document.getElementById("checkKeyInfoResult").textContent = "❌ Invalid response");
     }
 
     function deleteKey() {
@@ -228,21 +189,21 @@
 
     function adminResetKey() {
       const key = document.getElementById("admin_reset_key").value;
-      if (!key) {
-        document.getElementById("adminResetResult").textContent = "❌ Please enter a key";
-        return;
-      }
       fetch(`${API}/adminReset?key=${key}&admin=${ADMIN_PASS}`)
         .then(res => res.text())
         .then(data => document.getElementById("adminResetResult").textContent = data);
     }
 
+    function resetEmailFromKey() {
+      const key = document.getElementById("reset_email_key").value;
+      fetch(`${API}/resetEmail?key=${key}&admin=${ADMIN_PASS}`)
+        .then(res => res.text())
+        .then(data => document.getElementById("resetEmailResult").textContent = data);
+    }
+
     function downloadDump() {
       fetch(`${API}/dump?admin=${ADMIN_PASS}`)
-        .then(res => {
-          if (!res.ok) throw new Error("Failed to fetch dump");
-          return res.json();
-        })
+        .then(res => res.json())
         .then(data => {
           const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
           const url = URL.createObjectURL(blob);
@@ -251,66 +212,8 @@
           a.download = "keys.json";
           a.click();
           URL.revokeObjectURL(url);
-          document.getElementById("dumpResult").textContent = "✅ Downloaded";
-        })
-        .catch(err => {
-          console.error(err);
-          document.getElementById("dumpResult").textContent = "❌ Failed to download";
-        });
-    }
-
-    function bindEmailToKey() {
-      const key = document.getElementById("bind_key").value;
-      const email = document.getElementById("bind_email").value;
-      
-      if (!key) {
-        document.getElementById("bindEmailResult").textContent = "❌ Please enter a key";
-        return;
-      }
-      
-      if (!email) {
-        document.getElementById("bindEmailResult").textContent = "❌ Please enter an email";
-        return;
-      }
-
-      fetch(`${API}/bindEmail?key=${encodeURIComponent(key)}&email=${encodeURIComponent(email)}`)
-        .then(res => res.text())
-        .then(data => {
-          if (data.includes("successfully bound")) {
-            document.getElementById("bindEmailResult").textContent = "✅ " + data;
-          } else {
-            document.getElementById("bindEmailResult").textContent = "❌ " + data;
-          }
-        })
-        .catch(err => {
-          document.getElementById("bindEmailResult").textContent = "❌ Error: " + err.message;
-        });
-    }
-
-    function resetEmailFromKey() {
-      const key = document.getElementById("reset_email_key").value;
-      
-      if (!key) {
-        document.getElementById("resetEmailResult").textContent = "❌ Please enter a key";
-        return;
-      }
-
-      if (!confirm("Are you sure you want to reset the email for this key?")) return;
-
-      fetch(`${API}/resetEmail?key=${encodeURIComponent(key)}&admin=${ADMIN_PASS}`)
-        .then(res => res.text())
-        .then(data => {
-          if (data.includes("reset successfully")) {
-            document.getElementById("resetEmailResult").textContent = "✅ " + data;
-          } else {
-            document.getElementById("resetEmailResult").textContent = "❌ " + data;
-          }
-        })
-        .catch(err => {
-          document.getElementById("resetEmailResult").textContent = "❌ Error: " + err.message;
         });
     }
   </script>
-
 </body>
 </html>
