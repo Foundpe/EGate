@@ -337,8 +337,9 @@
     }
 function loadAllKeys() {
   fetch(`${API}/dump?admin=${ADMIN_PASS}`)
-    .then(res => res.text()) // <--- tomamos texto en vez de JSON
+    .then(res => res.text()) // obtenemos texto sin asumir JSON todavía
     .then(txt => {
+      console.log("🔍 API RAW RESPONSE:", txt); // 👈 agrega esto
       let data;
       try {
         data = JSON.parse(txt);
@@ -349,56 +350,6 @@ function loadAllKeys() {
         return;
       }
 
-      const container = document.getElementById("keysList");
-      container.innerHTML = "";
-
-      const keys = Object.entries(data);
-      if (keys.length === 0) {
-        container.innerHTML = `<p class="text-gray-400 text-sm">No keys found.</p>`;
-        return;
-      }
-
-      keys.forEach(([key, info]) => {
-        const created = info.created ? new Date(info.created).toLocaleString() : "—";
-        const expires = info.expires
-          ? new Date(info.expires).toLocaleString()
-          : "❌ No expiration";
-        const hwid = info.hwid || "—";
-        const email = info.email || "—";
-        const lastReset = info.last_reset
-          ? new Date(info.last_reset).toLocaleString()
-          : "—";
-
-        // Estado del key (según expiración)
-        let expClass = "text-green-400";
-        if (info.expires) {
-          const now = new Date();
-          const expDate = new Date(info.expires);
-          if (expDate < now) expClass = "text-red-500";
-          else if ((expDate - now) / (1000 * 60 * 60 * 24) <= 3)
-            expClass = "text-yellow-400";
-        }
-
-        container.innerHTML += `
-          <div class="bg-[#1e1f25] p-4 rounded-xl border border-gray-700 hover:border-indigo-500 transition-all duration-200">
-            <p class="font-mono text-indigo-400 text-sm break-all">${key}</p>
-            <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-sm mt-2">
-              <p><span class="text-gray-400">📧 Email:</span> ${email}</p>
-              <p><span class="text-gray-400">💻 HWID:</span> ${hwid}</p>
-              <p><span class="text-gray-400">🕒 Created:</span> ${created}</p>
-              <p><span class="text-gray-400">⏳ Expires:</span> <span class="${expClass}">${expires}</span></p>
-              <p><span class="text-gray-400">🔁 Last Reset:</span> ${lastReset}</p>
-            </div>
-          </div>
-        `;
-      });
-    })
-    .catch(err => {
-      document.getElementById("keysList").innerHTML =
-        `<p class="text-red-400 text-sm">❌ Error loading keys</p>`;
-      console.error("Load error:", err);
-    });
-}
   </script>
 </body>
 </html>
