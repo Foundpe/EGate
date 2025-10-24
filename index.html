@@ -330,7 +330,21 @@
           URL.revokeObjectURL(url);
         });
     }
-
+function loadAllKeys() {
+      fetch(`${API}/dump?admin=${ADMIN_PASS}`)
+        .then(res => res.json())
+        .then(data => {
+          const container = document.getElementById("keysList");
+          container.innerHTML = Object.entries(data)
+            .map(([key, info]) => `
+              <div class="bg-[#1e1f25] p-3 rounded-lg">
+                <p class="font-mono text-sm text-indigo-400">${key}</p>
+                <pre class="text-xs text-gray-400">${JSON.stringify(info, null, 2)}</pre>
+              </div>
+            `).join("");
+        });
+    }
+    
 async function loadAllKeys() {
   const listContainer = document.getElementById("keysList");
   listContainer.innerHTML = `<p class="text-gray-400 text-sm">Loading keys...</p>`;
