@@ -123,10 +123,14 @@
       </div>
 
       <div id="admin-actions" class="hidden mt-6 space-y-4">
-        <div>
-          <button class="btn bg-green-600 hover:bg-green-700" onclick="makeKey()">Generate Key</button>
-          <p id="makeKeyResult" class="text-sm mt-1 text-gray-400"></p>
-        </div>
+    <div>
+      <div class="flex gap-2 items-center mb-2">
+        <input id="key_days" type="number" min="1" class="input w-32" placeholder="Days (e.g. 30)">
+        <button class="btn bg-green-600 hover:bg-green-700" onclick="makeKey()">Generate Key</button>
+      </div>
+      <p id="makeKeyResult" class="text-sm mt-1 text-gray-400"></p>
+    </div>
+
         <div>
           <input id="check_key" class="input" placeholder="Key to check">
           <button class="btn bg-indigo-600 hover:bg-indigo-700" onclick="checkKeyInfo()">Check Info</button>
