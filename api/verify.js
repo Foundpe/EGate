@@ -1,8 +1,7 @@
 import { getKeys, updateKeys } from "../utils/github.js";
 
-function hoursSince(dateStr) {
-  if (!dateStr) return 9999;
-  return (Date.now() - new Date(dateStr)) / 1000 / 60 / 60;
+function isExpired(expires) {
+  return expires && new Date(expires) < new Date();
 }
 
 export default async function handler(req, res) {
@@ -18,12 +17,19 @@ export default async function handler(req, res) {
     const keyData = keys[key];
     if (!keyData) return res.status(404).send("key not found");
 
+    // 🔒 Verificar expiración
+    if (isExpired(keyData.expires)) {
+      return res.status(403).send("key expired");
+    }
+
+    // 🔗 Vincular HWID si aún no lo tiene
     if (!keyData.hwid) {
       keys[key].hwid = hwid;
       await updateKeys(keys, sha);
       return res.status(200).send("key bound to hwid");
     }
 
+    // ⚠️ HWID incorrecto
     if (keyData.hwid !== hwid) {
       return res.status(403).send("hwid mismatch");
     }
