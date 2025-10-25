@@ -243,29 +243,7 @@
     }
 
     
- let lastGeneratedKey = '';
-
-  function makeKey() {
-    const days = document.getElementById('key_days').value;
-    fetch(`/makekey?days=${days}`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.key) {
-          lastGeneratedKey = data.key;
-          document.getElementById('makeKeyResult').textContent = "Generated Key: " + data.key;
-          document.getElementById('keyResultContainer').classList.remove('hidden');
-        }
-      });
-  }
-
-  function copyLastKey() {
-    if (lastGeneratedKey) {
-      navigator.clipboard.writeText(lastGeneratedKey);
-      const btn = document.getElementById('copyKeyBtn');
-      btn.textContent = "✅ Copied!";
-      setTimeout(() => btn.textContent = "📋 Copy Key", 2000);
-    }
-  }
+ 
 
   // Mostrar estado real (activa/expirada)
   function renderKeyStatus(keyData) {
