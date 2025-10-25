@@ -75,129 +75,120 @@
 <body class="flex">
 
   <!-- Sidebar -->
-  <div class="sidebar">
-    <h2 class="text-xl font-bold mb-6 text-indigo-400 text-center">EGate Admin</h2>
-    <button class="active" onclick="showSection('verify')">🔑 Verify</button>
-    <button onclick="showSection('reset')">♻️ Reset HWID</button>
-    <button onclick="showSection('email')">📧 Bind Email</button>
-    <button onclick="showSection('admin')">🛠️ Admin</button>
-    <button onclick="showSection('info')">📋 Info</button>
-  </div>
+<div class="sidebar">
+  <h2 class="text-xl font-bold mb-6 text-indigo-400 text-center">EGate System</h2>
+  <button class="active" onclick="showSection('user')">🧍‍♂️ Usuarios</button>
+  <button onclick="showSection('admin')">🛠️ Admin Panel</button>
+</div>
 
-  <!-- Main content -->
-  <div class="content">
-    <!-- VERIFY -->
-    <div id="verify" class="section">
-      <h2 class="text-2xl font-semibold mb-4">Check License Key</h2>
+<!-- Main content -->
+<div class="content">
+  <!-- USUARIOS -->
+  <div id="user" class="section">
+    <h2 class="text-2xl font-semibold mb-4">Gestión de Usuario</h2>
+
+    <!-- CHECK LICENSE -->
+    <div class="mb-8">
+      <h3 class="text-lg font-semibold mb-2 text-indigo-300">🔑 Check License Key</h3>
       <input id="v_key" class="input" placeholder="License Key">
       <input id="v_hwid" class="input" placeholder="HWID">
       <button class="btn" onclick="verifyKey()">Verify</button>
       <p id="verifyResult" class="mt-3 text-sm text-gray-400"></p>
     </div>
 
-    <!-- RESET -->
-    <div id="reset" class="section hidden">
-      <h2 class="text-2xl font-semibold mb-4">Reset HWID</h2>
+    <hr class="my-6 border-gray-700">
+
+    <!-- RESET HWID -->
+    <div class="mb-8">
+      <h3 class="text-lg font-semibold mb-2 text-indigo-300">♻️ Reset HWID</h3>
       <input id="r_key" class="input" placeholder="License Key">
       <button class="btn" onclick="resetKey()">Reset</button>
       <p id="resetResult" class="mt-3 text-sm text-gray-400"></p>
     </div>
 
-    <!-- EMAIL -->
-    <div id="email" class="section hidden">
-      <h2 class="text-2xl font-semibold mb-4">Bind Email</h2>
+    <hr class="my-6 border-gray-700">
+
+    <!-- BIND EMAIL -->
+    <div>
+      <h3 class="text-lg font-semibold mb-2 text-indigo-300">📧 Bind Email</h3>
       <input id="bind_key" class="input" placeholder="License Key">
       <input id="bind_email" class="input" type="email" placeholder="Email Address">
       <button class="btn" onclick="bindEmailToKey()">Bind</button>
       <p id="bindEmailResult" class="mt-3 text-sm text-gray-400"></p>
     </div>
-
-    <!-- ADMIN -->
-    <div id="admin" class="section hidden">
-      <h2 class="text-2xl font-semibold mb-4">Admin Panel</h2>
-
-      <div id="admin-auth">
-        <input id="admin_password" type="password" class="input" placeholder="Admin Password">
-        <button class="btn" onclick="authAdmin()">Login</button>
-        <p id="adminLoginResult" class="mt-3 text-sm text-red-400"></p>
-      </div>
-
-      <div id="admin-actions" class="hidden mt-6 space-y-4">
-    <div>
-      <div class="flex gap-2 items-center mb-2">
-        <input id="key_days" type="number" min="1" class="input w-32" placeholder="Days (e.g. 30)">
-        <button class="btn bg-green-600 hover:bg-green-700" onclick="makeKey()">Generate Key</button>
-      </div>
-      <p id="makeKeyResult" class="text-sm mt-1 text-gray-400"></p>
-    </div>
-
-        <div>
-          <input id="check_key" class="input" placeholder="Key to check">
-          <button class="btn bg-indigo-600 hover:bg-indigo-700" onclick="checkKeyInfo()">Check Info</button>
-          <pre id="checkKeyInfoResult" class="mt-2"></pre>
-        </div>
-        <div>
-          <input id="delete_key" class="input" placeholder="Key to delete">
-          <button class="btn bg-red-600 hover:bg-red-700" onclick="deleteKey()">Delete Key</button>
-          <p id="deleteKeyResult" class="text-sm mt-1 text-gray-400"></p>
-        </div>
-        <div>
-          <button class="btn bg-red-600 hover:bg-red-700" onclick="deleteAllKeys()">Delete ALL Keys</button>
-          <p id="deleteAllResult" class="text-sm mt-1 text-gray-400"></p>
-        </div>
-        <div>
-          <input id="admin_reset_key" class="input" placeholder="Key to reset HWID">
-          <button class="btn bg-yellow-500 hover:bg-yellow-600" onclick="adminResetKey()">Admin Reset HWID</button>
-          <p id="adminResetResult" class="text-sm mt-1 text-gray-400"></p>
-        </div>
-        <div>
-          <input id="reset_email_key" class="input" placeholder="Key to reset email">
-          <button class="btn bg-yellow-500 hover:bg-yellow-600" onclick="resetEmailFromKey()">Reset Email</button>
-          <p id="resetEmailResult" class="text-sm mt-1 text-gray-400"></p>
-        </div>
-        <div>
-          <button class="btn bg-gray-600 hover:bg-gray-700" onclick="downloadDump()">Download Key Dump</button>
-          <p id="dumpResult" class="text-sm mt-1 text-gray-400"></p>
-        </div>
-
-        
-        <hr class="my-4 border-gray-700">
-        <h3 class="text-lg font-semibold text-indigo-400 mb-2">All Keys</h3>
-        <div id="keysList" class="space-y-3 max-h-[60vh] overflow-y-auto pr-2"></div>
-      </div>
-    </div>
-
-    <!-- INFO -->
-    <!-- INFO -->
-    <div id="info" class="section hidden">
-    <h2 class="text-2xl font-semibold mb-4">All Keys Information</h2>
-
-    <div class="flex items-center space-x-2 mb-4">
-        <input id="searchKey" class="input flex-1" placeholder="🔍 Search by key, HWID, or email">
-        <select id="filterStatus" class="input w-40">
-        <option value="all">All</option>
-        <option value="active">Active</option>
-        <option value="expired">Expired</option>
-        </select>
-        <button class="btn" onclick="loadAllKeys()">🔄 Refresh</button>
-    </div>
-
-    <div id="keysList" class="space-y-3 max-h-[70vh] overflow-y-auto pr-2"></div>
-    </div>
   </div>
 
+  <!-- ADMIN PANEL -->
+  <div id="admin" class="section hidden">
+    <h2 class="text-2xl font-semibold mb-4">Admin Panel</h2>
 
+    <div id="admin-auth">
+      <input id="admin_password" type="password" class="input" placeholder="Admin Password">
+      <button class="btn" onclick="authAdmin()">Login</button>
+      <p id="adminLoginResult" class="mt-3 text-sm text-red-400"></p>
+    </div>
 
-  <!-- Global Admin Lock -->
-   <div id="lock-overlay" class="fixed inset-0 flex items-center justify-center bg-black z-50">
-    <div class="bg-[#1a1c23] p-6 rounded-xl w-full max-w-md text-center">
-      <h2 class="text-xl font-bold text-indigo-400 mb-4">Admin Access</h2>
-      <input id="global_admin_password" type="password" class="input" placeholder="Admin Password">
-      <button class="btn mt-3 w-full" onclick="globalAuth()">Login</button>
-      <p id="globalLoginResult" class="mt-3 text-sm text-red-400"></p>
+    <div id="admin-actions" class="hidden mt-6 space-y-4">
+      <div>
+        <div class="flex gap-2 items-center mb-2">
+          <input id="key_days" type="number" min="1" class="input w-32" placeholder="Days (e.g. 30)">
+          <button class="btn bg-green-600 hover:bg-green-700" onclick="makeKey()">Generate Key</button>
+        </div>
+        <p id="makeKeyResult" class="text-sm mt-1 text-gray-400"></p>
+      </div>
+
+      <div>
+        <input id="check_key" class="input" placeholder="Key to check">
+        <button class="btn bg-indigo-600 hover:bg-indigo-700" onclick="checkKeyInfo()">Check Info</button>
+        <pre id="checkKeyInfoResult" class="mt-2"></pre>
+      </div>
+
+      <div>
+        <input id="delete_key" class="input" placeholder="Key to delete">
+        <button class="btn bg-red-600 hover:bg-red-700" onclick="deleteKey()">Delete Key</button>
+        <p id="deleteKeyResult" class="text-sm mt-1 text-gray-400"></p>
+      </div>
+
+      <div>
+        <button class="btn bg-red-600 hover:bg-red-700" onclick="deleteAllKeys()">Delete ALL Keys</button>
+        <p id="deleteAllResult" class="text-sm mt-1 text-gray-400"></p>
+      </div>
+
+      <div>
+        <input id="admin_reset_key" class="input" placeholder="Key to reset HWID">
+        <button class="btn bg-yellow-500 hover:bg-yellow-600" onclick="adminResetKey()">Admin Reset HWID</button>
+        <p id="adminResetResult" class="text-sm mt-1 text-gray-400"></p>
+      </div>
+
+      <div>
+        <input id="reset_email_key" class="input" placeholder="Key to reset email">
+        <button class="btn bg-yellow-500 hover:bg-yellow-600" onclick="resetEmailFromKey()">Reset Email</button>
+        <p id="resetEmailResult" class="text-sm mt-1 text-gray-400"></p>
+      </div>
+
+      <div>
+        <button class="btn bg-gray-600 hover:bg-gray-700" onclick="downloadDump()">Download Key Dump</button>
+        <p id="dumpResult" class="text-sm mt-1 text-gray-400"></p>
+      </div>
+
+      <hr class="my-4 border-gray-700">
+      <h3 class="text-lg font-semibold text-indigo-400 mb-2">All Keys</h3>
+      <div id="keysList" class="space-y-3 max-h-[60vh] overflow-y-auto pr-2"></div>
     </div>
   </div>
+</div>
 
+
+
+
+<!-- Bienvenida -->
+<div id="lock-overlay" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-90 z-50">
+  <div class="bg-[#1a1c23] p-8 rounded-2xl w-full max-w-md text-center shadow-lg">
+    <h2 class="text-2xl font-bold text-indigo-400 mb-4">👋 Bienvenido al Sistema de Usuario</h2>
+    <p class="text-gray-300 mb-6">Aquí podrás verificar tus licencias, resetear HWID y más.</p>
+    <button class="btn w-full text-lg bg-indigo-600 hover:bg-indigo-700" onclick="entrarAlDashboard()">Entrar al Panel</button>
+  </div>
+</div>
 
 
 
@@ -213,6 +204,11 @@
       event.target.classList.add("active");
     }
 
+  function entrarAlDashboard() {
+    const overlay = document.getElementById("lock-overlay");
+    overlay.classList.add("hidden"); // Oculta la pantalla de bienvenida
+  }
+    
     // Modo testing: quita overlay sin pedir password
     function bypassLock() {
     // opcional: asigna un admin temporal para que las acciones admin funcionen durante pruebas
