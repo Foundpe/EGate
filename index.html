@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EGate Admin Panel</title>
+  <title>MinHook Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
@@ -76,7 +76,7 @@
 
   <!-- Sidebar -->
 <div class="sidebar">
-  <h2 class="text-xl font-bold mb-6 text-indigo-400 text-center">EGate System</h2>
+  <h2 class="text-xl font-bold mb-6 text-indigo-400 text-center">Minhook System</h2>
   <button class="active" onclick="showSection('user')">🧍‍♂️ Usuarios</button>
   <button onclick="showSection('admin')">🛠️ Admin Panel</button>
 </div>
@@ -89,7 +89,7 @@
 
     <!-- CHECK LICENSE -->
     <div class="mb-8">
-      <h3 class="text-lg font-semibold mb-2 text-indigo-300">🔑 Check License Key</h3>
+      <h3 class="text-lg font-semibold mb-2 text-indigo-300">🔑 Register your Key</h3>
       <input id="v_key" class="input" placeholder="License Key">
       <input id="v_hwid" class="input" placeholder="HWID">
       <button class="btn" onclick="verifyKey()">Verify</button>
@@ -119,28 +119,40 @@
   </div>
 
   <!-- ADMIN PANEL -->
-  <div id="admin" class="section hidden">
-    <h2 class="text-2xl font-semibold mb-4">Admin Panel</h2>
+<div id="admin" class="section hidden">
+  <h2 class="text-2xl font-semibold mb-6 text-indigo-400 text-center">🛠️ Admin Panel</h2>
 
-    <div id="admin-auth">
-      <input id="admin_password" type="password" class="input" placeholder="Admin Password">
-      <button class="btn" onclick="authAdmin()">Login</button>
-      <p id="adminLoginResult" class="mt-3 text-sm text-red-400"></p>
+  <!-- AUTH -->
+  <div id="admin-auth" class="max-w-md mx-auto mb-8">
+    <input id="admin_password" type="password" class="input w-full mb-3" placeholder="Admin Password">
+    <button class="btn w-full" onclick="authAdmin()">Login</button>
+    <p id="adminLoginResult" class="mt-3 text-sm text-center text-red-400"></p>
+  </div>
+
+  <!-- ACTIONS -->
+  <div id="admin-actions" class="hidden space-y-6">
+
+    <!-- Generate Key -->
+    <div class="bg-gray-800 p-4 rounded-lg shadow">
+      <h3 class="text-lg font-semibold mb-2 text-green-400">🔑 Generate Key</h3>
+      <div class="flex gap-2 items-center mb-2">
+        <input id="key_days" type="number" min="1" class="input w-32" placeholder="Days (e.g. 30)">
+        <button class="btn bg-green-600 hover:bg-green-700" onclick="makeKey()">Generate</button>
+      </div>
+      <div id="keyResultContainer" class="hidden mt-2">
+        <p id="makeKeyResult" class="text-sm text-gray-300 mb-2"></p>
+        <button id="copyKeyBtn" class="btn bg-blue-600 hover:bg-blue-700" onclick="copyLastKey()">📋 Copy Key</button>
+      </div>
     </div>
 
-    <div id="admin-actions" class="hidden mt-6 space-y-4">
-      <div>
-        <div class="flex gap-2 items-center mb-2">
-          <input id="key_days" type="number" min="1" class="input w-32" placeholder="Days (e.g. 30)">
-          <button class="btn bg-green-600 hover:bg-green-700" onclick="makeKey()">Generate Key</button>
-        </div>
-        <p id="makeKeyResult" class="text-sm mt-1 text-gray-400"></p>
-      </div>
+    <!-- Manage Keys -->
+    <div class="bg-gray-800 p-4 rounded-lg shadow space-y-4">
+      <h3 class="text-lg font-semibold mb-2 text-indigo-400">🧩 Manage Keys</h3>
 
       <div>
         <input id="check_key" class="input" placeholder="Key to check">
         <button class="btn bg-indigo-600 hover:bg-indigo-700" onclick="checkKeyInfo()">Check Info</button>
-        <pre id="checkKeyInfoResult" class="mt-2"></pre>
+        <pre id="checkKeyInfoResult" class="mt-2 text-sm text-gray-400"></pre>
       </div>
 
       <div>
@@ -150,13 +162,18 @@
       </div>
 
       <div>
-        <button class="btn bg-red-600 hover:bg-red-700" onclick="deleteAllKeys()">Delete ALL Keys</button>
+        <button class="btn bg-red-600 hover:bg-red-700 w-full" onclick="deleteAllKeys()">🗑️ Delete ALL Keys</button>
         <p id="deleteAllResult" class="text-sm mt-1 text-gray-400"></p>
       </div>
+    </div>
+
+    <!-- Maintenance -->
+    <div class="bg-gray-800 p-4 rounded-lg shadow space-y-3">
+      <h3 class="text-lg font-semibold text-yellow-400">⚙️ Maintenance</h3>
 
       <div>
         <input id="admin_reset_key" class="input" placeholder="Key to reset HWID">
-        <button class="btn bg-yellow-500 hover:bg-yellow-600" onclick="adminResetKey()">Admin Reset HWID</button>
+        <button class="btn bg-yellow-500 hover:bg-yellow-600" onclick="adminResetKey()">Reset HWID</button>
         <p id="adminResetResult" class="text-sm mt-1 text-gray-400"></p>
       </div>
 
@@ -167,15 +184,36 @@
       </div>
 
       <div>
-        <button class="btn bg-gray-600 hover:bg-gray-700" onclick="downloadDump()">Download Key Dump</button>
+        <button class="btn bg-gray-600 hover:bg-gray-700 w-full" onclick="downloadDump()">📥 Download Key Dump</button>
         <p id="dumpResult" class="text-sm mt-1 text-gray-400"></p>
       </div>
+    </div>
 
-      <hr class="my-4 border-gray-700">
-      <h3 class="text-lg font-semibold text-indigo-400 mb-2">All Keys</h3>
-      <div id="keysList" class="space-y-3 max-h-[60vh] overflow-y-auto pr-2"></div>
+    <hr class="my-4 border-gray-700">
+
+    <!-- All Keys -->
+    <div class="bg-gray-800 p-4 rounded-lg shadow">
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="text-lg font-semibold text-indigo-400">📋 All Keys</h3>
+        <button class="btn bg-blue-600 hover:bg-blue-700 text-sm" onclick="loadAllKeys()">🔄 Update Users</button>
+      </div>
+
+      <div class="flex items-center space-x-2 mb-3">
+        <input id="searchKey" class="input flex-1" placeholder="🔍 Search key / HWID / email">
+        <select id="filterStatus" class="input w-40">
+          <option value="all">All</option>
+          <option value="active">Active</option>
+          <option value="expired">Expired</option>
+        </select>
+      </div>
+
+      <div id="keysList" class="space-y-3 max-h-[60vh] overflow-y-auto pr-2 text-sm"></div>
     </div>
   </div>
+</div>
+
+
+
 </div>
 
 
@@ -203,6 +241,38 @@
       document.querySelectorAll(".sidebar button").forEach(b => b.classList.remove("active"));
       event.target.classList.add("active");
     }
+
+    
+ let lastGeneratedKey = '';
+
+  function makeKey() {
+    const days = document.getElementById('key_days').value;
+    fetch(`/makekey?days=${days}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.key) {
+          lastGeneratedKey = data.key;
+          document.getElementById('makeKeyResult').textContent = "Generated Key: " + data.key;
+          document.getElementById('keyResultContainer').classList.remove('hidden');
+        }
+      });
+  }
+
+  function copyLastKey() {
+    if (lastGeneratedKey) {
+      navigator.clipboard.writeText(lastGeneratedKey);
+      const btn = document.getElementById('copyKeyBtn');
+      btn.textContent = "✅ Copied!";
+      setTimeout(() => btn.textContent = "📋 Copy Key", 2000);
+    }
+  }
+
+  // Mostrar estado real (activa/expirada)
+  function renderKeyStatus(keyData) {
+    const now = new Date();
+    const exp = new Date(keyData.expires);
+    return exp > now ? "🟢 Active" : "🔴 Expired";
+  }
 
   function entrarAlDashboard() {
     const overlay = document.getElementById("lock-overlay");
