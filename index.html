@@ -74,78 +74,94 @@
 </head>
 <body class="flex">
 
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <h2 class="text-xl font-bold mb-6 text-indigo-400 text-center">Minhook System</h2>
-    <button class="active">🛠️ Admin Panel</button>
+<!-- Sidebar -->
+<div class="sidebar">
+  <h2 class="text-xl font-bold mb-6 text-indigo-400 text-center">Minhook System</h2>
+  <button class="active">Admin Panel</button>
+</div>
+
+<!-- Main content -->
+<div class="content">
+  <!-- ADMIN PANEL -->
+  <div id="admin" class="section">
+    <h2 class="text-2xl font-semibold mb-6 text-indigo-400 text-center">Admin Panel</h2>
+
+    <!-- TAB MENU -->
+    <div class="flex justify-center mb-6 space-x-3">
+      <button class="tab-btn active" onclick="showAdminTab('generate')">Generate</button>
+      <button class="tab-btn" onclick="showAdminTab('manage')"> Manage Users</button>
+      <button class="tab-btn" onclick="showAdminTab('tools')">Tools</button>
+    </div>
+
+    <!-- ACTION SECTIONS -->
+    <div id="admin-actions" class="space-y-6 hidden">
+      
+     <!-- TAB: GENERATE -->
+<div id="tab-generate" class="admin-tab">
+  <div class="bg-gray-800 p-4 rounded-lg shadow mb-4">
+    <h3 class="text-lg font-semibold mb-2 text-green-400">Generate Key</h3>
+    <div class="flex gap-2 items-center mb-2">
+      <input id="key_days" type="number" min="1" class="input w-32" placeholder="Days (e.g. 30)">
+      <button class="btn bg-green-600 hover:bg-green-700" onclick="makeKey()">Generate</button>
+    </div>
+
+    <!-- Contenedor donde se mostrará la key -->
+    <div id="keyResultContainer" class="hidden mt-3 border border-gray-700 rounded-lg p-3 bg-gray-900">
+      <p class="text-gray-400 text-sm mb-1">Key generada:</p>
+      <div class="flex items-center justify-between bg-gray-800 px-3 py-2 rounded-md">
+        <code id="makeKeyResult" class="text-green-400 text-sm select-all">...</code>
+        <button id="copyKeyBtn" class="btn bg-blue-600 hover:bg-blue-700 text-sm px-3 py-1 ml-3" onclick="copyLastKey()">📋 Copiar</button>
+      </div>
+      <p id="copyStatus" class="text-xs text-gray-400 mt-2 hidden">✅ Copiado al portapapeles</p>
+    </div>
   </div>
+</div>
 
-  <!-- Main content -->
-  <div class="content">
-    <!-- ADMIN PANEL -->
-    <div id="admin" class="section">
-      <h2 class="text-2xl font-semibold mb-6 text-indigo-400 text-center">🛠️ Admin Panel</h2>
 
-      <!-- ACTIONS -->
-      <div id="admin-actions" class="space-y-6 hidden">
-
-        <!-- Generate Key -->
-        <div class="bg-gray-800 p-4 rounded-lg shadow">
-          <h3 class="text-lg font-semibold mb-2 text-green-400">🔑 Generate Key</h3>
-          <div class="flex gap-2 items-center mb-2">
-            <input id="key_days" type="number" min="1" class="input w-32" placeholder="Days (e.g. 30)">
-            <button class="btn bg-green-600 hover:bg-green-700" onclick="makeKey()">Generate</button>
-          </div>
-          <div id="keyResultContainer" class="hidden mt-2">
-            <p id="makeKeyResult" class="text-sm text-gray-300 mb-2"></p>
-            <button id="copyKeyBtn" class="btn bg-blue-600 hover:bg-blue-700" onclick="copyLastKey()">📋 Copy Key</button>
-          </div>
-        </div>
-
-        <!-- Manage Keys -->
+      <!-- TAB: MANAGE USERS -->
+      <div id="tab-manage" class="admin-tab hidden">
         <div class="bg-gray-800 p-4 rounded-lg shadow space-y-4">
-          <h3 class="text-lg font-semibold mb-2 text-indigo-400">🧩 Manage Keys</h3>
+          <h3 class="text-lg font-semibold mb-2 text-indigo-400">Manage Users</h3>
+
+          <!-- Verify HWID / KEY -->
           <div>
-            <input id="check_key" class="input" placeholder="Key to check">
-            <button class="btn bg-indigo-600 hover:bg-indigo-700" onclick="checkKeyInfo()">Check Info</button>
+            <input id="verify_key" class="input mb-2" placeholder="Key to verify">
+            <button class="btn bg-blue-600 hover:bg-blue-700" onclick="checkKeyInfo()">Verify Key</button>
             <pre id="checkKeyInfoResult" class="mt-2 text-sm text-gray-400"></pre>
           </div>
+
+          <!-- Reset HWID -->
           <div>
-            <input id="delete_key" class="input" placeholder="Key to delete">
+            <input id="admin_reset_key" class="input mb-2" placeholder="Key to reset HWID">
+            <button class="btn bg-yellow-500 hover:bg-yellow-600" onclick="adminResetKey()">Reset HWID</button>
+            <p id="adminResetResult" class="text-sm mt-1 text-gray-400"></p>
+          </div>
+
+          <!-- Reset Email -->
+          <div>
+            <input id="reset_email_key" class="input mb-2" placeholder="Key to reset email">
+            <button class="btn bg-yellow-500 hover:bg-yellow-600" onclick="resetEmailFromKey()">Reset Email</button>
+            <p id="resetEmailResult" class="text-sm mt-1 text-gray-400"></p>
+          </div>
+
+          <!-- Delete Key -->
+          <div>
+            <input id="delete_key" class="input mb-2" placeholder="Key to delete">
             <button class="btn bg-red-600 hover:bg-red-700" onclick="deleteKey()">Delete Key</button>
             <p id="deleteKeyResult" class="text-sm mt-1 text-gray-400"></p>
           </div>
+
+          <!-- Delete All -->
           <div>
-            <button class="btn bg-red-600 hover:bg-red-700 w-full" onclick="deleteAllKeys()">🗑️ Delete ALL Keys</button>
+            <button class="btn bg-red-700 hover:bg-red-800 w-full" onclick="deleteAllKeys()">Delete ALL Keys</button>
             <p id="deleteAllResult" class="text-sm mt-1 text-gray-400"></p>
           </div>
         </div>
 
-        <!-- Maintenance -->
-        <div class="bg-gray-800 p-4 rounded-lg shadow space-y-3">
-          <h3 class="text-lg font-semibold text-yellow-400">⚙️ Maintenance</h3>
-          <div>
-            <input id="admin_reset_key" class="input" placeholder="Key to reset HWID">
-            <button class="btn bg-yellow-500 hover:bg-yellow-600" onclick="adminResetKey()">Reset HWID</button>
-            <p id="adminResetResult" class="text-sm mt-1 text-gray-400"></p>
-          </div>
-          <div>
-            <input id="reset_email_key" class="input" placeholder="Key to reset email">
-            <button class="btn bg-yellow-500 hover:bg-yellow-600" onclick="resetEmailFromKey()">Reset Email</button>
-            <p id="resetEmailResult" class="text-sm mt-1 text-gray-400"></p>
-          </div>
-          <div>
-            <button class="btn bg-gray-600 hover:bg-gray-700 w-full" onclick="downloadDump()">📥 Download Key Dump</button>
-            <p id="dumpResult" class="text-sm mt-1 text-gray-400"></p>
-          </div>
-        </div>
-
-        <hr class="my-4 border-gray-700">
-
         <!-- All Keys -->
-        <div class="bg-gray-800 p-4 rounded-lg shadow">
+        <div class="bg-gray-800 p-4 rounded-lg shadow mt-4">
           <div class="flex justify-between items-center mb-3">
-            <h3 class="text-lg font-semibold text-indigo-400">📋 All Keys</h3>
+            <h3 class="text-lg font-semibold text-indigo-400">All Keys</h3>
             <button class="btn bg-blue-600 hover:bg-blue-700 text-sm" onclick="loadAllKeys()">🔄 Update Users</button>
           </div>
           <div class="flex items-center space-x-2 mb-3">
@@ -159,42 +175,112 @@
           <div id="keysList" class="space-y-3 max-h-[60vh] overflow-y-auto pr-2 text-sm"></div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Login Overlay -->
-  <div id="lock-overlay" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-90 z-50">
-    <div class="bg-[#1a1c23] p-8 rounded-2xl w-full max-w-md text-center shadow-lg">
-      <h2 class="text-2xl font-bold text-indigo-400 mb-4">🔐 Acceso de Administrador</h2>
-      <p class="text-gray-300 mb-6">Ingresa la contraseña de administrador para acceder al panel.</p>
-      <input id="adminLoginInput" type="password" class="input mb-4" placeholder="Admin Password">
-      <button class="btn w-full text-lg bg-indigo-600 hover:bg-indigo-700" onclick="checkAdminLogin()">Entrar</button>
-      <p id="adminLoginResult" class="text-sm text-red-400 mt-3"></p>
+      <!-- TAB: TOOLS -->
+      <div id="tab-tools" class="admin-tab hidden">
+        <div class="bg-gray-800 p-4 rounded-lg shadow space-y-3">
+          <h3 class="text-lg font-semibold text-yellow-400">⚙️ Tools</h3>
+          <div>
+            <button class="btn bg-gray-600 hover:bg-gray-700 w-full" onclick="downloadDump()">📥 Download Key Dump</button>
+            <p id="dumpResult" class="text-sm mt-1 text-gray-400"></p>
+          </div>
+          <div>
+            <button class="btn bg-indigo-700 hover:bg-indigo-800 w-full" onclick="alert('🔧 Coming soon...')">🧩 Future Tools</button>
+          </div>
+
+          <!-- CHECK LICENSE -->
+        <div class="mb-8">
+          <h3 class="text-lg font-semibold mb-2 text-indigo-300">Vincular HWID con Key</h3>
+          <input id="v_key" class="input" placeholder="License Key">
+          <input id="v_hwid" class="input" placeholder="HWID">
+          <button class="btn" onclick="verifyKey()">Verify</button>
+          <p id="verifyResult" class="mt-3 text-sm text-gray-400"></p>
+        </div>
+
+        <hr class="my-6 border-gray-700">
+
+        <!-- RESET HWID -->
+        <div class="mb-8">
+          <h3 class="text-lg font-semibold mb-2 text-indigo-300">Reset HWID</h3>
+          <input id="r_key" class="input" placeholder="License Key">
+          <button class="btn" onclick="resetKey()">Reset</button>
+          <p id="resetResult" class="mt-3 text-sm text-gray-400"></p>
+        </div>
+
+        </div>
+      </div>
     </div>
   </div>
+</div>
+
+<!-- Login Overlay -->
+<div id="lock-overlay" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-90 z-50">
+  <div class="bg-[#1a1c23] p-8 rounded-2xl w-full max-w-md text-center shadow-lg">
+    <h2 class="text-2xl font-bold text-indigo-400 mb-4">Minhook Auth</h2>
+    <p class="text-gray-300 mb-6">Ingresa la contraseña de administrador para acceder al panel.</p>
+    <input id="adminLoginInput" type="password" class="input mb-4" placeholder="Admin Password">
+    <button class="btn w-full text-lg bg-indigo-600 hover:bg-indigo-700" onclick="checkAdminLogin()">Entrar</button>
+    <p id="adminLoginResult" class="text-sm text-red-400 mt-3"></p>
+  </div>
+</div>
+
+<!-- Tab Switch Script -->
+<script>
+  function showAdminTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.admin-tab').forEach(tabDiv => tabDiv.classList.add('hidden'));
+    document.querySelector(`.tab-btn[onclick="showAdminTab('${tab}')"]`).classList.add('active');
+    document.getElementById(`tab-${tab}`).classList.remove('hidden');
+  }
+</script>
+
+<style>
+  .tab-btn {
+    background-color: #2d2f3a;
+    color: #cbd5e1;
+    padding: 0.5rem 1.2rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: background-color 0.2s, transform 0.1s;
+  }
+  .tab-btn:hover {
+    background-color: #3f4254;
+    transform: scale(1.03);
+  }
+  .tab-btn.active {
+    background-color: #4f46e5;
+    color: white;
+  }
+</style>
 
   <script>
     const API = "https://egatesystem.vercel.app/api";
     let ADMIN_PASS = "";
 
-    async function checkAdminLogin() {
-      const pass = document.getElementById("adminLoginInput").value.trim();
-      const result = document.getElementById("adminLoginResult");
-      result.textContent = "⏳ Verificando...";
+    
+    
+async function checkAdminLogin() {
+  const pass = document.getElementById("adminLoginInput").value.trim();
+  const result = document.getElementById("adminLoginResult");
+  result.textContent = "⏳ Verificando...";
 
-      try {
-        const res = await fetch(`${API}/info?key=dummy&admin=${encodeURIComponent(pass)}`);
-        if (res.status === 403) {
-          result.textContent = "❌ Contraseña incorrecta";
-          return;
-        }
-        ADMIN_PASS = pass;
-        document.getElementById("lock-overlay").classList.add("hidden");
-        document.getElementById("admin-actions").classList.remove("hidden");
-      } catch (err) {
-        result.textContent = "❌ Error de conexión";
-      }
+  try {
+    const res = await fetch(`${API}/info?key=dummy&admin=${encodeURIComponent(pass)}`);
+
+    if (res.status === 403) {
+      result.textContent = "❌ Contraseña incorrecta";
+      return;
     }
+
+    ADMIN_PASS = pass;
+    document.getElementById("lock-overlay").classList.add("hidden");
+    document.getElementById("admin-actions").classList.remove("hidden");
+    result.textContent = "✅ Acceso concedido";
+  } catch (err) {
+    result.textContent = "❌ Error de conexión";
+  }
+}
+
 
   // Mostrar estado real (activa/expirada)
   function renderKeyStatus(keyData) {
@@ -283,23 +369,37 @@ async function makeKey() {
   const daysInput = document.getElementById("key_days");
   const days = daysInput.value.trim() || "30"; // si no pone nada, 30 días por defecto
 
-  document.getElementById("makeKeyResult").textContent = "⏳ Generating...";
+  const resultBox = document.getElementById("makeKeyResult");
+  const container = document.getElementById("keyResultContainer");
+  const copyStatus = document.getElementById("copyStatus");
+
+  resultBox.textContent = "⏳ Generating...";
+  container.classList.remove("hidden");
+  copyStatus.classList.add("hidden");
 
   try {
     const res = await fetch(`${API}/make?admin=${ADMIN_PASS}&days=${days}`);
     const text = await res.text();
 
     if (res.ok) {
-      document.getElementById("makeKeyResult").innerHTML =
-        `✅ <b>Key created:</b> <span class="text-yellow-400">${text}</span>`;
-      loadAllKeys(); // refresca la lista automáticamente
+      resultBox.innerHTML = `<b>${text}</b>`;
+      loadAllKeys(); // refresca lista
     } else {
-      document.getElementById("makeKeyResult").textContent = `❌ ${text}`;
+      resultBox.textContent = `❌ ${text}`;
     }
   } catch (e) {
-    document.getElementById("makeKeyResult").textContent = `❌ Error: ${e.message}`;
+    resultBox.textContent = `❌ Error: ${e.message}`;
   }
 }
+function copyLastKey() {
+  const keyText = document.getElementById("makeKeyResult").innerText;
+  navigator.clipboard.writeText(keyText).then(() => {
+    const status = document.getElementById("copyStatus");
+    status.classList.remove("hidden");
+    setTimeout(() => status.classList.add("hidden"), 2000);
+  });
+}
+
 
     function checkKeyInfo() {
       const key = document.getElementById("check_key").value;
