@@ -106,14 +106,17 @@
     </div>
 
     <!-- Contenedor donde se mostrará la key -->
-    <div id="keyResultContainer" class="hidden mt-3 border border-gray-700 rounded-lg p-3 bg-gray-900">
-      <p class="text-gray-400 text-sm mb-1">Key generada:</p>
-      <div class="flex items-center justify-between bg-gray-800 px-3 py-2 rounded-md">
-        <code id="makeKeyResult" class="text-green-400 text-sm select-all">...</code>
-        <button id="copyKeyBtn" class="btn bg-blue-600 hover:bg-blue-700 text-sm px-3 py-1 ml-3" onclick="copyLastKey()">📋 Copiar</button>
+      <div id="keyResultContainer" class="hidden mt-3 border border-gray-700 rounded-lg p-3 bg-gray-900">
+        <p class="text-gray-400 text-sm mb-1">Key generada:</p>
+        <div class="flex items-center justify-between bg-gray-800 px-3 py-2 rounded-md">
+          <code id="makeKeyResult" class="text-green-400 text-sm select-all">...</code>
+          <button id="copyKeyBtn" class="btn bg-blue-600 hover:bg-blue-700 text-sm px-3 py-1 ml-3" onclick="copyLastKey()">📋 Copiar Key</button>
+        </div>
+      
+        <!-- expiración visible pero NO incluida al copiar -->
+        <p id="keyExpiry" class="text-sm text-gray-400 mt-2">Expira: —</p>
+        <p id="copyStatus" class="text-xs text-gray-400 mt-2 hidden">✅ Copiado al portapapeles</p>
       </div>
-      <p id="copyStatus" class="text-xs text-gray-400 mt-2 hidden">✅ Copiado al portapapeles</p>
-    </div>
   </div>
 </div>
 
@@ -367,34 +370,77 @@ async function checkAdminLogin() {
 
 async function makeKey() {
   const daysInput = document.getElementById("key_days");
-  const days = daysInput.value.trim() || "30"; // si no pone nada, 30 días por defecto
+  const days = daysInput.value.trim() || "30";
 
   const resultBox = document.getElementById("makeKeyResult");
   const container = document.getElementById("keyResultContainer");
   const copyStatus = document.getElementById("copyStatus");
+  const expiryEl = document.getElementById("keyExpiry");
 
   resultBox.textContent = "⏳ Generating...";
+  expiryEl.textContent = "Expira: —";
   container.classList.remove("hidden");
   copyStatus.classList.add("hidden");
 
   try {
     const res = await fetch(`${API}/make?admin=${ADMIN_PASS}&days=${days}`);
-    const text = await res.text();
+    const text = (await res.text()).trim();
 
-    if (res.ok) {
-      resultBox.innerHTML = `<b>${text}</b>`;
-      loadAllKeys(); // refresca lista
-    } else {
+    if (!res.ok) {
       resultBox.textContent = `❌ ${text}`;
+      return;
     }
+
+    // Si la API devuelve: "KEY (expira el 2025-11-10)" -> separar key y expiración
+    let key = text;
+    let expiryText = "";
+
+    if (text.includes("(")) {
+      // separa en "KEY" y "expira el 2025-11-10)" o similar
+      const parts = text.split("(");
+      key = parts[0].trim();
+      expiryText = parts.slice(1).join("(").replace(")", "").trim(); // todo lo que venga dentro de paréntesis
+    } else {
+      // intentar detectar " - expira: ..." u otros formatos
+      const sepMatch = text.match(/(.*?)(?:\s+[-–—]\s+|,\s*)(expir|expira|expires|expiración|expires:)\s*(.*)/i);
+      if (sepMatch) {
+        key = sepMatch[1].trim();
+        expiryText = sepMatch[3].trim();
+      }
+    }
+
+    // Mostrar solo la key en el elemento visible
+    resultBox.textContent = key;
+    resultBox.dataset.key = key; // almacenamos la key limpia
+
+    // Mostrar expiración de forma visible (pero no será copiada por el botón)
+    expiryEl.textContent = expiryText ? `Expira: ${expiryText}` : `Expira: —`;
+    expiryEl.dataset.expiry = expiryText || "";
+
+    loadAllKeys(); // refrescar la lista
   } catch (e) {
     resultBox.textContent = `❌ Error: ${e.message}`;
   }
 }
+
 function copyLastKey() {
-  const keyText = document.getElementById("makeKeyResult").innerText;
-  navigator.clipboard.writeText(keyText).then(() => {
-    const status = document.getElementById("copyStatus");
+  const resultBox = document.getElementById("makeKeyResult");
+  const status = document.getElementById("copyStatus");
+  const key = (resultBox.dataset.key || resultBox.innerText || "").trim();
+
+  if (!key) {
+    status.textContent = "❌ No hay key para copiar";
+    status.classList.remove("hidden");
+    setTimeout(() => status.classList.add("hidden"), 2000);
+    return;
+  }
+
+  navigator.clipboard.writeText(key).then(() => {
+    status.textContent = "✅ Key copiada al portapapeles";
+    status.classList.remove("hidden");
+    setTimeout(() => status.classList.add("hidden"), 2000);
+  }).catch(() => {
+    status.textContent = "❌ Error al copiar";
     status.classList.remove("hidden");
     setTimeout(() => status.classList.add("hidden"), 2000);
   });
