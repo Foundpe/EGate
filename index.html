@@ -112,6 +112,28 @@
         <p id="keyExpiry" class="text-sm text-gray-400 mt-2">Expira: —</p>
         <p id="copyStatus" class="text-xs text-gray-400 mt-2 hidden">✅ Copiado al portapapeles</p>
       </div>
+<!-- Generate Key sin HWID -->
+<div class="bg-gray-800 p-4 rounded-lg shadow mt-6">
+  <h3 class="text-lg font-semibold mb-2 text-yellow-400">Generate Free Key (sin HWID)</h3>
+  <div class="flex gap-2 items-center mb-2">
+    <input id="free_key_days" type="number" min="1" class="input w-32" placeholder="Days (e.g. 30)">
+    <button class="btn bg-yellow-600 hover:bg-yellow-700" onclick="makeFreeKey()">Generate</button>
+  </div>
+
+  <!-- Resultado -->
+  <div id="freeKeyResultContainer" class="hidden mt-3 border border-gray-700 rounded-lg p-3 bg-gray-900">
+    <p class="text-gray-400 text-sm mb-1">Key generada (sin HWID):</p>
+    <div class="flex items-center justify-between bg-gray-800 px-3 py-2 rounded-md">
+      <code id="makeFreeKeyResult" class="text-yellow-400 text-sm select-all">...</code>
+      <button class="btn bg-blue-600 hover:bg-blue-700 text-sm px-3 py-1 ml-3" onclick="copyFreeKey()">📋 Copiar Key</button>
+    </div>
+    <p id="freeKeyExpiry" class="text-sm text-gray-400 mt-2">Expira: —</p>
+    <p id="copyFreeStatus" class="text-xs text-gray-400 mt-2 hidden">✅ Copiado al portapapeles</p>
+  </div>
+</div>
+
+
+    
   </div>
 </div>
 
@@ -441,6 +463,72 @@ function copyLastKey() {
   });
 }
 
+
+
+    async function makeFreeKey() {
+  const days = document.getElementById("free_key_days").value.trim() || "30";
+  const resultBox = document.getElementById("makeFreeKeyResult");
+  const container = document.getElementById("freeKeyResultContainer");
+  const expiryEl = document.getElementById("freeKeyExpiry");
+  const copyStatus = document.getElementById("copyFreeStatus");
+
+  resultBox.textContent = "⏳ Generating...";
+  expiryEl.textContent = "Expira: —";
+  container.classList.remove("hidden");
+  copyStatus.classList.add("hidden");
+
+  try {
+    const res = await fetch(`${API}/make?admin=${ADMIN_PASS}&days=${days}&nohwid=true`);
+    const text = (await res.text()).trim();
+
+    if (!res.ok) {
+      resultBox.textContent = `❌ ${text}`;
+      return;
+    }
+
+    let key = text;
+    let expiryText = "";
+
+    if (text.includes("(")) {
+      const parts = text.split("(");
+      key = parts[0].trim();
+      expiryText = parts.slice(1).join("(").replace(")", "").trim();
+    }
+
+    resultBox.textContent = key;
+    resultBox.dataset.key = key;
+    expiryEl.textContent = expiryText ? `Expira: ${expiryText}` : `Expira: —`;
+
+    loadAllKeys(); // actualiza lista
+  } catch (e) {
+    resultBox.textContent = `❌ Error: ${e.message}`;
+  }
+}
+
+function copyFreeKey() {
+  const resultBox = document.getElementById("makeFreeKeyResult");
+  const status = document.getElementById("copyFreeStatus");
+  const key = (resultBox.dataset.key || resultBox.innerText || "").trim();
+
+  if (!key) {
+    status.textContent = "❌ No hay key para copiar";
+    status.classList.remove("hidden");
+    setTimeout(() => status.classList.add("hidden"), 2000);
+    return;
+  }
+
+  navigator.clipboard.writeText(key).then(() => {
+    status.textContent = "✅ Key copiada al portapapeles";
+    status.classList.remove("hidden");
+    setTimeout(() => status.classList.add("hidden"), 2000);
+  }).catch(() => {
+    status.textContent = "❌ Error al copiar";
+    status.classList.remove("hidden");
+    setTimeout(() => status.classList.add("hidden"), 2000);
+  });
+}
+
+    
 
     function checkKeyInfo() {
       const key = document.getElementById("check_key").value;
