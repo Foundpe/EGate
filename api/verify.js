@@ -22,6 +22,11 @@ export default async function handler(req, res) {
       return res.status(403).send("key expired");
     }
 
+    // ⚙️ Si la key es sin HWID, se acepta en cualquier PC
+    if (keyData.no_hwid === true) {
+      return res.status(200).send("key verified (no hwid)");
+    }
+
     // 🔗 Vincular HWID si aún no lo tiene
     if (!keyData.hwid) {
       keys[key].hwid = hwid;
@@ -34,6 +39,7 @@ export default async function handler(req, res) {
       return res.status(403).send("hwid mismatch");
     }
 
+    // ✅ Key válida y HWID correcto
     res.status(200).send("key verified");
   } catch (e) {
     res.status(500).send("Server error: " + e.message);
