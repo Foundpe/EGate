@@ -15,11 +15,11 @@
         extend: {
           colors: { 
             ka: { 
-              bg: '#0b0b0b',        // Main BG
-              panel: '#111111',     // Panel BG
-              border: '#1c1c1c',    // Borders
-              accent: '#dc2626',    // RED Accent (Minhook Style)
-              accentHover: '#b91c1c', // Darker Red Hover
+              bg: '#0b0b0b',        
+              panel: '#111111',     
+              border: '#1c1c1c',    
+              accent: '#dc2626',    // ROJO Minhook
+              accentHover: '#b91c1c', 
               text: '#e1e1e1',
               muted: '#666666'
             }
@@ -45,7 +45,6 @@
       overflow: hidden; 
     }
 
-    /* Scrollbar */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #0b0b0b; }
     ::-webkit-scrollbar-thumb { background: #1c1c1c; border-radius: 3px; }
@@ -65,8 +64,7 @@
       transition: all 0.2s ease;
     }
     .ka-input:focus { outline: none; border-color: #dc2626; box-shadow: 0 0 10px rgba(220, 38, 38, 0.2); }
-    .ka-input:disabled { opacity: 0.5; cursor: not-allowed; }
-
+    
     .ka-btn {
       background-color: #dc2626; 
       color: white;
@@ -88,20 +86,20 @@
     
     .noselect { user-select: none; }
     
-    /* Table Styles */
-    table { width: 100%; border-collapse: separate; border-spacing: 0; }
-    th { text-align: left; padding: 12px 16px; color: #666; font-size: 0.75rem; text-transform: uppercase; font-weight: 600; border-bottom: 1px solid #1c1c1c; }
-    td { padding: 12px 16px; border-bottom: 1px solid #1c1c1c; font-size: 0.85rem; }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background-color: #161616; }
-
-    /* Custom Checkbox */
+    /* Checkbox personalizado */
     .custom-checkbox {
         accent-color: #dc2626;
         cursor: pointer;
         width: 16px;
         height: 16px;
     }
+
+    /* Tabla */
+    table { width: 100%; border-collapse: separate; border-spacing: 0; }
+    th { text-align: left; padding: 12px 16px; color: #666; font-size: 0.75rem; text-transform: uppercase; font-weight: 600; border-bottom: 1px solid #1c1c1c; }
+    td { padding: 12px 16px; border-bottom: 1px solid #1c1c1c; font-size: 0.85rem; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background-color: #161616; }
   </style>
 </head>
 <body class="flex h-screen antialiased noselect">
@@ -114,7 +112,7 @@
       <p class="text-xs text-ka-muted mt-1 uppercase tracking-widest">Secure Dashboard</p>
     </div>
     <div class="space-y-4">
-      <input id="adminPass" type="password" class="ka-input w-full p-3 rounded text-center placeholder-gray-600" placeholder="Secret Key (admin)">
+      <input id="adminPass" type="password" class="ka-input w-full p-3 rounded text-center placeholder-gray-600" placeholder="Enter Key: admin">
       <button onclick="attemptLogin()" class="ka-btn w-full py-3 rounded shadow-lg shadow-red-900/20">Login</button>
     </div>
     <p id="loginMsg" class="mt-4 text-xs font-mono h-4 text-red-500"></p>
@@ -291,34 +289,41 @@
 </main>
 
 <script>
-    // --- AUTH LOGIC ---
+    // --- AUTH LOGIC REPARADO ---
     function attemptLogin() {
         const pass = document.getElementById('adminPass').value;
         const layer = document.getElementById('auth-layer');
         const msg = document.getElementById('loginMsg');
         
-        if(pass === 'admin') {
+        // --- CONFIGURA TU KEY AQUÍ ---
+        const masterKey = "admin"; // CAMBIA ESTO POR TU KEY
+        
+        if(pass === masterKey) {
             layer.style.opacity = '0';
             setTimeout(() => { layer.style.display = 'none'; }, 500);
         } else {
-            msg.innerText = 'Invalid credentials';
+            msg.innerText = 'Access Denied: Invalid Key';
             document.getElementById('adminPass').classList.add('border-red-500');
+            document.getElementById('adminPass').value = ''; // Limpiar input
         }
     }
 
+    // Permitir Login con ENTER
+    document.getElementById('adminPass').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            attemptLogin();
+        }
+    });
+
     // --- TABS LOGIC ---
     function switchTab(tabName) {
-        // Hide all
         ['generate', 'users', 'tools'].forEach(t => {
             document.getElementById('tab-' + t).classList.add('hidden');
             document.getElementById('nav-' + t).classList.remove('active');
         });
-
-        // Show selected
         document.getElementById('tab-' + tabName).classList.remove('hidden');
         document.getElementById('nav-' + tabName).classList.add('active');
         
-        // Update Title
         const titles = { 'generate': 'License Generation', 'users': 'User Management', 'tools': 'System Tools' };
         document.getElementById('page-title').innerText = titles[tabName];
     }
@@ -360,7 +365,6 @@
         tbody.innerHTML = '';
 
         users.forEach(u => {
-            // Status Logic
             let statusColor = u.days > 0 ? 'text-green-500' : 'text-red-500';
             let daysText = u.days > 0 ? `${u.days} Days` : 'Expired';
 
@@ -434,22 +438,10 @@
         if(confirm(`Delete ${checks.length} users permanently?`)) {
             const idsToDelete = Array.from(checks).map(c => parseInt(c.getAttribute('data-id')));
             users = users.filter(u => !idsToDelete.includes(u.id));
-            
-            // Uncheck master
             document.getElementById('select-all').checked = false;
             renderUsers();
         }
     }
-
-    // Init
-    document.addEventListener('keydown', function(event) {
-        if (event.key === "Enter") {
-             // If login is visible, attempt login
-             if(document.getElementById('auth-layer').style.display !== 'none') {
-                 attemptLogin();
-             }
-        }
-    });
 
     renderUsers();
 </script>
