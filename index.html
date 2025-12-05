@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Minhook // Administration</title>
+  
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -13,19 +14,28 @@
       theme: {
         extend: {
           colors: {
-            dark: {
-              900: '#050505',
-              800: '#0a0a0a',
-              700: '#111111',
-            },
             brand: {
               red: '#dc2626',
-              glow: 'rgba(220, 38, 38, 0.5)'
+              dark: '#050505'
             }
           },
           fontFamily: {
             sans: ['Inter', 'sans-serif'],
             mono: ['JetBrains Mono', 'monospace'],
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.5s ease-out',
+            'slide-up': 'slideUp 0.4s ease-out'
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' },
+            },
+            slideUp: {
+              '0%': { transform: 'translateY(10px)', opacity: '0' },
+              '100%': { transform: 'translateY(0)', opacity: '1' },
+            }
           }
         }
       }
@@ -36,35 +46,30 @@
     /* Base Styles */
     body {
       background-color: #000000;
-      background-image: radial-gradient(circle at 50% 0%, #1a0505 0%, #000000 70%);
+      background-image: radial-gradient(circle at 50% -20%, #220505 0%, #000000 60%);
       color: #e5e7eb;
-      overflow: hidden; /* Hide scrollbars usually */
+      overflow: hidden; 
     }
 
-    /* Scrollbar Customization */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #0a0a0a; }
-    ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #050505; }
+    ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
     ::-webkit-scrollbar-thumb:hover { background: #dc2626; }
 
-    /* Glass Effect & Containers */
+    /* Glass Panels */
     .glass-panel {
       background: rgba(10, 10, 10, 0.7);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.05);
       box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
     }
     
-    .glow-border:focus-within {
-      border-color: #dc2626;
-      box-shadow: 0 0 15px rgba(220, 38, 38, 0.2);
-    }
-
-    /* Inputs & Buttons */
+    /* Inputs */
     .input-field {
-      background: #050505;
-      border: 1px solid #222;
+      background: #080808;
+      border: 1px solid #1f1f1f;
       color: #fff;
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.85rem;
@@ -73,210 +78,242 @@
     .input-field:focus {
       outline: none;
       border-color: #dc2626;
-      box-shadow: 0 0 10px rgba(220, 38, 38, 0.1);
+      box-shadow: 0 0 15px rgba(220, 38, 38, 0.15);
     }
 
+    /* Buttons */
     .btn-primary {
-      background: linear-gradient(135deg, #991b1b 0%, #dc2626 100%);
+      background: linear-gradient(180deg, #b91c1c 0%, #991b1b 100%);
       color: white;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      border: 1px solid #ef4444;
+      transition: all 0.2s;
+      border-top: 1px solid #ef4444;
       text-transform: uppercase;
       letter-spacing: 1px;
       font-size: 0.75rem;
       font-weight: 700;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
     }
     .btn-primary:hover {
-      box-shadow: 0 0 20px rgba(220, 38, 38, 0.4);
+      box-shadow: 0 0 25px rgba(220, 38, 38, 0.4);
       transform: translateY(-1px);
     }
-    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:active { transform: translateY(1px); }
 
-    /* Animations */
-    @keyframes pulse-red {
-      0%, 100% { box-shadow: 0 0 5px rgba(220, 38, 38, 0.1); }
-      50% { box-shadow: 0 0 20px rgba(220, 38, 38, 0.3); }
-    }
-    .animate-pulse-red { animation: pulse-red 3s infinite; }
-
-    /* Anti-Select */
-    .noselect {
-      -webkit-touch-callout: none;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
+    /* Utilities */
+    .noselect { user-select: none; }
+    
+    /* Console Scanline Effect */
+    .console-bg {
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+      background-size: 100% 2px, 3px 100%;
     }
   </style>
 </head>
-<body class="flex h-screen text-sm antialiased noselect">
+<body class="flex h-screen text-sm antialiased noselect font-sans">
 
-<div id="auth-layer" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-95 backdrop-blur-md">
-  <div class="glass-panel p-8 rounded-xl w-full max-w-sm text-center border-t-2 border-brand-red relative overflow-hidden">
-    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-red-600 to-transparent"></div>
+<div id="auth-layer" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-100 backdrop-blur-xl transition-all duration-700">
+  <div class="glass-panel p-10 rounded-2xl w-full max-w-sm text-center border-t border-red-900/50 relative overflow-hidden shadow-[0_0_50px_rgba(220,38,38,0.1)]">
     
-    <div class="mb-6">
-      <i class="fa-solid fa-shield-cat text-4xl text-red-600 mb-2 animate-pulse-red"></i>
-      <h1 class="text-2xl font-bold tracking-widest text-white mt-2">MINHOOK</h1>
-      <p class="text-xs text-gray-500 uppercase tracking-widest">Secure Environment</p>
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-[2px] bg-gradient-to-r from-transparent via-red-600 to-transparent shadow-[0_0_10px_#ef4444]"></div>
+    
+    <div class="mb-8 relative">
+      <div class="w-16 h-16 mx-auto bg-red-600/10 rounded-full flex items-center justify-center mb-4 border border-red-500/20 animate-pulse">
+        <i class="fa-solid fa-fingerprint text-3xl text-red-500"></i>
+      </div>
+      <h1 class="text-3xl font-bold tracking-[0.2em] text-white">MINHOOK</h1>
+      <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-2">Administrative Control</p>
     </div>
 
-    <div class="space-y-4">
-      <div class="relative">
-        <i class="fa-solid fa-lock absolute left-3 top-3 text-gray-500"></i>
-        <input id="adminPass" type="password" class="input-field w-full p-2.5 pl-10 rounded-md" placeholder="Enter Access Code">
+    <div class="space-y-5">
+      <div class="relative group">
+        <input id="adminPass" type="password" class="input-field w-full p-3.5 text-center rounded-lg bg-black/50 text-red-100 placeholder-gray-700 focus:placeholder-red-900 transition-all" placeholder="AUTHENTICATION KEY">
       </div>
-      <button onclick="attemptLogin()" class="btn-primary w-full py-3 rounded-md">
-        Initialize Session
+      <button onclick="attemptLogin()" class="btn-primary w-full py-3.5 rounded-lg shadow-lg shadow-red-900/20 group">
+        <span class="group-hover:tracking-widest transition-all duration-300">Unlock System</span>
       </button>
     </div>
     <p id="loginMsg" class="mt-4 text-xs font-mono h-4 text-red-500"></p>
   </div>
 </div>
 
-<aside class="w-64 glass-panel border-r border-gray-900 flex flex-col z-10 transition-all duration-300">
-  <div class="p-6 flex items-center gap-3 border-b border-gray-800">
-    <div class="w-8 h-8 rounded bg-red-900 flex items-center justify-center text-red-200">
-      <i class="fa-solid fa-dragon"></i>
+<aside class="w-20 lg:w-64 glass-panel border-r border-gray-900 flex flex-col z-10 transition-all duration-300">
+  <div class="h-20 flex items-center justify-center lg:justify-start lg:px-6 border-b border-gray-800/50">
+    <div class="w-8 h-8 rounded bg-gradient-to-br from-red-600 to-red-900 flex items-center justify-center text-white shadow-lg shadow-red-600/20">
+      <i class="fa-solid fa-dragon text-sm"></i>
     </div>
-    <div>
-      <h2 class="font-bold text-gray-100">MINHOOK</h2>
-      <span class="text-[10px] text-green-500 flex items-center gap-1">
-        <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> SYSTEM ONLINE
-      </span>
+    <div class="hidden lg:block ml-3">
+      <h2 class="font-bold text-gray-100 tracking-wide text-sm">MINHOOK</h2>
+      <div class="flex items-center gap-1.5 mt-0.5">
+        <span class="w-1 h-1 rounded-full bg-green-500 animate-pulse"></span>
+        <span class="text-[9px] text-gray-500 font-mono">V.4.2.0 ACTIVE</span>
+      </div>
     </div>
   </div>
 
-  <nav class="flex-1 p-4 space-y-2">
-    <button onclick="switchTab('generate')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all group active-tab">
-      <i class="fa-solid fa-key group-hover:text-red-500 transition-colors"></i>
-      <span>Generator</span>
+  <nav class="flex-1 p-3 space-y-2 mt-4">
+    <button onclick="switchTab('generate')" class="nav-btn w-full flex items-center justify-center lg:justify-start gap-3 px-0 lg:px-4 py-3 rounded-lg text-gray-500 hover:text-white hover:bg-white/5 transition-all group active-tab bg-white/5 text-white border border-transparent hover:border-white/5">
+      <i class="fa-solid fa-terminal text-lg group-hover:text-red-500 transition-colors"></i>
+      <span class="hidden lg:inline font-medium">Generator</span>
     </button>
-    <button onclick="switchTab('users')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all group">
-      <i class="fa-solid fa-users group-hover:text-red-500 transition-colors"></i>
-      <span>User Database</span>
+    <button onclick="switchTab('users')" class="nav-btn w-full flex items-center justify-center lg:justify-start gap-3 px-0 lg:px-4 py-3 rounded-lg text-gray-500 hover:text-white hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
+      <i class="fa-solid fa-users-line text-lg group-hover:text-red-500 transition-colors"></i>
+      <span class="hidden lg:inline font-medium">Database</span>
     </button>
-    <button onclick="switchTab('tools')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all group">
-      <i class="fa-solid fa-screwdriver-wrench group-hover:text-red-500 transition-colors"></i>
-      <span>Utilities</span>
+    <button onclick="switchTab('tools')" class="nav-btn w-full flex items-center justify-center lg:justify-start gap-3 px-0 lg:px-4 py-3 rounded-lg text-gray-500 hover:text-white hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
+      <i class="fa-solid fa-screwdriver-wrench text-lg group-hover:text-red-500 transition-colors"></i>
+      <span class="hidden lg:inline font-medium">Utilities</span>
     </button>
   </nav>
 
-  <div class="p-4 border-t border-gray-800">
-    <button onclick="location.reload()" class="w-full flex items-center gap-2 text-xs text-gray-500 hover:text-red-500 transition-colors">
-      <i class="fa-solid fa-power-off"></i> Terminate Session
+  <div class="p-4 border-t border-gray-800/50">
+    <button onclick="location.reload()" class="w-full h-10 flex items-center justify-center lg:justify-start gap-2 rounded hover:bg-red-900/10 text-gray-600 hover:text-red-500 transition-all text-xs">
+      <i class="fa-solid fa-power-off"></i> <span class="hidden lg:inline">Terminate</span>
     </button>
   </div>
 </aside>
 
-<main class="flex-1 p-6 overflow-y-auto relative">
-  <div class="absolute top-0 right-0 w-96 h-96 bg-red-900/10 rounded-full blur-3xl pointer-events-none"></div>
+<main class="flex-1 p-6 lg:p-10 overflow-y-auto relative bg-[#030303]">
+  <div class="fixed top-0 right-0 w-[600px] h-[600px] bg-red-600/5 rounded-full blur-[120px] pointer-events-none"></div>
 
-  <div id="tab-generate" class="content-tab space-y-6 max-w-4xl mx-auto animate-fade-in">
-    <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
-      <i class="fa-solid fa-microchip text-red-500"></i> License Factory
-    </h2>
-
-    <div class="glass-panel p-1 rounded-lg inline-flex mb-4 bg-black/50">
-        <button onclick="toggleGenMode('single')" id="btn-mode-single" class="px-4 py-1.5 rounded text-xs font-bold transition-all bg-red-600 text-white">SINGLE</button>
-        <button onclick="toggleGenMode('bulk')" id="btn-mode-bulk" class="px-4 py-1.5 rounded text-xs font-bold text-gray-400 transition-all hover:text-white">BULK MODE</button>
+  <div id="tab-generate" class="content-tab space-y-6 max-w-5xl mx-auto animate-slide-up">
+    
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h2 class="text-3xl font-bold text-white tracking-tight">License Factory</h2>
+        <p class="text-xs text-gray-500 font-mono mt-1">Generate access tokens securely.</p>
+      </div>
+      <div class="glass-panel p-1 rounded-lg flex bg-black/60 border-red-900/30">
+        <button onclick="toggleGenMode('single')" id="btn-mode-single" class="px-5 py-2 rounded-md text-xs font-bold transition-all bg-red-600 text-white shadow shadow-red-900/50">SINGLE</button>
+        <button onclick="toggleGenMode('bulk')" id="btn-mode-bulk" class="px-5 py-2 rounded-md text-xs font-bold text-gray-500 transition-all hover:text-white">BULK</button>
+    </div>
     </div>
 
-    <div class="glass-panel p-6 rounded-xl border-l-4 border-red-600">
-      
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+    <div class="glass-panel p-8 rounded-xl border-l-2 border-red-600 shadow-2xl relative overflow-hidden">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 relative z-10">
         <div>
-           <label class="text-xs text-gray-500 uppercase font-bold block mb-2">License Type</label>
-           <select id="gen_type" class="input-field w-full p-2.5 rounded">
-             <option value="paid">Standard (HWID Locked)</option>
-             <option value="free">Free (No HWID)</option>
-           </select>
+           <label class="text-[10px] text-gray-500 uppercase font-bold block mb-2 tracking-wider">Plan Type</label>
+           <div class="relative">
+             <i class="fa-solid fa-layer-group absolute left-3 top-3 text-gray-600 text-xs"></i>
+             <select id="gen_type" class="input-field w-full p-2.5 pl-9 rounded text-gray-300">
+               <option value="paid">Standard (HWID Lock)</option>
+               <option value="free">Free (No HWID)</option>
+             </select>
+           </div>
         </div>
         <div>
-          <label class="text-xs text-gray-500 uppercase font-bold block mb-2">Duration (Days)</label>
-          <input id="gen_days" type="number" value="30" class="input-field w-full p-2.5 rounded text-center">
+          <label class="text-[10px] text-gray-500 uppercase font-bold block mb-2 tracking-wider">Duration (Days)</label>
+          <div class="relative">
+            <i class="fa-regular fa-clock absolute left-3 top-3 text-gray-600 text-xs"></i>
+            <input id="gen_days" type="number" value="30" class="input-field w-full p-2.5 pl-9 rounded text-center placeholder-gray-600">
+          </div>
         </div>
-        <div id="qty_container" class="hidden">
-            <label class="text-xs text-gray-500 uppercase font-bold block mb-2">Quantity</label>
-            <input id="gen_qty" type="number" value="5" max="50" class="input-field w-full p-2.5 rounded text-center border-red-900 text-red-100">
+        <div id="qty_container" class="hidden animate-fade-in">
+            <label class="text-[10px] text-red-500 uppercase font-bold block mb-2 tracking-wider">Bulk Qty</label>
+            <input id="gen_qty" type="number" value="5" max="50" class="input-field w-full p-2.5 rounded text-center border-red-900/50 text-red-100 bg-red-900/10 focus:bg-red-900/20">
           </div>
       </div>
 
-      <button onclick="processGeneration()" class="btn-primary w-full py-3 rounded flex items-center justify-center gap-2 group">
-        <span>Execute Generation</span>
-        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+      <button onclick="processGeneration()" class="btn-primary w-full py-4 rounded-lg flex items-center justify-center gap-3 group text-sm relative z-10">
+        <span class="tracking-widest font-bold">EXECUTE GENERATION</span>
+        <i class="fa-solid fa-bolt group-hover:text-yellow-400 transition-colors"></i>
       </button>
 
-      <div id="output-console" class="mt-6 hidden">
-        <div class="flex justify-between items-center mb-2">
-             <span class="text-xs text-gray-400 font-mono">Console Output_</span>
-             <button onclick="copyConsole()" class="text-xs text-red-400 hover:text-red-300"><i class="fa-regular fa-copy"></i> Copy All</button>
-        </div>
-        <textarea id="console_text" readonly class="w-full h-48 bg-black border border-gray-800 rounded p-3 font-mono text-xs text-green-400 leading-relaxed resize-none focus:outline-none"></textarea>
+      <div class="absolute inset-0 opacity-[0.03] pointer-events-none" 
+           style="background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 20px 20px;">
       </div>
-
     </div>
+
+    <div id="output-console" class="mt-8 hidden animate-fade-in">
+        <div class="flex justify-between items-end mb-3 px-1">
+             <span class="text-[10px] text-gray-500 font-mono uppercase tracking-widest flex items-center gap-2">
+               <i class="fa-solid fa-code text-red-500"></i> Execution Log
+             </span>
+             <div class="flex gap-2">
+               <button onclick="clearConsole()" class="text-[10px] px-3 py-1.5 bg-red-900/20 hover:bg-red-900/40 text-red-400 rounded border border-red-900/30 transition-colors flex items-center gap-2">
+                  <i class="fa-solid fa-trash-can"></i> Clear
+               </button>
+               <button onclick="copyConsole()" class="text-[10px] px-3 py-1.5 bg-white/5 hover:bg-white/10 text-green-400 rounded border border-white/10 transition-colors flex items-center gap-2">
+                  <i class="fa-regular fa-copy"></i> Copy Keys (CSV)
+               </button>
+             </div>
+        </div>
+        
+        <div class="relative">
+          <textarea id="console_text" readonly class="w-full h-56 bg-[#080808] console-bg border border-gray-800 rounded-lg p-4 font-mono text-[11px] text-green-500/80 leading-relaxed resize-none focus:outline-none shadow-inner custom-scroll select-text"></textarea>
+          <div class="absolute bottom-4 right-4 flex items-center gap-2 pointer-events-none">
+            <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+            <span class="text-[9px] text-green-700 font-mono">IDLE</span>
+          </div>
+        </div>
+      </div>
   </div>
 
-  <div id="tab-users" class="content-tab hidden space-y-4 max-w-6xl mx-auto">
-    <div class="flex justify-between items-end mb-4">
+  <div id="tab-users" class="content-tab hidden space-y-6 max-w-7xl mx-auto animate-slide-up">
+    <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-4 mb-2 pb-4 border-b border-gray-800/50">
       <div>
-        <h2 class="text-2xl font-bold flex items-center gap-2">
-            <i class="fa-solid fa-database text-red-500"></i> Live Database
+        <h2 class="text-2xl font-bold flex items-center gap-3 text-white">
+            <i class="fa-solid fa-server text-red-600"></i> User Database
         </h2>
-        <p class="text-xs text-gray-500 mt-1">Updates automatically every 3 seconds</p>
       </div>
-      <div class="flex gap-2">
-          <div class="flex items-center gap-2 px-3 py-1 bg-black/40 rounded border border-gray-800">
-              <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-              <span class="text-xs text-gray-400">Auto-Sync</span>
-              <input type="checkbox" id="autoSyncToggle" checked class="accent-red-600">
+      <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2 px-3 py-1.5 bg-black/40 rounded-full border border-gray-800">
+              <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_#22c55e]"></span>
+              <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wide">Live Sync</span>
+              <input type="checkbox" id="autoSyncToggle" checked class="accent-red-600 w-3 h-3 cursor-pointer">
           </div>
-          <button onclick="forceLoadUsers()" class="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded text-xs"><i class="fa-solid fa-rotate"></i></button>
+          <button onclick="forceLoadUsers()" class="w-8 h-8 flex items-center justify-center bg-gray-800 hover:bg-gray-700 rounded-full text-gray-300 transition-colors" title="Force Refresh">
+            <i class="fa-solid fa-rotate text-xs"></i>
+          </button>
       </div>
     </div>
 
-    <div class="flex gap-2 mb-4">
-        <input id="searchUsers" type="text" placeholder="Search key, email or HWID..." class="input-field flex-1 p-2 rounded bg-black/50">
-        <select id="filterState" class="input-field w-32 p-2 rounded bg-black/50">
+    <div class="flex flex-col md:flex-row gap-3 mb-6">
+        <div class="relative flex-1">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-gray-600 text-xs"></i>
+            <input id="searchUsers" type="text" placeholder="Search by Key, Email or HWID..." onkeyup="renderUsersFromCache()" class="input-field w-full p-2.5 pl-9 rounded-lg bg-black/40 border-gray-800 focus:border-red-900">
+        </div>
+        <select id="filterState" onchange="renderUsersFromCache()" class="input-field w-full md:w-40 p-2.5 rounded-lg bg-black/40 border-gray-800">
             <option value="all">All Status</option>
-            <option value="active">Active</option>
-            <option value="expired">Expired</option>
+            <option value="active">Active Only</option>
+            <option value="expired">Expired Only</option>
         </select>
     </div>
 
-    <div id="user-grid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 pb-10">
+    <div id="user-grid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 pb-12">
         </div>
   </div>
 
-  <div id="tab-tools" class="content-tab hidden space-y-6 max-w-4xl mx-auto">
-    <h2 class="text-2xl font-bold flex items-center gap-2 mb-6">
+  <div id="tab-tools" class="content-tab hidden space-y-8 max-w-4xl mx-auto animate-slide-up">
+    <h2 class="text-2xl font-bold flex items-center gap-3 mb-6 border-b border-gray-800 pb-4">
         <i class="fa-solid fa-toolbox text-red-500"></i> System Utilities
     </h2>
     
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="glass-panel p-5 rounded-lg">
-            <h3 class="font-bold text-gray-300 mb-3"><i class="fa-solid fa-magnifying-glass"></i> Inspect Key</h3>
-            <input id="tool_verify_key" placeholder="Key string..." class="input-field w-full p-2 mb-2 rounded">
-            <button onclick="toolCheck()" class="w-full py-2 bg-gray-800 hover:bg-gray-700 rounded text-xs border border-gray-700 text-white">Verify Status</button>
-            <pre id="verify_result" class="mt-2 text-[10px] text-gray-400 font-mono"></pre>
+        <div class="glass-panel p-6 rounded-xl border border-gray-800 hover:border-gray-700 transition-colors">
+            <h3 class="font-bold text-gray-300 mb-4 text-xs uppercase tracking-wider"><i class="fa-solid fa-magnifying-glass text-blue-500 mr-2"></i>Inspect Key Details</h3>
+            <input id="tool_verify_key" placeholder="Paste Key Here..." class="input-field w-full p-2.5 mb-3 rounded border-gray-700">
+            <button onclick="toolCheck()" class="w-full py-2 bg-gray-800 hover:bg-gray-700 rounded text-xs border border-gray-600 text-white font-bold transition-all">CHECK STATUS</button>
+            <div class="mt-3 p-3 bg-black/50 rounded border border-gray-800 h-32 overflow-auto">
+                <pre id="verify_result" class="text-[10px] text-blue-400 font-mono">Waiting for input...</pre>
+            </div>
         </div>
 
-        <div class="glass-panel p-5 rounded-lg border border-red-900/30">
-            <h3 class="font-bold text-red-400 mb-3"><i class="fa-solid fa-skull"></i> Reset HWID</h3>
-            <input id="tool_reset_key" placeholder="Key string..." class="input-field w-full p-2 mb-2 rounded">
-            <button onclick="toolReset()" class="w-full py-2 bg-red-900/50 hover:bg-red-900 rounded text-xs border border-red-800 text-white">Force Reset</button>
-            <p id="reset_msg" class="mt-2 text-xs text-gray-400"></p>
+        <div class="glass-panel p-6 rounded-xl border border-red-900/20 hover:border-red-900/50 transition-colors">
+            <h3 class="font-bold text-red-400 mb-4 text-xs uppercase tracking-wider"><i class="fa-solid fa-skull text-red-500 mr-2"></i>HWID Override</h3>
+            <input id="tool_reset_key" placeholder="Paste Key Here..." class="input-field w-full p-2.5 mb-3 rounded border-red-900/30">
+            <button onclick="toolReset()" class="w-full py-2 bg-red-900/20 hover:bg-red-900/40 rounded text-xs border border-red-900/50 text-red-200 font-bold transition-all">RESET HARDWARE ID</button>
+            <p id="reset_msg" class="mt-3 text-xs text-gray-400 font-mono text-center h-4"></p>
         </div>
 
-        <div class="glass-panel p-5 rounded-lg md:col-span-2 border-t border-red-600">
-            <h3 class="font-bold text-white mb-3">Danger Zone</h3>
+        <div class="glass-panel p-6 rounded-xl md:col-span-2 border-t-2 border-red-600 relative overflow-hidden">
+            <div class="absolute inset-0 bg-red-900/5 pointer-events-none"></div>
+            <h3 class="font-bold text-white mb-4 text-sm"><i class="fa-solid fa-triangle-exclamation text-red-500 mr-2"></i>DANGER ZONE</h3>
             <div class="flex gap-4">
-                <button onclick="downloadBackup()" class="flex-1 py-3 bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded text-xs">
-                    <i class="fa-solid fa-download mb-1 block text-lg"></i> Backup Database
+                <button onclick="downloadBackup()" class="flex-1 py-4 bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded text-xs font-bold text-gray-300 transition-all flex flex-col items-center gap-2">
+                    <i class="fa-solid fa-download text-lg"></i> BACKUP JSON
                 </button>
-                <button onclick="nukeDatabase()" class="flex-1 py-3 bg-red-950 hover:bg-red-900 border border-red-700 text-red-200 rounded text-xs">
-                    <i class="fa-solid fa-bomb mb-1 block text-lg"></i> Delete ALL Keys
+                <button onclick="nukeDatabase()" class="flex-1 py-4 bg-red-950/50 hover:bg-red-900 border border-red-800 text-red-400 hover:text-red-100 rounded text-xs font-bold transition-all flex flex-col items-center gap-2 group">
+                    <i class="fa-solid fa-bomb text-lg group-hover:animate-bounce"></i> DELETE ALL KEYS
                 </button>
             </div>
         </div>
@@ -285,43 +322,43 @@
 
 </main>
 
-<div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+<div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 pointer-events-none"></div>
 
 <script>
-    /* --- CONFIG --- */
-    const API = "https://egatesystem.vercel.app/api"; // Tu API
+    /* --- CONFIGURATION --- */
+    const API = "https://egatesystem.vercel.app/api"; // URL API
     let ADMIN = "";
-    let GEN_MODE = "single"; // 'single' | 'bulk'
+    let GEN_MODE = "single"; 
     let AUTO_REFRESH_INTERVAL = null;
-    let IS_DRAGGING = false;
+    let RAW_KEYS_CACHE = ""; // Almacena las keys limpias para copiar
+    let USERS_CACHE = {}; // Cache local de usuarios
 
-    /* --- SECURITY & UI --- */
-    // Anti-DevTools Basic
-    document.addEventListener('contextmenu', event => event.preventDefault());
+    /* --- SECURITY (Anti-DevTools Lite) --- */
+    document.addEventListener('contextmenu', e => e.preventDefault());
     document.onkeydown = function(e) {
-        if(e.keyCode == 123) return false;
+        if(e.keyCode == 123) return false; // F12
         if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
-        if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
         if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
         if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
     }
 
+    /* --- UI NAVIGATION --- */
     function switchTab(tabId) {
         document.querySelectorAll('.content-tab').forEach(el => el.classList.add('hidden'));
         document.getElementById(`tab-${tabId}`).classList.remove('hidden');
         
-        // Update Sidebar visual
+        // Update Sidebar
         document.querySelectorAll('nav button').forEach(btn => {
-            btn.classList.remove('bg-white/5', 'text-white');
-            btn.classList.add('text-gray-400');
+            btn.classList.remove('bg-white/5', 'text-white', 'border-white/5');
+            btn.classList.add('text-gray-500', 'border-transparent');
         });
         const activeBtn = document.querySelector(`button[onclick="switchTab('${tabId}')"]`);
         if(activeBtn) {
-            activeBtn.classList.add('bg-white/5', 'text-white');
-            activeBtn.classList.remove('text-gray-400');
+            activeBtn.classList.add('bg-white/5', 'text-white', 'border-white/5');
+            activeBtn.classList.remove('text-gray-500', 'border-transparent');
         }
 
-        // Handle auto-refresh logic
+        // Handle Refresh
         if (tabId === 'users') {
             startAutoRefresh();
         } else {
@@ -336,16 +373,16 @@
         const qtyContainer = document.getElementById('qty_container');
 
         if(mode === 'bulk') {
-            btnSingle.classList.replace('bg-red-600', 'text-gray-400');
-            btnSingle.classList.remove('text-white');
-            btnBulk.classList.add('bg-red-600', 'text-white');
-            btnBulk.classList.remove('text-gray-400');
+            btnSingle.classList.replace('bg-red-600', 'text-gray-500');
+            btnSingle.classList.remove('text-white', 'shadow');
+            btnBulk.classList.add('bg-red-600', 'text-white', 'shadow');
+            btnBulk.classList.remove('text-gray-500');
             qtyContainer.classList.remove('hidden');
         } else {
-            btnBulk.classList.replace('bg-red-600', 'text-gray-400');
-            btnBulk.classList.remove('text-white');
-            btnSingle.classList.add('bg-red-600', 'text-white');
-            btnSingle.classList.remove('text-gray-400');
+            btnBulk.classList.replace('bg-red-600', 'text-gray-500');
+            btnBulk.classList.remove('text-white', 'shadow');
+            btnSingle.classList.add('bg-red-600', 'text-white', 'shadow');
+            btnSingle.classList.remove('text-gray-500');
             qtyContainer.classList.add('hidden');
         }
     }
@@ -353,41 +390,47 @@
     function showToast(msg, type = 'info') {
         const container = document.getElementById('toast-container');
         const el = document.createElement('div');
-        const colorClass = type === 'error' ? 'border-red-500 bg-black' : 'border-green-500 bg-black';
+        const borderColor = type === 'error' ? 'border-red-600' : 'border-green-500';
         const icon = type === 'error' ? '<i class="fa-solid fa-circle-xmark text-red-500"></i>' : '<i class="fa-solid fa-circle-check text-green-500"></i>';
         
-        el.className = `p-3 rounded border-l-4 ${colorClass} text-white shadow-lg text-xs flex items-center gap-3 min-w-[200px] animate-bounce-in pointer-events-auto`;
-        el.innerHTML = `${icon} <span>${msg}</span>`;
+        el.className = `p-4 rounded-lg border-l-4 ${borderColor} bg-[#0a0a0a] text-white shadow-2xl text-xs font-bold flex items-center gap-3 min-w-[240px] animate-slide-up pointer-events-auto border border-gray-800`;
+        el.innerHTML = `${icon} <span class="tracking-wide uppercase">${msg}</span>`;
         
         container.appendChild(el);
-        setTimeout(() => el.remove(), 3000);
+        setTimeout(() => {
+            el.style.opacity = '0';
+            setTimeout(() => el.remove(), 500);
+        }, 3000);
     }
 
-    /* --- AUTH --- */
+    /* --- AUTHENTICATION --- */
     async function attemptLogin() {
         const pass = document.getElementById('adminPass').value;
         const msg = document.getElementById('loginMsg');
         
         if(!pass) return;
-        msg.textContent = "Negotiating...";
+        msg.textContent = "Negotiating Handshake...";
 
         try {
-            // Check against API (dummy call)
+            // Real fetch
             const res = await fetch(`${API}/info?key=dummy&admin=${encodeURIComponent(pass)}`);
             if (res.status === 403) throw new Error("Access Denied");
 
             ADMIN = pass;
-            document.getElementById('auth-layer').classList.add('hidden');
+            document.getElementById('auth-layer').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('auth-layer').classList.add('hidden');
+            }, 700);
             showToast("System Access Granted", "success");
-            switchTab('generate'); // Default tab
+            switchTab('generate');
         } catch (e) {
-            msg.textContent = "Invalid Credentials";
+            msg.textContent = "INVALID CREDENTIALS";
             document.getElementById('adminPass').classList.add('border-red-600');
             setTimeout(() => document.getElementById('adminPass').classList.remove('border-red-600'), 1000);
         }
     }
 
-    /* --- GENERATOR LOGIC --- */
+    /* --- GENERATOR CORE --- */
     async function processGeneration() {
         const type = document.getElementById('gen_type').value;
         const days = document.getElementById('gen_days').value || "30";
@@ -397,12 +440,14 @@
         const consoleText = document.getElementById('console_text');
         
         consoleDiv.classList.remove('hidden');
-        consoleText.value = ">>> INITIALIZING GENERATION SEQUENCE...\n";
+        consoleText.value += "\n>>> INITIALIZING SEQUENCE...\n";
         
         const isFree = type === 'free';
-        const keysGenerated = [];
+        let cleanKeysArray = [];
 
-        // Loop for Bulk
+        // Visual scroll to bottom
+        const scrollToBottom = () => { consoleText.scrollTop = consoleText.scrollHeight; }
+
         for (let i = 0; i < qty; i++) {
             try {
                 const url = `${API}/make?admin=${ADMIN}&days=${days}${isFree ? '&nohwid=true' : ''}`;
@@ -411,43 +456,60 @@
                 
                 if (!res.ok) throw new Error(raw);
 
-                // Clean Key
+                // Parse Key
                 let cleanKey = raw;
                 if (raw.includes("(")) cleanKey = raw.split("(")[0].trim();
                 
-                // Format for user
-                const label = GEN_MODE === 'bulk' ? `Key${i}` : `Key`;
-                const line = `${label} :: ${cleanKey}`;
-                
-                keysGenerated.push(line);
-                consoleText.value += `[SUCCESS] ${line}\n`;
-                consoleText.scrollTop = consoleText.scrollHeight; // Auto scroll
+                // Add to internal list for copying
+                cleanKeysArray.push(cleanKey);
+
+                // Visual Log
+                const label = GEN_MODE === 'bulk' ? `KEY_${i+1}` : `KEY`;
+                const timestamp = new Date().toLocaleTimeString('en-US', {hour12: false});
+                consoleText.value += `[${timestamp}] SUCCESS :: ${cleanKey}\n`;
+                scrollToBottom();
 
             } catch (err) {
-                consoleText.value += `[ERROR] Failed to gen key ${i}: ${err.message}\n`;
+                consoleText.value += `[ERROR] Failed gen ${i}: ${err.message}\n`;
+                scrollToBottom();
             }
         }
 
-        consoleText.value += `>>> PROCESS COMPLETE. Generated ${keysGenerated.length} keys.`;
-        showToast(`Generated ${keysGenerated.length} keys`, "success");
+        // Update Cache: Append new keys to existing cache or start new
+        const newCSV = cleanKeysArray.join(", ");
+        RAW_KEYS_CACHE = RAW_KEYS_CACHE ? RAW_KEYS_CACHE + ", " + newCSV : newCSV;
+
+        consoleText.value += `>>> COMPLETED. ${cleanKeysArray.length} Keys generated.\n`;
+        scrollToBottom();
+        showToast(`Sequence Complete: ${cleanKeysArray.length}`, "success");
     }
 
     function copyConsole() {
-        const txt = document.getElementById('console_text');
-        txt.select();
-        document.execCommand('copy');
-        showToast("Console output copied to clipboard");
+        if (!RAW_KEYS_CACHE) {
+            showToast("Buffer Empty", "error");
+            return;
+        }
+        navigator.clipboard.writeText(RAW_KEYS_CACHE).then(() => {
+            showToast("CSV List Copied to Clipboard", "success");
+        }).catch(() => {
+            showToast("Clipboard Error", "error");
+        });
     }
 
-    /* --- USER MANAGER --- */
+    function clearConsole() {
+        document.getElementById('console_text').value = "";
+        RAW_KEYS_CACHE = "";
+        showToast("Console & Buffer Cleared", "info");
+    }
+
+    /* --- USER DB MANAGER --- */
     function startAutoRefresh() {
         if(AUTO_REFRESH_INTERVAL) clearInterval(AUTO_REFRESH_INTERVAL);
-        loadUsers(); // Load immediately
+        loadUsers(); 
         AUTO_REFRESH_INTERVAL = setInterval(() => {
             const toggle = document.getElementById('autoSyncToggle');
-            // Only refresh if toggle is on AND user is not typing in search
             if (toggle.checked && document.activeElement.id !== 'searchUsers') {
-                loadUsers(true); // true = silent mode
+                loadUsers(true);
             }
         }, 3000);
     }
@@ -456,9 +518,7 @@
         if(AUTO_REFRESH_INTERVAL) clearInterval(AUTO_REFRESH_INTERVAL);
     }
     
-    function forceLoadUsers() {
-        loadUsers(false);
-    }
+    function forceLoadUsers() { loadUsers(false); }
 
     async function loadUsers(silent = false) {
         const grid = document.getElementById('user-grid');
@@ -468,106 +528,107 @@
             const res = await fetch(`${API}/dump?admin=${ADMIN}`);
             const text = await res.text();
             
-            // Parse logic (handle text before JSON)
             const jsonStart = text.indexOf("{");
-            if (jsonStart === -1) throw new Error("Invalid Data");
+            if (jsonStart === -1) throw new Error("Data corruption");
+            
             const data = JSON.parse(text.slice(jsonStart));
-            const allKeys = data.keys ? data.keys : data;
+            USERS_CACHE = data.keys ? data.keys : data; // Store in global cache
 
-            renderUsers(allKeys);
+            renderUsersFromCache();
+
         } catch (e) {
-            console.error(e);
-            if(!silent) showToast("Sync Error", "error");
+            if(!silent) showToast("Sync Failed", "error");
         } finally {
             grid.style.opacity = "1";
         }
     }
 
-    function renderUsers(keysObj) {
+    function renderUsersFromCache() {
         const grid = document.getElementById('user-grid');
         const searchTerm = document.getElementById('searchUsers').value.toLowerCase();
         const filterState = document.getElementById('filterState').value;
 
         let html = "";
         
-        // Reverse order (newest first usually)
-        Object.entries(keysObj).reverse().forEach(([key, info]) => {
+        Object.entries(USERS_CACHE).reverse().forEach(([key, info]) => {
             const isActive = info.expires && new Date(info.expires) > new Date();
             const statusStr = isActive ? "active" : "expired";
 
-            // Filtering
+            // Filters
             if (filterState !== 'all' && filterState !== statusStr) return;
             if (searchTerm && !key.toLowerCase().includes(searchTerm) && !(info.email||"").toLowerCase().includes(searchTerm)) return;
 
-            // Template
+            // Card HTML
             html += `
-            <div class="glass-panel p-4 rounded-lg relative group hover:border-red-900 transition-colors">
-                <div class="flex justify-between items-start mb-2">
-                    <div class="font-mono text-xs text-red-400 break-all pr-6 font-bold select-all">${key}</div>
-                    <span class="px-2 py-0.5 rounded text-[10px] uppercase font-bold ${isActive ? 'bg-green-900/40 text-green-400 border border-green-800' : 'bg-red-900/40 text-red-500 border border-red-800'}">
-                        ${isActive ? 'Active' : 'Expired'}
+            <div class="glass-panel p-5 rounded-xl relative group hover:border-red-900/50 transition-all hover:translate-y-[-2px]">
+                <div class="flex justify-between items-start mb-3">
+                    <div class="flex items-center gap-2">
+                         <i class="fa-solid fa-key text-gray-600 text-xs"></i>
+                         <div class="font-mono text-xs text-white break-all font-bold select-all tracking-tight">${key}</div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[9px] uppercase font-bold tracking-wider ${isActive ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-red-500/10 text-red-500 border border-red-500/20'}">
+                        ${isActive ? 'ACT' : 'EXP'}
                     </span>
                 </div>
                 
-                <div class="space-y-1 text-[11px] text-gray-500 font-mono">
-                    <div class="flex justify-between">
-                        <span>HWID:</span>
-                        <span class="text-gray-300 truncate max-w-[120px]" title="${info.hwid}">${info.hwid ? info.hwid : '—'}</span>
+                <div class="space-y-2 text-[10px] text-gray-500 font-mono border-t border-gray-800/50 pt-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600 uppercase">Hardware ID</span>
+                        <span class="text-gray-300 truncate max-w-[140px] bg-black/30 px-1 rounded" title="${info.hwid}">${info.hwid ? info.hwid : '<span class="text-gray-700">UNLINKED</span>'}</span>
                     </div>
-                    <div class="flex justify-between">
-                        <span>Email:</span>
-                        <span class="text-gray-300 truncate max-w-[120px]">${info.email || '—'}</span>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600 uppercase">Contact</span>
+                        <span class="text-gray-300 truncate max-w-[140px]">${info.email || '—'}</span>
                     </div>
-                    <div class="flex justify-between">
-                        <span>Exp:</span>
-                        <span class="${isActive ? 'text-gray-300' : 'text-red-900'}">${info.expires ? new Date(info.expires).toLocaleDateString() : '—'}</span>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600 uppercase">Expires</span>
+                        <span class="${isActive ? 'text-green-400' : 'text-red-800'}">${info.expires ? new Date(info.expires).toLocaleDateString() : '—'}</span>
                     </div>
                 </div>
 
-                <div class="absolute bottom-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onclick="quickDelete('${key}')" class="w-6 h-6 rounded bg-red-900 hover:bg-red-700 text-white flex items-center justify-center text-xs" title="Delete Key">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                     <button onclick="quickReset('${key}')" class="w-6 h-6 rounded bg-yellow-900 hover:bg-yellow-700 text-white flex items-center justify-center text-xs" title="Reset HWID">
+                <div class="absolute top-2 right-12 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-black/80 rounded p-1 border border-gray-800">
+                     <button onclick="quickReset('${key}')" class="w-6 h-6 rounded bg-yellow-600/20 hover:bg-yellow-600 text-yellow-500 hover:text-white flex items-center justify-center text-xs transition-colors" title="Reset HWID">
                         <i class="fa-solid fa-sync"></i>
+                    </button>
+                    <button onclick="quickDelete('${key}')" class="w-6 h-6 rounded bg-red-600/20 hover:bg-red-600 text-red-500 hover:text-white flex items-center justify-center text-xs transition-colors" title="Delete">
+                        <i class="fa-solid fa-trash"></i>
                     </button>
                 </div>
             </div>
             `;
         });
 
-        if (html === "") html = `<div class="col-span-full text-center text-gray-600 py-10 font-mono text-xs">NO DATA FOUND</div>`;
-        
-        // Simple DOM diffing could be better, but innerHTML is fine for small datasets
+        if (html === "") html = `<div class="col-span-full text-center text-gray-600 py-12 font-mono text-xs border border-dashed border-gray-800 rounded-lg">DATA STREAM EMPTY OR FILTERED</div>`;
         grid.innerHTML = html;
     }
 
     async function quickDelete(key) {
-        if(!confirm("Delete this key permanently?")) return;
+        if(!confirm("CONFIRM DELETION: This action is permanent.")) return;
         try {
             await fetch(`${API}/delete?key=${key}&admin=${ADMIN}`);
             showToast("Key Deleted", "success");
-            loadUsers(true); // Immediate refresh
-        } catch(e) { showToast("Error deleting", "error"); }
+            loadUsers(true); 
+        } catch(e) { showToast("Action Failed", "error"); }
     }
 
     async function quickReset(key) {
         try {
-            await fetch(`${API}/reset?key=${key}&admin=${ADMIN}`); // Asumiendo endpoint 'reset' para HWID
-            showToast("HWID Reset", "success");
-        } catch(e) { showToast("Error resetting", "error"); }
+            await fetch(`${API}/adminReset?key=${key}&admin=${ADMIN}`); // Asegúrate que el endpoint es correcto
+            showToast("HWID Unlinked", "success");
+            loadUsers(true);
+        } catch(e) { showToast("Action Failed", "error"); }
     }
 
-    /* --- TOOLS LOGIC --- */
+    /* --- TOOLS --- */
     async function toolCheck() {
         const k = document.getElementById('tool_verify_key').value;
         const resEl = document.getElementById('verify_result');
-        resEl.innerText = "Querying...";
+        resEl.innerText = "Querying Database...";
         try {
             const r = await fetch(`${API}/info?key=${k}&admin=${ADMIN}`);
             const d = await r.json();
             resEl.innerText = JSON.stringify(d, null, 2);
-        } catch(e) { resEl.innerText = "Error / Not Found"; }
+        } catch(e) { resEl.innerText = "Error: Key not found or server error."; }
     }
     
     async function toolReset() {
@@ -575,18 +636,20 @@
         try {
             const r = await fetch(`${API}/adminReset?key=${k}&admin=${ADMIN}`);
             const t = await r.text();
-            document.getElementById('reset_msg').innerText = t;
-        } catch(e) { document.getElementById('reset_msg').innerText = "Fail"; }
+            document.getElementById('reset_msg').innerText = "SUCCESS: " + t;
+            showToast("HWID Reset Successful", "success");
+        } catch(e) { document.getElementById('reset_msg').innerText = "FAILED"; }
     }
 
     async function nukeDatabase() {
-        const code = prompt("Type 'DELETE-ALL' to confirm destruction of database.");
-        if (code !== 'DELETE-ALL') return;
+        const code = prompt("TYPE 'CONFIRM-NUKE' TO ERASE ALL DATABASE ENTRIES:");
+        if (code !== 'CONFIRM-NUKE') return;
         
         try {
             await fetch(`${API}/deleteAll?admin=${ADMIN}`);
-            showToast("DATABASE CLEARED", "error");
-        } catch(e) { showToast("Command Failed", "error"); }
+            showToast("DATABASE FORMATTED", "error");
+            loadUsers();
+        } catch(e) { showToast("Operation Failed", "error"); }
     }
 
     function downloadBackup() {
@@ -594,5 +657,23 @@
     }
 
 </script>
+
+<script id="test-mode-script">
+    // Descomentar para probar el diseño sin login
+    /*
+    console.warn("⚠️ DEV MODE :: AUTH BYPASS");
+    setTimeout(() => {
+        document.getElementById('auth-layer').classList.add('hidden');
+        ADMIN = "test_mode";
+        // Dummy data render
+        USERS_CACHE = {
+             "Key-TEST-001": { hwid: "HWID-88X-11", expires: "2025-10-10", email: "client@test.com" },
+             "Key-TEST-002": { hwid: null, expires: "2022-01-01", email: null }
+        };
+        renderUsersFromCache();
+    }, 500);
+    */
+</script>
+
 </body>
 </html>
