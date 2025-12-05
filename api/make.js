@@ -1,49 +1,97 @@
-import { v4 as uuidv4 } from "uuid";
 import { getKeys, updateKeys } from "../utils/github.js";
+
+// Función auxiliar para generar caracteres aleatorios sobre la máscara
+function generateCustomKey(pattern) {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  // Reemplaza cada '*' con un caracter aleatorio
+  return pattern.replace(/\*/g, () => chars[Math.floor(Math.random() * chars.length)]);
+}
 
 export default async function handler(req, res) {
   if (req.method !== "GET")
-    return res.status(405).send("method not allowed");
+    return res.status(405).send("Method not allowed");
 
   const admin = req.query.admin;
   if (admin !== process.env.ADMIN_PASSWORD)
-    return res.status(403).send("invalid admin password");
+    return res.status(403).send("Invalid admin password");
 
-  // días de duración
-  const days = parseInt(req.query.days || "30");
-
-  // si es una key sin HWID
+  // --- PARÁMETROS NUEVOS ---
+  // Recibimos amount (cantidad) y unit (minutos, horas, dias, etc)
+  const amount = parseInt(req.query.amount || "30");
+  const unit = req.query.unit || "days"; 
+  
+  // Recibimos si es free (no hwid)
   const noHwid = req.query.nohwid === "true";
+
+  // Recibimos el patrón custom. Si no envían nada, usamos defaults.
+  let patternInput = req.query.pattern || "MINHOOK-******";
+  
+  // --- REGLA OBLIGATORIA: FREE KEYS ---
+  // Si es free, forzamos el formato MINHOOKFREE
+  if (noHwid) {
+    patternInput = "MINHOOKFREE-****";
+  }
+
+  // --- CÁLCULO DE TIEMPO ---
+  const now = new Date();
+  let expiresDate = new Date(now);
+
+  // Multiplicadores en milisegundos
+  const timeMap = {
+    minutes: 60 * 1000,
+    hours: 60 * 60 * 1000,
+    days: 24 * 60 * 60 * 1000,
+    weeks: 7 * 24 * 60 * 60 * 1000,
+    months: 30 * 24 * 60 * 60 * 1000, // aprox
+    years: 365 * 24 * 60 * 60 * 1000
+  };
+
+  // Si es Lifetime, ponemos una fecha muy lejana (Año 2099)
+  if (unit === 'lifetime') {
+    expiresDate.setFullYear(2099, 0, 1);
+  } else {
+    // Si la unidad existe en el mapa, sumamos el tiempo
+    const multiplier = timeMap[unit] || timeMap['days'];
+    expiresDate = new Date(now.getTime() + (amount * multiplier));
+  }
 
   try {
     const { content: keys, sha } = await getKeys();
 
     let newKey;
+    let attempts = 0;
+    
+    // Generar Key y asegurar que no exista duplicada
     do {
-      newKey = uuidv4().toUpperCase();
+      newKey = generateCustomKey(patternInput);
+      attempts++;
+      // Safety break por si alguien pone un patrón sin asteriscos "HOLA"
+      if(attempts > 10) break; 
     } while (keys[newKey]);
 
-    const now = new Date();
-    const expires = new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
-
-    // estructura del objeto de key
+    // Guardar en la estructura de datos
     keys[newKey] = {
       hwid: noHwid ? null : "",
       no_hwid: noHwid,
       last_reset: null,
       created: now.toISOString(),
-      expires: expires.toISOString(),
+      expires: expiresDate.toISOString(),
       email: "",
+      // Opcional: Guardamos info extra del plan para mostrarlo en dashboard
+      plan_info: unit === 'lifetime' ? 'Lifetime' : `${amount} ${unit}`
     };
 
     await updateKeys(keys, sha);
 
-    // respuesta clara para mostrar en el panel
-    const msg = noHwid
-      ? `${newKey} (expira el ${expires.toISOString().split("T")[0]}) [sin HWID]`
-      : `${newKey} (expira el ${expires.toISOString().split("T")[0]})`;
+    // Respuesta simple para el frontend
+    // Formato: KEY (expira el YYYY-MM-DD)
+    const friendlyDate = expiresDate.toISOString().replace("T", " ").substring(0, 16); // "2025-10-10 15:30"
+    const msg = unit === 'lifetime' 
+      ? `${newKey} (Lifetime)` 
+      : `${newKey} (Expires: ${friendlyDate})`;
 
     res.status(200).send(msg);
+
   } catch (e) {
     res.status(500).send("Server error: " + e.message);
   }
