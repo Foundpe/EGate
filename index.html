@@ -1,436 +1,457 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minhook-Auth Panel</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            /* Cambio de Azul a Rojo Intenso */
-            --primary: #ff3333; 
-            --primary-hover: #cc0000;
-            --bg-dark: #0f0f0f;
-            --bg-panel: #1a1a1a;
-            --text-main: #ffffff;
-            --text-sec: #a0a0a0;
-            --border: #333;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Minhook-Auth // Dashboard</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { 
+            ka: { 
+              bg: '#0b0b0b',        // Main BG
+              panel: '#111111',     // Panel BG
+              border: '#1c1c1c',    // Borders
+              accent: '#dc2626',    // RED Accent (Minhook Style)
+              accentHover: '#b91c1c', // Darker Red Hover
+              text: '#e1e1e1',
+              muted: '#666666'
+            }
+          },
+          fontFamily: { 
+            sans: ['Poppins', 'sans-serif'], 
+            mono: ['Consolas', 'monospace'],
+          },
+          animation: { 'fade-in': 'fadeIn 0.3s ease-out' },
+          keyframes: {
+            fadeIn: { '0%': { opacity: '0', transform: 'translateY(5px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }
+          }
         }
+      }
+    }
+  </script>
 
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            display: flex;
-            height: 100vh;
-        }
+  <style>
+    body {
+      background-color: #0b0b0b;
+      color: #e1e1e1;
+      font-family: 'Poppins', sans-serif;
+      overflow: hidden; 
+    }
 
-        /* Sidebar */
-        .sidebar {
-            width: 260px;
-            background-color: var(--bg-panel);
-            border-right: 1px solid var(--border);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-        }
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0b0b0b; }
+    ::-webkit-scrollbar-thumb { background: #1c1c1c; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #dc2626; } 
+    
+    .ka-panel {
+      background-color: #111111;
+      border: 1px solid #1c1c1c;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    }
+    
+    .ka-input {
+      background-color: #0b0b0b;
+      border: 1px solid #1c1c1c;
+      color: #fff;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+    }
+    .ka-input:focus { outline: none; border-color: #dc2626; box-shadow: 0 0 10px rgba(220, 38, 38, 0.2); }
+    .ka-input:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--primary);
-            margin-bottom: 40px;
-            text-align: center;
-            letter-spacing: 1px;
-            text-shadow: 0 0 10px rgba(255, 51, 51, 0.3);
-        }
+    .ka-btn {
+      background-color: #dc2626; 
+      color: white;
+      transition: all 0.2s;
+      font-weight: 500;
+      font-size: 0.85rem;
+    }
+    .ka-btn:hover { background-color: #b91c1c; transform: translateY(-1px); box-shadow: 0 0 15px rgba(220, 38, 38, 0.4); }
+    .ka-btn:active { transform: translateY(0); }
 
-        .menu-item {
-            padding: 12px 15px;
-            color: var(--text-sec);
-            text-decoration: none;
-            border-radius: 8px;
-            margin-bottom: 5px;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+    .sidebar-link {
+      color: #888;
+      transition: all 0.2s;
+      font-size: 0.9rem;
+      border-left: 3px solid transparent;
+    }
+    .sidebar-link:hover { color: #fff; background: #161616; }
+    .sidebar-link.active { color: #fff; background: #161616; border-left-color: #dc2626; } 
+    
+    .noselect { user-select: none; }
+    
+    /* Table Styles */
+    table { width: 100%; border-collapse: separate; border-spacing: 0; }
+    th { text-align: left; padding: 12px 16px; color: #666; font-size: 0.75rem; text-transform: uppercase; font-weight: 600; border-bottom: 1px solid #1c1c1c; }
+    td { padding: 12px 16px; border-bottom: 1px solid #1c1c1c; font-size: 0.85rem; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background-color: #161616; }
 
-        .menu-item:hover, .menu-item.active {
-            background-color: rgba(255, 51, 51, 0.1); /* Rojo transparente */
-            color: var(--primary);
-        }
-
-        /* Contenido Principal */
-        .main-content {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-primary {
-            background-color: var(--primary);
-            color: white;
-            box-shadow: 0 0 15px rgba(255, 51, 51, 0.4);
-        }
-
-        .btn-primary:hover {
-            background-color: var(--primary-hover);
-        }
-
-        .btn-danger {
-            background-color: #2a2a2a;
-            color: #ff5555;
-            border: 1px solid #ff5555;
-        }
-        
-        .btn-danger:hover {
-            background-color: #ff5555;
-            color: white;
-        }
-
-        /* Tabla de Usuarios */
-        .user-table-container {
-            background-color: var(--bg-panel);
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid var(--border);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            text-align: left;
-            padding: 15px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        th {
-            color: var(--text-sec);
-            font-size: 0.9em;
-            text-transform: uppercase;
-        }
-
-        td {
-            font-size: 0.95em;
-        }
-
-        /* Checkbox personalizado */
-        .custom-checkbox {
-            cursor: pointer;
-            accent-color: var(--primary);
-            transform: scale(1.2);
-        }
-
-        /* Acciones */
-        .action-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.1em;
-            padding: 5px;
-            transition: 0.2s;
-        }
-
-        .edit-btn { color: var(--text-sec); }
-        .edit-btn:hover { color: var(--primary); text-shadow: 0 0 8px var(--primary); }
-        
-        /* Status Badge */
-        .status {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8em;
-            font-weight: bold;
-        }
-        .status.active { background-color: rgba(0, 255, 128, 0.15); color: #00ff80; }
-        .status.banned { background-color: rgba(255, 51, 51, 0.15); color: #ff3333; }
-
-        /* --- MODAL ESTILO KEYAUTH --- */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
-            display: none; /* Oculto por defecto */
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .modal-content {
-            background: #151515;
-            width: 400px;
-            padding: 30px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            box-shadow: 0 0 30px rgba(0,0,0,0.8), 0 0 5px var(--primary);
-            position: relative;
-            text-align: center;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            color: white;
-        }
-        
-        .modal-subtitle {
-            font-size: 0.9rem;
-            color: var(--text-sec);
-            margin-bottom: 25px;
-        }
-
-        .input-group {
-            text-align: left;
-            margin-bottom: 25px;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--text-sec);
-            font-size: 0.9rem;
-        }
-
-        .styled-input {
-            width: 100%;
-            padding: 12px;
-            background-color: #0a0a0a;
-            border: 1px solid #333;
-            border-radius: 6px;
-            color: white;
-            outline: none;
-            transition: 0.3s;
-        }
-
-        .styled-input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 10px rgba(255, 51, 51, 0.2);
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-
-        .btn-modal-save {
-            background-color: var(--primary);
-            color: white;
-            width: 100%;
-        }
-        
-        .btn-modal-cancel {
-            background-color: transparent;
-            border: 1px solid var(--border);
-            color: var(--text-sec);
-            width: 100%;
-        }
-        
-        .btn-modal-cancel:hover {
-            border-color: white;
-            color: white;
-        }
-
-    </style>
+    /* Custom Checkbox */
+    .custom-checkbox {
+        accent-color: #dc2626;
+        cursor: pointer;
+        width: 16px;
+        height: 16px;
+    }
+  </style>
 </head>
-<body>
+<body class="flex h-screen antialiased noselect">
 
-    <div class="sidebar">
-        <div class="logo">
-            <i class="fa-solid fa-shield-halved"></i> Minhook
-        </div>
-        <a href="#" class="menu-item active"><i class="fa-solid fa-users"></i> Usuarios</a>
-        <a href="#" class="menu-item"><i class="fa-solid fa-key"></i> Licencias</a>
-        <a href="#" class="menu-item"><i class="fa-solid fa-chart-line"></i> Estadísticas</a>
-        <a href="#" class="menu-item"><i class="fa-solid fa-gear"></i> Configuración</a>
+<div id="auth-layer" class="fixed inset-0 z-50 flex items-center justify-center bg-[#050505] transition-all duration-500">
+  <div class="ka-panel p-8 rounded-lg w-full max-w-sm text-center relative border-t-2 border-ka-accent shadow-[0_0_30px_rgba(220,38,38,0.15)]">
+    <div class="mb-8">
+      <i class="fa-solid fa-fingerprint text-4xl text-ka-accent mb-4"></i>
+      <h1 class="text-2xl font-bold text-white tracking-wide">Minhook-Auth</h1>
+      <p class="text-xs text-ka-muted mt-1 uppercase tracking-widest">Secure Dashboard</p>
     </div>
-
-    <div class="main-content">
-        <div class="header">
-            <h2>Gestión de Usuarios</h2>
-            <button class="btn btn-danger" onclick="deleteSelected()">
-                <i class="fa-solid fa-trash"></i> Eliminar Seleccionados
-            </button>
-        </div>
-
-        <div class="user-table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 50px;">Select</th>
-                        <th>Usuario</th>
-                        <th>HWID</th>
-                        <th>Estado</th>
-                        <th>Tiempo Restante</th>
-                        <th>Acción</th>
-                    </tr>
-                </thead>
-                <tbody id="userTableBody">
-                    </tbody>
-            </table>
-        </div>
+    <div class="space-y-4">
+      <input id="adminPass" type="password" class="ka-input w-full p-3 rounded text-center placeholder-gray-600" placeholder="Secret Key (admin)">
+      <button onclick="attemptLogin()" class="ka-btn w-full py-3 rounded shadow-lg shadow-red-900/20">Login</button>
     </div>
+    <p id="loginMsg" class="mt-4 text-xs font-mono h-4 text-red-500"></p>
+  </div>
+</div>
 
-    <div class="modal-overlay" id="editModal">
-        <div class="modal-content">
-            <h3 class="modal-title">Extender Tiempo</h3>
-            <p class="modal-subtitle">Editando suscripción para: <span id="modalUsername" style="color:var(--primary)">Usuario</span></p>
-            
-            <div class="input-group">
-                <label>Días restantes</label>
-                <input type="number" id="editTimeInput" class="styled-input" placeholder="Ej: 30">
+<div id="edit-modal" class="fixed inset-0 z-40 hidden items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity duration-300">
+    <div class="ka-panel w-full max-w-md p-6 rounded-lg border border-ka-border shadow-[0_0_50px_rgba(0,0,0,0.8)] transform scale-100 animate-fade-in relative">
+        <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+        
+        <div class="text-center mb-6">
+            <div class="w-12 h-12 bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-3 border border-red-500/30">
+                <i class="fa-solid fa-clock text-ka-accent text-xl"></i>
             </div>
+            <h3 class="text-xl font-bold text-white">Extend Subscription</h3>
+            <p class="text-xs text-ka-muted mt-1">Editing time for <span id="modal-username" class="text-ka-accent">User</span></p>
+        </div>
 
-            <div class="modal-actions">
-                <button class="btn btn-modal-cancel" onclick="closeModal()">Cancelar</button>
-                <button class="btn btn-modal-save" onclick="saveChanges()">Guardar</button>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Days Remaining</label>
+                <input type="number" id="edit-days-input" class="ka-input w-full p-3 rounded" placeholder="Enter days">
+            </div>
+            
+            <div class="flex gap-3 mt-6">
+                <button onclick="closeModal()" class="w-1/2 py-2 rounded border border-ka-border text-gray-400 hover:text-white hover:border-gray-500 transition-colors text-sm">Cancel</button>
+                <button onclick="saveUserTime()" class="ka-btn w-1/2 py-2 rounded text-sm shadow-lg shadow-red-900/20">Save Changes</button>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-        // Datos de ejemplo
-        let users = [
-            { id: 1, name: "AdminUser", hwid: "A1-B2-C3-D4", status: "active", days: 365 },
-            { id: 2, name: "GamerPro", hwid: "X9-Y8-Z7-W6", status: "active", days: 15 },
-            { id: 3, name: "Cheater01", hwid: "H5-J4-K3-L2", status: "banned", days: 0 },
-            { id: 4, name: "MinHookFan", hwid: "M1-N2-H3-K4", status: "active", days: 120 }
-        ];
+<aside class="w-64 bg-[#111111] border-r border-[#1c1c1c] flex flex-col z-10">
+  <div class="h-16 flex items-center px-6 border-b border-[#1c1c1c]">
+    <i class="fa-solid fa-shield-cat text-ka-accent text-xl mr-3"></i>
+    <span class="font-bold text-lg tracking-wide">Minhook</span>
+    <span class="ml-auto text-[10px] bg-red-900/20 text-red-400 px-2 py-0.5 rounded border border-red-900/50">V1.3</span>
+  </div>
 
-        let currentEditingId = null;
+  <div class="p-4">
+      <p class="text-[10px] text-[#444] font-bold uppercase mb-2 pl-3">Main</p>
+      <nav class="space-y-1">
+        <button onclick="switchTab('generate')" id="nav-generate" class="sidebar-link w-full flex items-center px-4 py-3 rounded active">
+            <i class="fa-solid fa-ticket w-6"></i> <span>Licenses</span>
+        </button>
+        <button onclick="switchTab('users')" id="nav-users" class="sidebar-link w-full flex items-center px-4 py-3 rounded">
+            <i class="fa-solid fa-users w-6"></i> <span>Users</span>
+        </button>
+        <button onclick="switchTab('tools')" id="nav-tools" class="sidebar-link w-full flex items-center px-4 py-3 rounded">
+            <i class="fa-solid fa-screwdriver-wrench w-6"></i> <span>Tools</span>
+        </button>
+      </nav>
+  </div>
 
-        // Renderizar tabla
-        function renderTable() {
-            const tbody = document.getElementById("userTableBody");
-            tbody.innerHTML = ""; // Limpiar tabla
+  <div class="mt-auto p-4 border-t border-[#1c1c1c]">
+    <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-red-600 to-red-900 flex items-center justify-center text-xs font-bold border border-red-500/30">A</div>
+        <div>
+            <p class="text-xs font-bold text-white">Administrator</p>
+            <p class="text-[10px] text-gray-500">Admin Access</p>
+        </div>
+        <button onclick="location.reload()" class="ml-auto text-gray-500 hover:text-red-500"><i class="fa-solid fa-right-from-bracket"></i></button>
+    </div>
+  </div>
+</aside>
 
-            users.forEach(user => {
-                const tr = document.createElement("tr");
-                tr.innerHTML = `
-                    <td><input type="checkbox" class="custom-checkbox user-checkbox" data-id="${user.id}"></td>
-                    <td>${user.name}</td>
-                    <td><code style="color:var(--text-sec)">${user.hwid}</code></td>
-                    <td><span class="status ${user.status}">${user.status.toUpperCase()}</span></td>
-                    <td>${user.days} Días</td>
-                    <td>
-                        <button class="action-btn edit-btn" onclick="openModal(${user.id})">
-                            <i class="fa-solid fa-pen-to-square"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
+<main class="flex-1 flex flex-col bg-[#0b0b0b] relative">
+  <header class="h-16 border-b border-[#1c1c1c] bg-[#111111] flex items-center justify-between px-8">
+      <h2 id="page-title" class="font-semibold text-sm text-gray-300">License Generation</h2>
+      <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2 text-xs text-gray-500 bg-[#0b0b0b] px-3 py-1.5 rounded border border-[#1c1c1c]">
+              <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+              <span>System Online</span>
+          </div>
+      </div>
+  </header>
+
+  <div class="flex-1 overflow-y-auto p-8 relative">
+      
+      <div id="tab-generate" class="animate-fade-in max-w-4xl mx-auto">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div class="ka-panel p-5 rounded border-l-2 border-ka-accent">
+                  <p class="text-gray-500 text-xs uppercase font-bold">Total Keys</p>
+                  <p class="text-2xl font-bold text-white mt-1">1,248</p>
+              </div>
+              <div class="ka-panel p-5 rounded border-l-2 border-green-600">
+                  <p class="text-gray-500 text-xs uppercase font-bold">Active Users</p>
+                  <p class="text-2xl font-bold text-white mt-1">843</p>
+              </div>
+              <div class="ka-panel p-5 rounded border-l-2 border-yellow-600">
+                  <p class="text-gray-500 text-xs uppercase font-bold">Banned</p>
+                  <p class="text-2xl font-bold text-white mt-1">42</p>
+              </div>
+          </div>
+
+          <div class="ka-panel p-6 rounded-lg">
+              <h3 class="text-lg font-semibold mb-6 flex items-center gap-2">
+                  <i class="fa-solid fa-plus text-ka-accent"></i> Create Licenses
+              </h3>
+              <div class="grid grid-cols-2 gap-4 mb-4">
+                  <div>
+                      <label class="block text-xs text-gray-500 mb-2">Duration (Days)</label>
+                      <select id="gen-days" class="ka-input w-full p-3 rounded">
+                          <option value="1">1 Day</option>
+                          <option value="7">7 Days</option>
+                          <option value="30">30 Days</option>
+                          <option value="365">Lifetime</option>
+                      </select>
+                  </div>
+                  <div>
+                      <label class="block text-xs text-gray-500 mb-2">Amount</label>
+                      <input type="number" id="gen-amount" class="ka-input w-full p-3 rounded" value="1" min="1" max="50">
+                  </div>
+              </div>
+              <div class="mb-6">
+                   <label class="block text-xs text-gray-500 mb-2">Key Level</label>
+                   <select class="ka-input w-full p-3 rounded">
+                       <option>Premium</option>
+                       <option>Developer</option>
+                       <option>Trial</option>
+                   </select>
+              </div>
+              <button onclick="generateKeys()" class="ka-btn w-full py-3 rounded shadow-lg shadow-red-900/10">
+                  <i class="fa-solid fa-bolt mr-2"></i> Generate Keys
+              </button>
+
+              <div id="output-area" class="mt-6 hidden">
+                  <label class="block text-xs text-gray-500 mb-2">Generated Output</label>
+                  <textarea id="keys-output" class="ka-input w-full p-3 rounded h-32 font-mono text-xs text-green-400" readonly></textarea>
+              </div>
+          </div>
+      </div>
+
+      <div id="tab-users" class="hidden animate-fade-in">
+          <div class="ka-panel rounded-lg overflow-hidden border border-[#1c1c1c]">
+              <div class="p-4 border-b border-[#1c1c1c] flex justify-between items-center bg-[#111111]">
+                  <div class="flex items-center gap-3">
+                      <div class="relative">
+                          <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-600 text-xs"></i>
+                          <input type="text" placeholder="Search user..." class="ka-input pl-8 pr-3 py-2 rounded text-xs w-64 border-none bg-[#0b0b0b]">
+                      </div>
+                  </div>
+                  <button onclick="deleteSelected()" class="bg-red-900/20 hover:bg-red-900/40 text-red-500 border border-red-900/50 px-4 py-2 rounded text-xs font-semibold transition-all">
+                      <i class="fa-solid fa-trash mr-1"></i> Delete Selected
+                  </button>
+              </div>
+              
+              <div class="overflow-x-auto">
+                  <table class="w-full">
+                      <thead>
+                          <tr class="bg-[#0f0f0f]">
+                              <th style="width: 40px;"><input type="checkbox" id="select-all" class="custom-checkbox" onclick="toggleSelectAll()"></th>
+                              <th>User</th>
+                              <th>HWID</th>
+                              <th>IP Address</th>
+                              <th>Expires In</th>
+                              <th class="text-right">Action</th>
+                          </tr>
+                      </thead>
+                      <tbody id="users-table-body">
+                          </tbody>
+                  </table>
+              </div>
+          </div>
+      </div>
+
+      <div id="tab-tools" class="hidden animate-fade-in max-w-2xl mx-auto text-center mt-20">
+          <i class="fa-solid fa-toolbox text-6xl text-[#1c1c1c] mb-4"></i>
+          <h3 class="text-xl font-bold text-gray-500">System Tools</h3>
+          <p class="text-gray-600 text-sm mt-2">HWID Reset and Blacklist manager coming soon.</p>
+      </div>
+
+  </div>
+</main>
+
+<script>
+    // --- AUTH LOGIC ---
+    function attemptLogin() {
+        const pass = document.getElementById('adminPass').value;
+        const layer = document.getElementById('auth-layer');
+        const msg = document.getElementById('loginMsg');
+        
+        if(pass === 'admin') {
+            layer.style.opacity = '0';
+            setTimeout(() => { layer.style.display = 'none'; }, 500);
+        } else {
+            msg.innerText = 'Invalid credentials';
+            document.getElementById('adminPass').classList.add('border-red-500');
         }
+    }
 
-        // --- Lógica del Modal (Pop-up) ---
+    // --- TABS LOGIC ---
+    function switchTab(tabName) {
+        // Hide all
+        ['generate', 'users', 'tools'].forEach(t => {
+            document.getElementById('tab-' + t).classList.add('hidden');
+            document.getElementById('nav-' + t).classList.remove('active');
+        });
 
-        function openModal(id) {
-            const user = users.find(u => u.id === id);
-            if(user) {
-                currentEditingId = id;
-                document.getElementById('modalUsername').innerText = user.name;
-                document.getElementById('editTimeInput').value = user.days;
-                
-                // Mostrar modal con Flex para centrar
-                const modal = document.getElementById('editModal');
-                modal.style.display = 'flex';
+        // Show selected
+        document.getElementById('tab-' + tabName).classList.remove('hidden');
+        document.getElementById('nav-' + tabName).classList.add('active');
+        
+        // Update Title
+        const titles = { 'generate': 'License Generation', 'users': 'User Management', 'tools': 'System Tools' };
+        document.getElementById('page-title').innerText = titles[tabName];
+    }
+
+    // --- KEY GEN LOGIC ---
+    function generateKeys() {
+        const amount = document.getElementById('gen-amount').value;
+        const output = document.getElementById('keys-output');
+        const area = document.getElementById('output-area');
+        
+        let keys = "";
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        
+        for(let i=0; i<amount; i++) {
+            let key = "MINHOOK-";
+            for(let j=0; j<4; j++) {
+                for(let k=0; k<4; k++) key += chars.charAt(Math.floor(Math.random() * chars.length));
+                if(j<3) key += "-";
             }
+            keys += key + "\n";
         }
+        
+        area.classList.remove('hidden');
+        output.value = keys;
+    }
 
-        function closeModal() {
-            document.getElementById('editModal').style.display = 'none';
-            currentEditingId = null;
+    // --- USERS DATA & LOGIC ---
+    let users = [
+        { id: 1, name: "DarkSlayer", hwid: "BF-34-19-AA-01", ip: "192.168.1.XX", days: 28 },
+        { id: 2, name: "AimGod_Pro", hwid: "11-FA-CC-99-22", ip: "45.21.11.XX", days: 365 },
+        { id: 3, name: "TestUser01", hwid: "DD-00-11-22-33", ip: "10.0.0.XX", days: 0 },
+        { id: 4, name: "MinHooker", hwid: "AA-BB-CC-DD-EE", ip: "127.0.0.1", days: 12 },
+    ];
+
+    let currentEditId = null;
+
+    function renderUsers() {
+        const tbody = document.getElementById('users-table-body');
+        tbody.innerHTML = '';
+
+        users.forEach(u => {
+            // Status Logic
+            let statusColor = u.days > 0 ? 'text-green-500' : 'text-red-500';
+            let daysText = u.days > 0 ? `${u.days} Days` : 'Expired';
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="checkbox" class="custom-checkbox user-check" data-id="${u.id}"></td>
+                <td>
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 rounded bg-[#1c1c1c] flex items-center justify-center text-[10px] text-gray-400 font-bold">${u.name.charAt(0)}</div>
+                        <span class="font-medium text-white">${u.name}</span>
+                    </div>
+                </td>
+                <td class="font-mono text-xs text-gray-500">${u.hwid}</td>
+                <td class="font-mono text-xs text-gray-500">${u.ip}</td>
+                <td class="font-mono text-xs ${statusColor}">${daysText}</td>
+                <td class="text-right">
+                    <button onclick="openEditModal(${u.id})" class="text-gray-500 hover:text-ka-accent transition-colors p-2" title="Edit Time">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // --- EDIT MODAL LOGIC (TIME ONLY) ---
+    function openEditModal(id) {
+        const user = users.find(u => u.id === id);
+        if(!user) return;
+
+        currentEditId = id;
+        document.getElementById('modal-username').innerText = user.name;
+        document.getElementById('edit-days-input').value = user.days;
+        
+        const modal = document.getElementById('edit-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('edit-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        currentEditId = null;
+    }
+
+    function saveUserTime() {
+        if(currentEditId === null) return;
+        
+        const newDays = parseInt(document.getElementById('edit-days-input').value);
+        const userIndex = users.findIndex(u => u.id === currentEditId);
+        
+        if(userIndex !== -1) {
+            users[userIndex].days = newDays;
+            renderUsers();
+            closeModal();
         }
+    }
 
-        function saveChanges() {
-            const newTime = document.getElementById('editTimeInput').value;
+    // --- BULK DELETE LOGIC ---
+    function toggleSelectAll() {
+        const mainCheck = document.getElementById('select-all');
+        const checks = document.querySelectorAll('.user-check');
+        checks.forEach(c => c.checked = mainCheck.checked);
+    }
+
+    function deleteSelected() {
+        const checks = document.querySelectorAll('.user-check:checked');
+        if(checks.length === 0) return alert('No users selected');
+
+        if(confirm(`Delete ${checks.length} users permanently?`)) {
+            const idsToDelete = Array.from(checks).map(c => parseInt(c.getAttribute('data-id')));
+            users = users.filter(u => !idsToDelete.includes(u.id));
             
-            if(currentEditingId !== null) {
-                // Actualizar array de datos
-                const userIndex = users.findIndex(u => u.id === currentEditingId);
-                if(userIndex !== -1) {
-                    users[userIndex].days = newTime;
-                    
-                    // Si le das tiempo, reactivarlo automáticamente (opcional)
-                    if(newTime > 0) users[userIndex].status = "active";
-                    
-                    renderTable();
-                    closeModal();
-                }
-            }
+            // Uncheck master
+            document.getElementById('select-all').checked = false;
+            renderUsers();
         }
+    }
 
-        // --- Lógica de Eliminación Múltiple ---
-
-        function deleteSelected() {
-            // Obtener todas las checkboxes marcadas
-            const checkboxes = document.querySelectorAll('.user-checkbox:checked');
-            
-            if(checkboxes.length === 0) {
-                alert("Selecciona al menos un usuario para eliminar.");
-                return;
-            }
-
-            if(confirm(`¿Estás seguro de eliminar ${checkboxes.length} usuarios?`)) {
-                // Crear lista de IDs a eliminar
-                const idsToDelete = Array.from(checkboxes).map(cb => parseInt(cb.getAttribute('data-id')));
-                
-                // Filtrar el array principal manteniendo solo los que NO están en la lista de eliminar
-                users = users.filter(user => !idsToDelete.includes(user.id));
-                
-                renderTable();
-            }
+    // Init
+    document.addEventListener('keydown', function(event) {
+        if (event.key === "Enter") {
+             // If login is visible, attempt login
+             if(document.getElementById('auth-layer').style.display !== 'none') {
+                 attemptLogin();
+             }
         }
+    });
 
-        // Cerrar modal si clickeas afuera
-        window.onclick = function(event) {
-            const modal = document.getElementById('editModal');
-            if (event.target == modal) {
-                closeModal();
-            }
-        }
-
-        // Inicializar
-        renderTable();
-    </script>
+    renderUsers();
+</script>
 </body>
 </html>
