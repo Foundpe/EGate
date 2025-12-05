@@ -13,29 +13,12 @@
     tailwind.config = {
       theme: {
         extend: {
-          colors: {
-            brand: {
-              red: '#dc2626',
-              dark: '#050505'
-            }
-          },
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace'],
-          },
-          animation: {
-            'fade-in': 'fadeIn 0.5s ease-out',
-            'slide-up': 'slideUp 0.4s ease-out'
-          },
+          colors: { brand: { red: '#dc2626', dark: '#050505' } },
+          fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+          animation: { 'fade-in': 'fadeIn 0.5s ease-out', 'slide-up': 'slideUp 0.4s ease-out' },
           keyframes: {
-            fadeIn: {
-              '0%': { opacity: '0' },
-              '100%': { opacity: '1' },
-            },
-            slideUp: {
-              '0%': { transform: 'translateY(10px)', opacity: '0' },
-              '100%': { transform: 'translateY(0)', opacity: '1' },
-            }
+            fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+            slideUp: { '0%': { transform: 'translateY(10px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } }
           }
         }
       }
@@ -43,45 +26,36 @@
   </script>
 
   <style>
-    /* Base Styles */
     body {
       background-color: #000000;
       background-image: radial-gradient(circle at 50% -20%, #220505 0%, #000000 60%);
       color: #e5e7eb;
       overflow: hidden; 
     }
-
-    /* Custom Scrollbar */
     ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: #050505; }
     ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
     ::-webkit-scrollbar-thumb:hover { background: #dc2626; }
-
-    /* Glass Panels */
+    
     .glass-panel {
-      background: rgba(10, 10, 10, 0.7);
+      background: rgba(10, 10, 10, 0.75);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.05);
       box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
     }
     
-    /* Inputs */
     .input-field {
       background: #080808;
       border: 1px solid #1f1f1f;
       color: #fff;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.85rem;
+      font-size: 0.80rem;
       transition: all 0.3s ease;
     }
-    .input-field:focus {
-      outline: none;
-      border-color: #dc2626;
-      box-shadow: 0 0 15px rgba(220, 38, 38, 0.15);
-    }
+    .input-field:focus { outline: none; border-color: #dc2626; box-shadow: 0 0 15px rgba(220, 38, 38, 0.15); }
+    .input-field:disabled { background: #050505; color: #444; border-color: #111; cursor: not-allowed; }
 
-    /* Buttons */
     .btn-primary {
       background: linear-gradient(180deg, #b91c1c 0%, #991b1b 100%);
       color: white;
@@ -91,18 +65,10 @@
       letter-spacing: 1px;
       font-size: 0.75rem;
       font-weight: 700;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
     }
-    .btn-primary:hover {
-      box-shadow: 0 0 25px rgba(220, 38, 38, 0.4);
-      transform: translateY(-1px);
-    }
+    .btn-primary:hover { box-shadow: 0 0 25px rgba(220, 38, 38, 0.4); transform: translateY(-1px); }
     .btn-primary:active { transform: translateY(1px); }
-
-    /* Utilities */
     .noselect { user-select: none; }
-    
-    /* Console Scanline Effect */
     .console-bg {
       background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
       background-size: 100% 2px, 3px 100%;
@@ -113,9 +79,7 @@
 
 <div id="auth-layer" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-100 backdrop-blur-xl transition-all duration-700">
   <div class="glass-panel p-10 rounded-2xl w-full max-w-sm text-center border-t border-red-900/50 relative overflow-hidden shadow-[0_0_50px_rgba(220,38,38,0.1)]">
-    
     <div class="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-[2px] bg-gradient-to-r from-transparent via-red-600 to-transparent shadow-[0_0_10px_#ef4444]"></div>
-    
     <div class="mb-8 relative">
       <div class="w-16 h-16 mx-auto bg-red-600/10 rounded-full flex items-center justify-center mb-4 border border-red-500/20 animate-pulse">
         <i class="fa-solid fa-fingerprint text-3xl text-red-500"></i>
@@ -123,11 +87,8 @@
       <h1 class="text-3xl font-bold tracking-[0.2em] text-white">MINHOOK</h1>
       <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-2">Administrative Control</p>
     </div>
-
     <div class="space-y-5">
-      <div class="relative group">
-        <input id="adminPass" type="password" class="input-field w-full p-3.5 text-center rounded-lg bg-black/50 text-red-100 placeholder-gray-700 focus:placeholder-red-900 transition-all" placeholder="AUTHENTICATION KEY">
-      </div>
+      <input id="adminPass" type="password" class="input-field w-full p-3.5 text-center rounded-lg bg-black/50 text-red-100 placeholder-gray-700 focus:placeholder-red-900 transition-all" placeholder="AUTHENTICATION KEY">
       <button onclick="attemptLogin()" class="btn-primary w-full py-3.5 rounded-lg shadow-lg shadow-red-900/20 group">
         <span class="group-hover:tracking-widest transition-all duration-300">Unlock System</span>
       </button>
@@ -145,26 +106,21 @@
       <h2 class="font-bold text-gray-100 tracking-wide text-sm">MINHOOK</h2>
       <div class="flex items-center gap-1.5 mt-0.5">
         <span class="w-1 h-1 rounded-full bg-green-500 animate-pulse"></span>
-        <span class="text-[9px] text-gray-500 font-mono">V.4.2.0 ACTIVE</span>
+        <span class="text-[9px] text-gray-500 font-mono">V.4.5.0 ACTIVE</span>
       </div>
     </div>
   </div>
-
   <nav class="flex-1 p-3 space-y-2 mt-4">
     <button onclick="switchTab('generate')" class="nav-btn w-full flex items-center justify-center lg:justify-start gap-3 px-0 lg:px-4 py-3 rounded-lg text-gray-500 hover:text-white hover:bg-white/5 transition-all group active-tab bg-white/5 text-white border border-transparent hover:border-white/5">
-      <i class="fa-solid fa-terminal text-lg group-hover:text-red-500 transition-colors"></i>
-      <span class="hidden lg:inline font-medium">Generator</span>
+      <i class="fa-solid fa-terminal text-lg group-hover:text-red-500 transition-colors"></i><span class="hidden lg:inline font-medium">Generator</span>
     </button>
     <button onclick="switchTab('users')" class="nav-btn w-full flex items-center justify-center lg:justify-start gap-3 px-0 lg:px-4 py-3 rounded-lg text-gray-500 hover:text-white hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
-      <i class="fa-solid fa-users-line text-lg group-hover:text-red-500 transition-colors"></i>
-      <span class="hidden lg:inline font-medium">Database</span>
+      <i class="fa-solid fa-users-line text-lg group-hover:text-red-500 transition-colors"></i><span class="hidden lg:inline font-medium">Database</span>
     </button>
     <button onclick="switchTab('tools')" class="nav-btn w-full flex items-center justify-center lg:justify-start gap-3 px-0 lg:px-4 py-3 rounded-lg text-gray-500 hover:text-white hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
-      <i class="fa-solid fa-screwdriver-wrench text-lg group-hover:text-red-500 transition-colors"></i>
-      <span class="hidden lg:inline font-medium">Utilities</span>
+      <i class="fa-solid fa-screwdriver-wrench text-lg group-hover:text-red-500 transition-colors"></i><span class="hidden lg:inline font-medium">Utilities</span>
     </button>
   </nav>
-
   <div class="p-4 border-t border-gray-800/50">
     <button onclick="location.reload()" class="w-full h-10 flex items-center justify-center lg:justify-start gap-2 rounded hover:bg-red-900/10 text-gray-600 hover:text-red-500 transition-all text-xs">
       <i class="fa-solid fa-power-off"></i> <span class="hidden lg:inline">Terminate</span>
@@ -175,85 +131,94 @@
 <main class="flex-1 p-6 lg:p-10 overflow-y-auto relative bg-[#030303]">
   <div class="fixed top-0 right-0 w-[600px] h-[600px] bg-red-600/5 rounded-full blur-[120px] pointer-events-none"></div>
 
-  <div id="tab-generate" class="content-tab space-y-6 max-w-5xl mx-auto animate-slide-up">
+  <div id="tab-generate" class="content-tab space-y-6 max-w-6xl mx-auto animate-slide-up">
     
     <div class="flex items-center justify-between mb-8">
       <div>
-        <h2 class="text-3xl font-bold text-white tracking-tight">License Factory</h2>
-        <p class="text-xs text-gray-500 font-mono mt-1">Generate access tokens securely.</p>
+        <h2 class="text-3xl font-bold text-white tracking-tight">License Manager</h2>
+        <p class="text-xs text-gray-500 font-mono mt-1">Advanced Token Generation (KeyAuth Style)</p>
       </div>
       <div class="glass-panel p-1 rounded-lg flex bg-black/60 border-red-900/30">
         <button onclick="toggleGenMode('single')" id="btn-mode-single" class="px-5 py-2 rounded-md text-xs font-bold transition-all bg-red-600 text-white shadow shadow-red-900/50">SINGLE</button>
         <button onclick="toggleGenMode('bulk')" id="btn-mode-bulk" class="px-5 py-2 rounded-md text-xs font-bold text-gray-500 transition-all hover:text-white">BULK</button>
-    </div>
-    </div>
-
-    <div class="glass-panel p-8 rounded-xl border-l-2 border-red-600 shadow-2xl relative overflow-hidden">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 relative z-10">
-        <div>
-           <label class="text-[10px] text-gray-500 uppercase font-bold block mb-2 tracking-wider">Plan Type</label>
-           <div class="relative">
-             <i class="fa-solid fa-layer-group absolute left-3 top-3 text-gray-600 text-xs"></i>
-             <select id="gen_type" class="input-field w-full p-2.5 pl-9 rounded text-gray-300">
-               <option value="paid">Standard (HWID Lock)</option>
-               <option value="free">Free (No HWID)</option>
-             </select>
-           </div>
-        </div>
-        <div>
-          <label class="text-[10px] text-gray-500 uppercase font-bold block mb-2 tracking-wider">Duration (Days)</label>
-          <div class="relative">
-            <i class="fa-regular fa-clock absolute left-3 top-3 text-gray-600 text-xs"></i>
-            <input id="gen_days" type="number" value="30" class="input-field w-full p-2.5 pl-9 rounded text-center placeholder-gray-600">
-          </div>
-        </div>
-        <div id="qty_container" class="hidden animate-fade-in">
-            <label class="text-[10px] text-red-500 uppercase font-bold block mb-2 tracking-wider">Bulk Qty</label>
-            <input id="gen_qty" type="number" value="5" max="50" class="input-field w-full p-2.5 rounded text-center border-red-900/50 text-red-100 bg-red-900/10 focus:bg-red-900/20">
-          </div>
-      </div>
-
-      <button onclick="processGeneration()" class="btn-primary w-full py-4 rounded-lg flex items-center justify-center gap-3 group text-sm relative z-10">
-        <span class="tracking-widest font-bold">EXECUTE GENERATION</span>
-        <i class="fa-solid fa-bolt group-hover:text-yellow-400 transition-colors"></i>
-      </button>
-
-      <div class="absolute inset-0 opacity-[0.03] pointer-events-none" 
-           style="background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 20px 20px;">
       </div>
     </div>
 
-    <div id="output-console" class="mt-8 hidden animate-fade-in">
-        <div class="flex justify-between items-end mb-3 px-1">
-             <span class="text-[10px] text-gray-500 font-mono uppercase tracking-widest flex items-center gap-2">
-               <i class="fa-solid fa-code text-red-500"></i> Execution Log
-             </span>
-             <div class="flex gap-2">
-               <button onclick="clearConsole()" class="text-[10px] px-3 py-1.5 bg-red-900/20 hover:bg-red-900/40 text-red-400 rounded border border-red-900/30 transition-colors flex items-center gap-2">
-                  <i class="fa-solid fa-trash-can"></i> Clear
-               </button>
-               <button onclick="copyConsole()" class="text-[10px] px-3 py-1.5 bg-white/5 hover:bg-white/10 text-green-400 rounded border border-white/10 transition-colors flex items-center gap-2">
-                  <i class="fa-regular fa-copy"></i> Copy Keys (CSV)
-               </button>
-             </div>
-        </div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        <div class="relative">
-          <textarea id="console_text" readonly class="w-full h-56 bg-[#080808] console-bg border border-gray-800 rounded-lg p-4 font-mono text-[11px] text-green-500/80 leading-relaxed resize-none focus:outline-none shadow-inner custom-scroll select-text"></textarea>
-          <div class="absolute bottom-4 right-4 flex items-center gap-2 pointer-events-none">
-            <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-            <span class="text-[9px] text-green-700 font-mono">IDLE</span>
-          </div>
+        <div class="lg:col-span-2 glass-panel p-8 rounded-xl border-l-2 border-red-600 shadow-2xl relative overflow-hidden z-10">
+            
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label class="text-[10px] text-gray-500 uppercase font-bold block mb-2 tracking-wider">License Level</label>
+                    <select id="gen_type" onchange="updateFormatConstraints()" class="input-field w-full p-3 rounded text-gray-300">
+                        <option value="paid">PAID (HWID Locked)</option>
+                        <option value="free">FREE (No HWID)</option>
+                    </select>
+                </div>
+                <div id="qty_wrapper" class="hidden">
+                    <label class="text-[10px] text-red-500 uppercase font-bold block mb-2 tracking-wider">Quantity</label>
+                    <input id="gen_qty" type="number" value="5" max="100" class="input-field w-full p-3 rounded text-center border-red-900/50 text-red-100 bg-red-900/10">
+                </div>
+            </div>
+
+            <hr class="border-gray-800 mb-6">
+
+            <div class="mb-6">
+                <label class="text-[10px] text-gray-500 uppercase font-bold block mb-2 tracking-wider flex items-center gap-2"><i class="fa-regular fa-clock"></i> Duration</label>
+                <div class="flex gap-2">
+                    <input id="gen_time_amount" type="number" value="30" class="input-field w-1/3 p-3 rounded text-center text-lg font-bold">
+                    <select id="gen_time_unit" class="input-field w-2/3 p-3 rounded">
+                        <option value="minutes">Minutes</option>
+                        <option value="hours">Hours</option>
+                        <option value="days" selected>Days</option>
+                        <option value="weeks">Weeks</option>
+                        <option value="months">Months</option>
+                        <option value="years">Years</option>
+                        <option value="lifetime">Lifetime (Permanent)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <label class="text-[10px] text-gray-500 uppercase font-bold block mb-2 tracking-wider flex items-center gap-2"><i class="fa-solid fa-mask"></i> Key Format Mask</label>
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="col-span-1">
+                        <input id="gen_prefix" value="MINHOOK" placeholder="Prefix" class="input-field w-full p-3 rounded text-center font-mono text-yellow-500">
+                        <span class="text-[9px] text-gray-600 block mt-1 text-center">PREFIX</span>
+                    </div>
+                    <div class="col-span-2">
+                        <input id="gen_mask" value="******" placeholder="****-****-****" class="input-field w-full p-3 rounded text-center font-mono tracking-widest text-blue-400">
+                        <span class="text-[9px] text-gray-600 block mt-1 text-center">MASK (* = Random Char)</span>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="processGeneration()" class="btn-primary w-full py-4 rounded-lg flex items-center justify-center gap-3 group text-sm relative z-10">
+                <span class="tracking-widest font-bold">CREATE LICENSE(S)</span>
+                <i class="fa-solid fa-bolt group-hover:text-yellow-400 transition-colors"></i>
+            </button>
+            
+            <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 20px 20px;"></div>
         </div>
-      </div>
+
+        <div class="lg:col-span-1 flex flex-col h-full animate-fade-in">
+             <div class="glass-panel p-1 rounded-t-lg bg-black/80 border-b-0 flex justify-between items-center px-3 py-2">
+                 <span class="text-[10px] font-mono text-gray-400"><i class="fa-solid fa-terminal text-red-500"></i> OUTPUT_LOG</span>
+                 <div class="flex gap-1">
+                    <button onclick="clearConsole()" class="w-6 h-6 flex items-center justify-center rounded bg-gray-800 hover:bg-red-900/50 text-gray-400 hover:text-red-400 transition-colors"><i class="fa-solid fa-trash-can text-[10px]"></i></button>
+                    <button onclick="copyConsole()" class="w-6 h-6 flex items-center justify-center rounded bg-gray-800 hover:bg-green-900/50 text-gray-400 hover:text-green-400 transition-colors"><i class="fa-regular fa-copy text-[10px]"></i></button>
+                 </div>
+             </div>
+             <textarea id="console_text" readonly class="flex-1 w-full bg-[#080808] console-bg border border-gray-800 border-t-0 rounded-b-lg p-4 font-mono text-[10px] text-green-500/80 leading-relaxed resize-none focus:outline-none shadow-inner custom-scroll select-text min-h-[300px]"></textarea>
+        </div>
+    </div>
   </div>
 
   <div id="tab-users" class="content-tab hidden space-y-6 max-w-7xl mx-auto animate-slide-up">
     <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-4 mb-2 pb-4 border-b border-gray-800/50">
       <div>
-        <h2 class="text-2xl font-bold flex items-center gap-3 text-white">
-            <i class="fa-solid fa-server text-red-600"></i> User Database
-        </h2>
+        <h2 class="text-2xl font-bold flex items-center gap-3 text-white"><i class="fa-solid fa-server text-red-600"></i> User Database</h2>
       </div>
       <div class="flex items-center gap-3">
           <div class="flex items-center gap-2 px-3 py-1.5 bg-black/40 rounded-full border border-gray-800">
@@ -279,15 +244,11 @@
         </select>
     </div>
 
-    <div id="user-grid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 pb-12">
-        </div>
+    <div id="user-grid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 pb-12"></div>
   </div>
 
   <div id="tab-tools" class="content-tab hidden space-y-8 max-w-4xl mx-auto animate-slide-up">
-    <h2 class="text-2xl font-bold flex items-center gap-3 mb-6 border-b border-gray-800 pb-4">
-        <i class="fa-solid fa-toolbox text-red-500"></i> System Utilities
-    </h2>
-    
+    <h2 class="text-2xl font-bold flex items-center gap-3 mb-6 border-b border-gray-800 pb-4"><i class="fa-solid fa-toolbox text-red-500"></i> System Utilities</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="glass-panel p-6 rounded-xl border border-gray-800 hover:border-gray-700 transition-colors">
             <h3 class="font-bold text-gray-300 mb-4 text-xs uppercase tracking-wider"><i class="fa-solid fa-magnifying-glass text-blue-500 mr-2"></i>Inspect Key Details</h3>
@@ -297,268 +258,213 @@
                 <pre id="verify_result" class="text-[10px] text-blue-400 font-mono">Waiting for input...</pre>
             </div>
         </div>
-
         <div class="glass-panel p-6 rounded-xl border border-red-900/20 hover:border-red-900/50 transition-colors">
             <h3 class="font-bold text-red-400 mb-4 text-xs uppercase tracking-wider"><i class="fa-solid fa-skull text-red-500 mr-2"></i>HWID Override</h3>
             <input id="tool_reset_key" placeholder="Paste Key Here..." class="input-field w-full p-2.5 mb-3 rounded border-red-900/30">
             <button onclick="toolReset()" class="w-full py-2 bg-red-900/20 hover:bg-red-900/40 rounded text-xs border border-red-900/50 text-red-200 font-bold transition-all">RESET HARDWARE ID</button>
             <p id="reset_msg" class="mt-3 text-xs text-gray-400 font-mono text-center h-4"></p>
         </div>
-
         <div class="glass-panel p-6 rounded-xl md:col-span-2 border-t-2 border-red-600 relative overflow-hidden">
             <div class="absolute inset-0 bg-red-900/5 pointer-events-none"></div>
             <h3 class="font-bold text-white mb-4 text-sm"><i class="fa-solid fa-triangle-exclamation text-red-500 mr-2"></i>DANGER ZONE</h3>
             <div class="flex gap-4">
-                <button onclick="downloadBackup()" class="flex-1 py-4 bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded text-xs font-bold text-gray-300 transition-all flex flex-col items-center gap-2">
-                    <i class="fa-solid fa-download text-lg"></i> BACKUP JSON
-                </button>
-                <button onclick="nukeDatabase()" class="flex-1 py-4 bg-red-950/50 hover:bg-red-900 border border-red-800 text-red-400 hover:text-red-100 rounded text-xs font-bold transition-all flex flex-col items-center gap-2 group">
-                    <i class="fa-solid fa-bomb text-lg group-hover:animate-bounce"></i> DELETE ALL KEYS
-                </button>
+                <button onclick="downloadBackup()" class="flex-1 py-4 bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded text-xs font-bold text-gray-300 transition-all flex flex-col items-center gap-2"><i class="fa-solid fa-download text-lg"></i> BACKUP JSON</button>
+                <button onclick="nukeDatabase()" class="flex-1 py-4 bg-red-950/50 hover:bg-red-900 border border-red-800 text-red-400 hover:text-red-100 rounded text-xs font-bold transition-all flex flex-col items-center gap-2 group"><i class="fa-solid fa-bomb text-lg group-hover:animate-bounce"></i> DELETE ALL KEYS</button>
             </div>
         </div>
     </div>
   </div>
-
 </main>
 
 <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 pointer-events-none"></div>
 
 <script>
-    /* --- CONFIGURATION --- */
-    const API = "https://egatesystem.vercel.app/api"; // URL API
+    const API = "https://egatesystem.vercel.app/api"; 
     let ADMIN = "";
     let GEN_MODE = "single"; 
     let AUTO_REFRESH_INTERVAL = null;
-    let RAW_KEYS_CACHE = ""; // Almacena las keys limpias para copiar
-    let USERS_CACHE = {}; // Cache local de usuarios
+    let RAW_KEYS_CACHE = ""; 
+    let USERS_CACHE = {}; 
 
-    /* --- SECURITY (Anti-DevTools Lite) --- */
+    // SECURITY
     document.addEventListener('contextmenu', e => e.preventDefault());
-    document.onkeydown = function(e) {
-        if(e.keyCode == 123) return false; // F12
-        if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
-        if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
-        if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
-    }
+    document.onkeydown = function(e) { if(e.keyCode == 123 || (e.ctrlKey && (e.keyCode === 85 || e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)))) return false; }
 
-    /* --- UI NAVIGATION --- */
+    /* --- UI LOGIC --- */
     function switchTab(tabId) {
         document.querySelectorAll('.content-tab').forEach(el => el.classList.add('hidden'));
         document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-        
-        // Update Sidebar
         document.querySelectorAll('nav button').forEach(btn => {
             btn.classList.remove('bg-white/5', 'text-white', 'border-white/5');
             btn.classList.add('text-gray-500', 'border-transparent');
         });
-        const activeBtn = document.querySelector(`button[onclick="switchTab('${tabId}')"]`);
-        if(activeBtn) {
-            activeBtn.classList.add('bg-white/5', 'text-white', 'border-white/5');
-            activeBtn.classList.remove('text-gray-500', 'border-transparent');
-        }
-
-        // Handle Refresh
-        if (tabId === 'users') {
-            startAutoRefresh();
-        } else {
-            stopAutoRefresh();
-        }
+        document.querySelector(`button[onclick="switchTab('${tabId}')"]`).classList.add('bg-white/5', 'text-white', 'border-white/5');
+        if (tabId === 'users') startAutoRefresh(); else stopAutoRefresh();
     }
 
     function toggleGenMode(mode) {
         GEN_MODE = mode;
         const btnSingle = document.getElementById('btn-mode-single');
         const btnBulk = document.getElementById('btn-mode-bulk');
-        const qtyContainer = document.getElementById('qty_container');
-
+        const qtyWrapper = document.getElementById('qty_wrapper');
         if(mode === 'bulk') {
-            btnSingle.classList.replace('bg-red-600', 'text-gray-500');
-            btnSingle.classList.remove('text-white', 'shadow');
-            btnBulk.classList.add('bg-red-600', 'text-white', 'shadow');
-            btnBulk.classList.remove('text-gray-500');
-            qtyContainer.classList.remove('hidden');
+            btnSingle.classList.replace('bg-red-600', 'text-gray-500'); btnSingle.classList.remove('text-white', 'shadow');
+            btnBulk.classList.add('bg-red-600', 'text-white', 'shadow'); btnBulk.classList.remove('text-gray-500');
+            qtyWrapper.classList.remove('hidden');
         } else {
-            btnBulk.classList.replace('bg-red-600', 'text-gray-500');
-            btnBulk.classList.remove('text-white', 'shadow');
-            btnSingle.classList.add('bg-red-600', 'text-white', 'shadow');
-            btnSingle.classList.remove('text-gray-500');
-            qtyContainer.classList.add('hidden');
+            btnBulk.classList.replace('bg-red-600', 'text-gray-500'); btnBulk.classList.remove('text-white', 'shadow');
+            btnSingle.classList.add('bg-red-600', 'text-white', 'shadow'); btnSingle.classList.remove('text-gray-500');
+            qtyWrapper.classList.add('hidden');
+        }
+    }
+
+    function updateFormatConstraints() {
+        const type = document.getElementById('gen_type').value;
+        const prefixInput = document.getElementById('gen_prefix');
+        const maskInput = document.getElementById('gen_mask');
+
+        if (type === 'free') {
+            // FORCE FREE SETTINGS
+            prefixInput.value = "MINHOOKFREE";
+            prefixInput.disabled = true;
+            maskInput.value = "MINHOOKFREE-****";
+            maskInput.disabled = true;
+        } else {
+            // UNLOCK PAID SETTINGS
+            prefixInput.disabled = false;
+            maskInput.disabled = false;
+            // Restore defaults if they were the free ones
+            if(prefixInput.value === "MINHOOKFREE") prefixInput.value = "MINHOOK";
+            if(maskInput.value === "MINHOOKFREE-****") maskInput.value = "******";
         }
     }
 
     function showToast(msg, type = 'info') {
         const container = document.getElementById('toast-container');
         const el = document.createElement('div');
-        const borderColor = type === 'error' ? 'border-red-600' : 'border-green-500';
+        const color = type === 'error' ? 'border-red-600' : 'border-green-500';
         const icon = type === 'error' ? '<i class="fa-solid fa-circle-xmark text-red-500"></i>' : '<i class="fa-solid fa-circle-check text-green-500"></i>';
-        
-        el.className = `p-4 rounded-lg border-l-4 ${borderColor} bg-[#0a0a0a] text-white shadow-2xl text-xs font-bold flex items-center gap-3 min-w-[240px] animate-slide-up pointer-events-auto border border-gray-800`;
+        el.className = `p-4 rounded-lg border-l-4 ${color} bg-[#0a0a0a] text-white shadow-2xl text-xs font-bold flex items-center gap-3 min-w-[240px] animate-slide-up pointer-events-auto border border-gray-800`;
         el.innerHTML = `${icon} <span class="tracking-wide uppercase">${msg}</span>`;
-        
         container.appendChild(el);
-        setTimeout(() => {
-            el.style.opacity = '0';
-            setTimeout(() => el.remove(), 500);
-        }, 3000);
+        setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 500); }, 3000);
     }
 
-    /* --- AUTHENTICATION --- */
+    /* --- AUTH --- */
     async function attemptLogin() {
         const pass = document.getElementById('adminPass').value;
         const msg = document.getElementById('loginMsg');
-        
         if(!pass) return;
-        msg.textContent = "Negotiating Handshake...";
-
+        msg.textContent = "Negotiating...";
         try {
-            // Real fetch
             const res = await fetch(`${API}/info?key=dummy&admin=${encodeURIComponent(pass)}`);
             if (res.status === 403) throw new Error("Access Denied");
-
             ADMIN = pass;
             document.getElementById('auth-layer').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('auth-layer').classList.add('hidden');
-            }, 700);
+            setTimeout(() => document.getElementById('auth-layer').classList.add('hidden'), 700);
             showToast("System Access Granted", "success");
             switchTab('generate');
         } catch (e) {
             msg.textContent = "INVALID CREDENTIALS";
-            document.getElementById('adminPass').classList.add('border-red-600');
-            setTimeout(() => document.getElementById('adminPass').classList.remove('border-red-600'), 1000);
         }
     }
 
-    /* --- GENERATOR CORE --- */
+    /* --- ADVANCED GENERATION LOGIC --- */
     async function processGeneration() {
         const type = document.getElementById('gen_type').value;
-        const days = document.getElementById('gen_days').value || "30";
+        const amount = document.getElementById('gen_time_amount').value;
+        const unit = document.getElementById('gen_time_unit').value;
+        const prefix = document.getElementById('gen_prefix').value;
+        const mask = document.getElementById('gen_mask').value;
         const qty = GEN_MODE === 'bulk' ? parseInt(document.getElementById('gen_qty').value) : 1;
         
         const consoleDiv = document.getElementById('output-console');
         const consoleText = document.getElementById('console_text');
         
-        consoleDiv.classList.remove('hidden');
-        consoleText.value += "\n>>> INITIALIZING SEQUENCE...\n";
+        consoleText.value += `\n>>> INITIATING [${type.toUpperCase()}] BATCH...\n`;
+        consoleText.value += `>>> CONFIG: ${amount} ${unit} | PFX: ${prefix} | MASK: ${mask}\n`;
         
-        const isFree = type === 'free';
         let cleanKeysArray = [];
-
-        // Visual scroll to bottom
         const scrollToBottom = () => { consoleText.scrollTop = consoleText.scrollHeight; }
+        const isFree = type === 'free';
 
         for (let i = 0; i < qty; i++) {
             try {
-                const url = `${API}/make?admin=${ADMIN}&days=${days}${isFree ? '&nohwid=true' : ''}`;
+                // Construct URL with NEW parameters
+                // Ensure your API handles: amount, unit, prefix, mask/pattern
+                let url = `${API}/make?admin=${ADMIN}&amount=${amount}&unit=${unit}&prefix=${encodeURIComponent(prefix)}&pattern=${encodeURIComponent(mask)}`;
+                
+                // Keep backward compatibility if needed, map 'days' if unit is days
+                if (unit === 'days') url += `&days=${amount}`;
+                if (isFree) url += `&nohwid=true`;
+
                 const res = await fetch(url);
                 const raw = await res.text();
                 
                 if (!res.ok) throw new Error(raw);
 
-                // Parse Key
                 let cleanKey = raw;
                 if (raw.includes("(")) cleanKey = raw.split("(")[0].trim();
                 
-                // Add to internal list for copying
                 cleanKeysArray.push(cleanKey);
-
-                // Visual Log
-                const label = GEN_MODE === 'bulk' ? `KEY_${i+1}` : `KEY`;
-                const timestamp = new Date().toLocaleTimeString('en-US', {hour12: false});
-                consoleText.value += `[${timestamp}] SUCCESS :: ${cleanKey}\n`;
+                consoleText.value += `[SUCCESS] :: ${cleanKey}\n`;
                 scrollToBottom();
 
             } catch (err) {
-                consoleText.value += `[ERROR] Failed gen ${i}: ${err.message}\n`;
+                consoleText.value += `[FAIL] :: ${err.message}\n`;
                 scrollToBottom();
             }
         }
 
-        // Update Cache: Append new keys to existing cache or start new
         const newCSV = cleanKeysArray.join(", ");
         RAW_KEYS_CACHE = RAW_KEYS_CACHE ? RAW_KEYS_CACHE + ", " + newCSV : newCSV;
 
-        consoleText.value += `>>> COMPLETED. ${cleanKeysArray.length} Keys generated.\n`;
+        consoleText.value += `>>> BATCH COMPLETE. ${cleanKeysArray.length} Keys.\n`;
         scrollToBottom();
-        showToast(`Sequence Complete: ${cleanKeysArray.length}`, "success");
+        showToast(`Generated ${cleanKeysArray.length} keys`, "success");
     }
 
     function copyConsole() {
-        if (!RAW_KEYS_CACHE) {
-            showToast("Buffer Empty", "error");
-            return;
-        }
-        navigator.clipboard.writeText(RAW_KEYS_CACHE).then(() => {
-            showToast("CSV List Copied to Clipboard", "success");
-        }).catch(() => {
-            showToast("Clipboard Error", "error");
-        });
+        if (!RAW_KEYS_CACHE) return showToast("Buffer Empty", "error");
+        navigator.clipboard.writeText(RAW_KEYS_CACHE).then(() => showToast("CSV Copied", "success"));
     }
-
     function clearConsole() {
         document.getElementById('console_text').value = "";
         RAW_KEYS_CACHE = "";
-        showToast("Console & Buffer Cleared", "info");
+        showToast("Console Cleared", "info");
     }
 
-    /* --- USER DB MANAGER --- */
-    function startAutoRefresh() {
-        if(AUTO_REFRESH_INTERVAL) clearInterval(AUTO_REFRESH_INTERVAL);
-        loadUsers(); 
-        AUTO_REFRESH_INTERVAL = setInterval(() => {
-            const toggle = document.getElementById('autoSyncToggle');
-            if (toggle.checked && document.activeElement.id !== 'searchUsers') {
-                loadUsers(true);
-            }
-        }, 3000);
-    }
-
-    function stopAutoRefresh() {
-        if(AUTO_REFRESH_INTERVAL) clearInterval(AUTO_REFRESH_INTERVAL);
-    }
-    
+    /* --- USER DB (Cached) --- */
+    function startAutoRefresh() { if(AUTO_REFRESH_INTERVAL) clearInterval(AUTO_REFRESH_INTERVAL); loadUsers(); AUTO_REFRESH_INTERVAL = setInterval(() => { if (document.getElementById('autoSyncToggle').checked && document.activeElement.id !== 'searchUsers') loadUsers(true); }, 3000); }
+    function stopAutoRefresh() { if(AUTO_REFRESH_INTERVAL) clearInterval(AUTO_REFRESH_INTERVAL); }
     function forceLoadUsers() { loadUsers(false); }
 
     async function loadUsers(silent = false) {
         const grid = document.getElementById('user-grid');
         if(!silent) grid.style.opacity = "0.5";
-
         try {
             const res = await fetch(`${API}/dump?admin=${ADMIN}`);
             const text = await res.text();
-            
             const jsonStart = text.indexOf("{");
             if (jsonStart === -1) throw new Error("Data corruption");
-            
             const data = JSON.parse(text.slice(jsonStart));
-            USERS_CACHE = data.keys ? data.keys : data; // Store in global cache
-
+            USERS_CACHE = data.keys ? data.keys : data;
             renderUsersFromCache();
-
-        } catch (e) {
-            if(!silent) showToast("Sync Failed", "error");
-        } finally {
-            grid.style.opacity = "1";
-        }
+        } catch (e) { if(!silent) showToast("Sync Failed", "error"); } finally { grid.style.opacity = "1"; }
     }
 
     function renderUsersFromCache() {
         const grid = document.getElementById('user-grid');
         const searchTerm = document.getElementById('searchUsers').value.toLowerCase();
         const filterState = document.getElementById('filterState').value;
-
         let html = "";
         
         Object.entries(USERS_CACHE).reverse().forEach(([key, info]) => {
             const isActive = info.expires && new Date(info.expires) > new Date();
             const statusStr = isActive ? "active" : "expired";
-
-            // Filters
             if (filterState !== 'all' && filterState !== statusStr) return;
             if (searchTerm && !key.toLowerCase().includes(searchTerm) && !(info.email||"").toLowerCase().includes(searchTerm)) return;
 
-            // Card HTML
             html += `
             <div class="glass-panel p-5 rounded-xl relative group hover:border-red-900/50 transition-all hover:translate-y-[-2px]">
                 <div class="flex justify-between items-start mb-3">
@@ -566,114 +472,29 @@
                          <i class="fa-solid fa-key text-gray-600 text-xs"></i>
                          <div class="font-mono text-xs text-white break-all font-bold select-all tracking-tight">${key}</div>
                     </div>
-                    <span class="px-2 py-0.5 rounded text-[9px] uppercase font-bold tracking-wider ${isActive ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-red-500/10 text-red-500 border border-red-500/20'}">
-                        ${isActive ? 'ACT' : 'EXP'}
-                    </span>
+                    <span class="px-2 py-0.5 rounded text-[9px] uppercase font-bold tracking-wider ${isActive ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-red-500/10 text-red-500 border border-red-500/20'}">${isActive ? 'ACT' : 'EXP'}</span>
                 </div>
-                
                 <div class="space-y-2 text-[10px] text-gray-500 font-mono border-t border-gray-800/50 pt-3">
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-600 uppercase">Hardware ID</span>
-                        <span class="text-gray-300 truncate max-w-[140px] bg-black/30 px-1 rounded" title="${info.hwid}">${info.hwid ? info.hwid : '<span class="text-gray-700">UNLINKED</span>'}</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-600 uppercase">Contact</span>
-                        <span class="text-gray-300 truncate max-w-[140px]">${info.email || '—'}</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-600 uppercase">Expires</span>
-                        <span class="${isActive ? 'text-green-400' : 'text-red-800'}">${info.expires ? new Date(info.expires).toLocaleDateString() : '—'}</span>
-                    </div>
+                    <div class="flex justify-between items-center"><span class="text-gray-600 uppercase">Hardware ID</span><span class="text-gray-300 truncate max-w-[140px] bg-black/30 px-1 rounded">${info.hwid ? info.hwid : '<span class="text-gray-700">UNLINKED</span>'}</span></div>
+                    <div class="flex justify-between items-center"><span class="text-gray-600 uppercase">Contact</span><span class="text-gray-300 truncate max-w-[140px]">${info.email || '—'}</span></div>
+                    <div class="flex justify-between items-center"><span class="text-gray-600 uppercase">Expires</span><span class="${isActive ? 'text-green-400' : 'text-red-800'}">${info.expires ? new Date(info.expires).toLocaleDateString() : '—'}</span></div>
                 </div>
-
                 <div class="absolute top-2 right-12 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-black/80 rounded p-1 border border-gray-800">
-                     <button onclick="quickReset('${key}')" class="w-6 h-6 rounded bg-yellow-600/20 hover:bg-yellow-600 text-yellow-500 hover:text-white flex items-center justify-center text-xs transition-colors" title="Reset HWID">
-                        <i class="fa-solid fa-sync"></i>
-                    </button>
-                    <button onclick="quickDelete('${key}')" class="w-6 h-6 rounded bg-red-600/20 hover:bg-red-600 text-red-500 hover:text-white flex items-center justify-center text-xs transition-colors" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
+                     <button onclick="quickReset('${key}')" class="w-6 h-6 rounded bg-yellow-600/20 hover:bg-yellow-600 text-yellow-500 hover:text-white flex items-center justify-center text-xs transition-colors"><i class="fa-solid fa-sync"></i></button>
+                    <button onclick="quickDelete('${key}')" class="w-6 h-6 rounded bg-red-600/20 hover:bg-red-600 text-red-500 hover:text-white flex items-center justify-center text-xs transition-colors"><i class="fa-solid fa-trash"></i></button>
                 </div>
-            </div>
-            `;
+            </div>`;
         });
-
-        if (html === "") html = `<div class="col-span-full text-center text-gray-600 py-12 font-mono text-xs border border-dashed border-gray-800 rounded-lg">DATA STREAM EMPTY OR FILTERED</div>`;
+        if (html === "") html = `<div class="col-span-full text-center text-gray-600 py-12 font-mono text-xs border border-dashed border-gray-800 rounded-lg">DATA STREAM EMPTY</div>`;
         grid.innerHTML = html;
     }
 
-    async function quickDelete(key) {
-        if(!confirm("CONFIRM DELETION: This action is permanent.")) return;
-        try {
-            await fetch(`${API}/delete?key=${key}&admin=${ADMIN}`);
-            showToast("Key Deleted", "success");
-            loadUsers(true); 
-        } catch(e) { showToast("Action Failed", "error"); }
-    }
-
-    async function quickReset(key) {
-        try {
-            await fetch(`${API}/adminReset?key=${key}&admin=${ADMIN}`); // Asegúrate que el endpoint es correcto
-            showToast("HWID Unlinked", "success");
-            loadUsers(true);
-        } catch(e) { showToast("Action Failed", "error"); }
-    }
-
-    /* --- TOOLS --- */
-    async function toolCheck() {
-        const k = document.getElementById('tool_verify_key').value;
-        const resEl = document.getElementById('verify_result');
-        resEl.innerText = "Querying Database...";
-        try {
-            const r = await fetch(`${API}/info?key=${k}&admin=${ADMIN}`);
-            const d = await r.json();
-            resEl.innerText = JSON.stringify(d, null, 2);
-        } catch(e) { resEl.innerText = "Error: Key not found or server error."; }
-    }
-    
-    async function toolReset() {
-        const k = document.getElementById('tool_reset_key').value;
-        try {
-            const r = await fetch(`${API}/adminReset?key=${k}&admin=${ADMIN}`);
-            const t = await r.text();
-            document.getElementById('reset_msg').innerText = "SUCCESS: " + t;
-            showToast("HWID Reset Successful", "success");
-        } catch(e) { document.getElementById('reset_msg').innerText = "FAILED"; }
-    }
-
-    async function nukeDatabase() {
-        const code = prompt("TYPE 'CONFIRM-NUKE' TO ERASE ALL DATABASE ENTRIES:");
-        if (code !== 'CONFIRM-NUKE') return;
-        
-        try {
-            await fetch(`${API}/deleteAll?admin=${ADMIN}`);
-            showToast("DATABASE FORMATTED", "error");
-            loadUsers();
-        } catch(e) { showToast("Operation Failed", "error"); }
-    }
-
-    function downloadBackup() {
-        window.open(`${API}/dump?admin=${ADMIN}`, '_blank');
-    }
-
+    async function quickDelete(k){ if(confirm("Confirm deletion?")) try{ await fetch(`${API}/delete?key=${k}&admin=${ADMIN}`); loadUsers(true); showToast("Deleted", "success"); }catch(e){showToast("Error", "error");} }
+    async function quickReset(k){ try{ await fetch(`${API}/adminReset?key=${k}&admin=${ADMIN}`); loadUsers(true); showToast("Reset OK", "success"); }catch(e){showToast("Error", "error");} }
+    async function toolCheck(){ const k=document.getElementById('tool_verify_key').value; try{const r=await fetch(`${API}/info?key=${k}&admin=${ADMIN}`); document.getElementById('verify_result').innerText = JSON.stringify(await r.json(),null,2);}catch(e){document.getElementById('verify_result').innerText="Not Found";} }
+    async function toolReset(){ const k=document.getElementById('tool_reset_key').value; try{await fetch(`${API}/adminReset?key=${k}&admin=${ADMIN}`); showToast("HWID Reset", "success"); }catch(e){showToast("Error", "error");} }
+    async function nukeDatabase(){ if(prompt("TYPE 'NUKE'")==='NUKE') try{await fetch(`${API}/deleteAll?admin=${ADMIN}`); loadUsers(); showToast("DB Cleared", "error");}catch(e){showToast("Error", "error");} }
+    function downloadBackup() { window.open(`${API}/dump?admin=${ADMIN}`, '_blank'); }
 </script>
-
-<script id="test-mode-script">
-    // Descomentar para probar el diseño sin login
-    /*
-    console.warn("⚠️ DEV MODE :: AUTH BYPASS");
-    setTimeout(() => {
-        document.getElementById('auth-layer').classList.add('hidden');
-        ADMIN = "test_mode";
-        // Dummy data render
-        USERS_CACHE = {
-             "Key-TEST-001": { hwid: "HWID-88X-11", expires: "2025-10-10", email: "client@test.com" },
-             "Key-TEST-002": { hwid: null, expires: "2022-01-01", email: null }
-        };
-        renderUsersFromCache();
-    }, 500);
-    */
-</script>
-
 </body>
 </html>
